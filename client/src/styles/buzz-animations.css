@@ -1,0 +1,217 @@
+/* Buzzing Animation Styles for Buzz Smile Logo */
+
+/* Option 1: Subtle Shake/Vibration */
+@keyframes buzz-shake {
+  0%, 100% { transform: translateX(0); }
+  10% { transform: translateX(-1px) translateY(-1px); }
+  20% { transform: translateX(1px) translateY(1px); }
+  30% { transform: translateX(-1px) translateY(1px); }
+  40% { transform: translateX(1px) translateY(-1px); }
+  50% { transform: translateX(-1px) translateY(-1px); }
+  60% { transform: translateX(1px) translateY(1px); }
+  70% { transform: translateX(-1px) translateY(1px); }
+  80% { transform: translateX(1px) translateY(-1px); }
+  90% { transform: translateX(-1px) translateY(-1px); }
+}
+
+.buzz-shake {
+  animation: buzz-shake 0.5s ease-in-out infinite;
+}
+
+.buzz-shake:hover {
+  animation: buzz-shake 0.3s ease-in-out infinite;
+}
+
+/* Option 2: Pulsing Scale Animation */
+@keyframes buzz-pulse {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.05); }
+  50% { transform: scale(0.98); }
+  75% { transform: scale(1.02); }
+}
+
+.buzz-pulse {
+  animation: buzz-pulse 0.8s ease-in-out infinite;
+}
+
+.buzz-pulse:hover {
+  animation: buzz-pulse 0.4s ease-in-out infinite;
+}
+
+/* Option 3: Letter-by-letter Vibration */
+@keyframes buzz-letter-1 {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-2px) rotate(1deg); }
+  50% { transform: translateY(1px) rotate(-1deg); }
+  75% { transform: translateY(-1px) rotate(0.5deg); }
+}
+
+@keyframes buzz-letter-2 {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  20% { transform: translateY(1px) rotate(-1deg); }
+  40% { transform: translateY(-2px) rotate(1deg); }
+  60% { transform: translateY(1px) rotate(-0.5deg); }
+  80% { transform: translateY(-1px) rotate(0.5deg); }
+}
+
+@keyframes buzz-letter-3 {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  30% { transform: translateY(-1px) rotate(0.5deg); }
+  60% { transform: translateY(2px) rotate(-1deg); }
+  90% { transform: translateY(-1px) rotate(1deg); }
+}
+
+@keyframes buzz-letter-4 {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  15% { transform: translateY(2px) rotate(-0.5deg); }
+  35% { transform: translateY(-1px) rotate(1deg); }
+  55% { transform: translateY(1px) rotate(-1deg); }
+  75% { transform: translateY(-2px) rotate(0.5deg); }
+}
+
+.buzz-letter-animation .buzz-letter-1 {
+  animation: buzz-letter-1 0.6s ease-in-out infinite;
+}
+
+.buzz-letter-animation .buzz-letter-2 {
+  animation: buzz-letter-2 0.7s ease-in-out infinite;
+}
+
+.buzz-letter-animation .buzz-letter-3 {
+  animation: buzz-letter-3 0.5s ease-in-out infinite;
+}
+
+.buzz-letter-animation .buzz-letter-4 {
+  animation: buzz-letter-4 0.8s ease-in-out infinite;
+}
+
+/* Option 4: Rotation Wobble Effect */
+@keyframes buzz-wobble {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  15% { transform: rotate(2deg) scale(1.02); }
+  30% { transform: rotate(-1deg) scale(0.98); }
+  45% { transform: rotate(1.5deg) scale(1.01); }
+  60% { transform: rotate(-2deg) scale(0.99); }
+  75% { transform: rotate(1deg) scale(1.01); }
+  90% { transform: rotate(-0.5deg) scale(1); }
+}
+
+.buzz-wobble {
+  animation: buzz-wobble 1s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.buzz-wobble:hover {
+  animation: buzz-wobble 0.6s ease-in-out infinite;
+}
+
+/* Option 5: Electric Buzz (Combination Effect) */
+@keyframes buzz-electric {
+  0%, 100% { 
+    transform: translateX(0) translateY(0) scale(1);
+    filter: brightness(1);
+  }
+  10% { 
+    transform: translateX(-0.5px) translateY(-1px) scale(1.01);
+    filter: brightness(1.1);
+  }
+  20% { 
+    transform: translateX(1px) translateY(0.5px) scale(0.99);
+    filter: brightness(1.05);
+  }
+  30% { 
+    transform: translateX(-1px) translateY(1px) scale(1.02);
+    filter: brightness(1.15);
+  }
+  40% { 
+    transform: translateX(0.5px) translateY(-0.5px) scale(0.98);
+    filter: brightness(1);
+  }
+  50% { 
+    transform: translateX(-0.5px) translateY(-1px) scale(1.01);
+    filter: brightness(1.08);
+  }
+  60% { 
+    transform: translateX(1px) translateY(1px) scale(1);
+    filter: brightness(1.12);
+  }
+  70% { 
+    transform: translateX(-1px) translateY(0.5px) scale(0.99);
+    filter: brightness(1.03);
+  }
+  80% { 
+    transform: translateX(0.5px) translateY(-1px) scale(1.01);
+    filter: brightness(1.07);
+  }
+  90% { 
+    transform: translateX(-0.5px) translateY(-0.5px) scale(1);
+    filter: brightness(1.02);
+  }
+}
+
+.buzz-electric {
+  animation: buzz-electric 0.4s ease-in-out infinite;
+}
+
+.buzz-electric:hover {
+  animation: buzz-electric 0.2s ease-in-out infinite;
+}
+
+/* Option 6: Gentle Continuous Buzz */
+@keyframes buzz-gentle {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  25% { transform: translateX(0.8px) translateY(-0.8px); }
+  50% { transform: translateX(-0.8px) translateY(0.8px); }
+  75% { transform: translateX(0.8px) translateY(0.8px); }
+}
+
+.buzz-gentle {
+  animation: buzz-gentle 0.6s ease-in-out infinite;
+}
+
+/* Utility classes for controlling animation states */
+.buzz-paused {
+  animation-play-state: paused;
+}
+
+.buzz-on-hover:hover {
+  animation-play-state: running;
+}
+
+.buzz-on-hover {
+  animation-play-state: paused;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .buzz-shake {
+    animation: buzz-shake 0.6s ease-in-out infinite;
+  }
+  
+  .buzz-pulse {
+    animation: buzz-pulse 1s ease-in-out infinite;
+  }
+  
+  .buzz-wobble {
+    animation: buzz-wobble 1.2s ease-in-out infinite;
+  }
+  
+  .buzz-electric {
+    animation: buzz-electric 0.5s ease-in-out infinite;
+  }
+}
+
+/* Accessibility: Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .buzz-shake,
+  .buzz-pulse,
+  .buzz-wobble,
+  .buzz-electric,
+  .buzz-gentle,
+  .buzz-letter-animation .buzz-letter-1,
+  .buzz-letter-animation .buzz-letter-2,
+  .buzz-letter-animation .buzz-letter-3,
+  .buzz-letter-animation .buzz-letter-4 {
+    animation: none;
+  }
+}

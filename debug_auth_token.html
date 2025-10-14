@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Auth Token</title>
+</head>
+<body>
+    <h1>Authentication Token Debug</h1>
+    <div id="results"></div>
+    
+    <script>
+        const results = document.getElementById('results');
+        
+        // Check localStorage for token
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+        
+        results.innerHTML = `
+            <h2>LocalStorage Contents:</h2>
+            <p><strong>Token:</strong> ${token ? token.substring(0, 50) + '...' : 'No token found'}</p>
+            <p><strong>User:</strong> ${user || 'No user found'}</p>
+            
+            <h2>Test Auth Endpoint:</h2>
+            <button onclick="testAuth()">Test /api/auth/me</button>
+            <div id="authResult"></div>
+        `;
+        
+        async function testAuth() {
+            const authResult = document.getElementById('authResult');
+            
+            if (!token) {
+                authResult.innerHTML = '<p style="color: red;">No token found in localStorage</p>';
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                authResult.innerHTML = `
+                    <p><strong>Status:</strong> ${response.status}</p>
+                    <p><strong>Response:</strong> ${JSON.stringify(data, null, 2)}</p>
+                `;
+            } catch (error) {
+                authResult.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

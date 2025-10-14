@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Debug</title>
+</head>
+<body>
+    <h1>Upload Debug Test</h1>
+    <input type="file" id="fileInput" accept="video/*">
+    <button onclick="testUpload()">Test Upload</button>
+    <div id="result"></div>
+
+    <script>
+        async function testUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a file');
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+            console.log('Token:', token);
+            
+            if (!token) {
+                document.getElementById('result').innerHTML = 'No token found in localStorage';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('video', file);
+            formData.append('title', 'Debug Test');
+            formData.append('editingData', '{}');
+
+            try {
+                const response = await fetch('http://localhost:5000/api/videos/upload', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const result = await response.text();
+                console.log('Response:', result);
+                document.getElementById('result').innerHTML = `Response: ${result}`;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

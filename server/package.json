@@ -1,0 +1,55 @@
+{
+  "name": "buzz-smile-official-website-server",
+  "version": "1.0.0",
+  "description": "Backend server for Buzz Smile Official Website (SAAS)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "build": "echo 'No build step required for Node.js server'",
+    "postinstall": "echo 'Server dependencies installed successfully'",
+    "test": "jest --detectOpenHandles --forceExit",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "echo 'Linting would run here - install eslint for full linting'"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@sentry/node": "^10.17.0",
+    "@sentry/tracing": "^7.120.4",
+    "archiver": "^7.0.1",
+    "axios": "^1.5.0",
+    "bcryptjs": "^2.4.3",
+    "bull": "^4.16.5",
+    "connect-mongo": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-session": "^1.18.2",
+    "express-validator": "^7.0.1",
+    "fluent-ffmpeg": "^2.1.3",
+    "glob": "^11.0.3",
+    "googleapis": "^162.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.5.0",
+    "multer": "^1.4.5-lts.1",
+    "node-cache": "^5.1.2",
+    "passport": "^0.7.0",
+    "passport-facebook": "^3.0.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-instagram": "^1.0.0",
+    "passport-twitter": "^1.0.4",
+    "passport-youtube-v3": "^2.1.0",
+    "redis": "^5.8.2",
+    "winston": "^3.18.3"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "nodemon": "^3.0.1",
+    "supertest": "^7.1.4"
+  }
+}
