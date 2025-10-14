@@ -14,7 +14,7 @@
     "lint": "echo 'Linting would run here - install eslint for full linting'"
   },
   "engines": {
-    "node": ">=18.0.0",
+    "node": ">=18 <21",
     "npm": ">=8.0.0"
   },
   "dependencies": {
