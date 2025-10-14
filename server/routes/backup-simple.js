@@ -118,8 +118,15 @@ async function copyDirectory(src, dest) {
 router.post('/create', auth, requireAdmin, async (req, res) => {
   try {
     // Direct backups to a target directory (allows avoiding Cloud Drive path)
-    const backupTargetDir = process.env.BACKUP_TARGET_DIR || path.join(__dirname, '../backups');
-    await fs.mkdir(backupTargetDir, { recursive: true });
+    let backupTargetDir = process.env.BACKUP_TARGET_DIR || process.env.BACKUP_DIR || path.join(__dirname, '../backups');
+    try {
+      await fs.mkdir(backupTargetDir, { recursive: true });
+    } catch (dirErr) {
+      const tmpFallback = path.join('/tmp', 'backups');
+      console.warn(`⚠️ Backup target dir not writable (${backupTargetDir}). Falling back to ${tmpFallback}.`, dirErr?.message || dirErr);
+      backupTargetDir = tmpFallback;
+      await fs.mkdir(backupTargetDir, { recursive: true });
+    }
 
     // Create timestamp and names
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -130,19 +137,29 @@ router.post('/create', auth, requireAdmin, async (req, res) => {
 
     console.log(`📦 Creating compressed website backup: ${backupName}`);
 
-    // 1) Export Database to working directory
+    // 1) Export Database to working directory (resilient)
     console.log('📄 Exporting database (JSON)...');
-    const collections = await mongoose.connection.db.listCollections().toArray();
-    const backupData = {};
-    for (const collection of collections) {
-      const collectionName = collection.name;
-      const data = await mongoose.connection.db.collection(collectionName).find({}).toArray();
-      backupData[collectionName] = data;
+    let backupData = {};
+    let dbExportError = null;
+    try {
+      const collections = await mongoose.connection.db.listCollections().toArray();
+      for (const collection of collections) {
+        const collectionName = collection.name;
+        const data = await mongoose.connection.db.collection(collectionName).find({}).toArray();
+        backupData[collectionName] = data;
+      }
+    } catch (dbErr) {
+      dbExportError = dbErr;
+      console.error('❌ Database export failed:', dbErr?.message || dbErr);
     }
     const databaseDir = path.join(workingDir, 'database');
     await fs.mkdir(databaseDir, { recursive: true });
     const dbBackupFile = path.join(databaseDir, 'database-backup.json');
-    await fs.writeFile(dbBackupFile, JSON.stringify(backupData, null, 2));
+    if (dbExportError) {
+      await fs.writeFile(dbBackupFile, JSON.stringify({ error: dbExportError?.message || String(dbExportError) }, null, 2));
+    } else {
+      await fs.writeFile(dbBackupFile, JSON.stringify(backupData, null, 2));
+    }
 
     // 2) Create manifest in working directory
     const manifest = {
@@ -151,14 +168,18 @@ router.post('/create', auth, requireAdmin, async (req, res) => {
       created: new Date().toISOString(),
       database: {
         collections: Object.keys(backupData),
-        totalRecords: Object.values(backupData).reduce((sum, arr) => sum + arr.length, 0)
+        totalRecords: Object.values(backupData).reduce((sum, arr) => sum + arr.length, 0),
+        error: dbExportError ? (dbExportError?.message || String(dbExportError)) : undefined
       }
     };
     const manifestFile = path.join(workingDir, 'backup-manifest.json');
     await fs.writeFile(manifestFile, JSON.stringify(manifest, null, 2));
 
     // 3) Build tar.gz directly from source directories with robust excludes
-    const projectDir = path.join(__dirname, '../..'); // buzz-smile-saas project root
+    // Robustly resolve project root relative to this file location (safer than process.cwd())
+    const serverDir = path.resolve(__dirname, '..'); // buzz-smile-saas/server
+    const projectDir = path.resolve(serverDir, '..'); // buzz-smile-saas
+    console.log(`🔧 Resolved dirs for backup: serverDir=${serverDir}, projectDir=${projectDir}`);
     const archivePath = path.join(backupTargetDir, `${backupName}.tar.gz`);
     const excludes = [
       "--exclude='**/node_modules'",
@@ -200,16 +221,21 @@ router.post('/create', auth, requireAdmin, async (req, res) => {
     for (const f of projectConfigFiles) {
       try { await fs.access(path.join(projectDir, f)); projectExisting.push(`'${f}'`); } catch {}
     }
-    const workspaceRoot = path.join(projectDir, '..');
+    const workspaceRoot = path.resolve(projectDir, '..');
     const workspaceExisting = [];
     for (const f of workspaceConfigFiles) {
       try { await fs.access(path.join(workspaceRoot, f)); workspaceExisting.push(`'${f}'`); } catch {}
     }
 
+    // Only include directories that actually exist to avoid tar errors
+    const includeDirs = [];
+    try { await fs.access(path.join(projectDir, 'server')); includeDirs.push('server'); } catch {}
+    try { await fs.access(path.join(projectDir, 'client')); includeDirs.push('client'); } catch {}
+
     const parts = [
       `tar -czf "${archivePath}" ${excludes}`,
       `-C "${workingDir}" database backup-manifest.json`,
-      `-C "${projectDir}" server client ${projectExisting.join(' ')}`
+      ...(includeDirs.length || projectExisting.length ? [`-C "${projectDir}" ${includeDirs.join(' ')} ${projectExisting.join(' ')}`] : [])
     ];
     if (workspaceExisting.length) {
       parts.push(`-C "${workspaceRoot}" ${workspaceExisting.join(' ')}`);
@@ -217,26 +243,96 @@ router.post('/create', auth, requireAdmin, async (req, res) => {
     const command = parts.join(' ');
 
     console.log('🗜️ Creating archive with tar...');
-    await execAsync(command);
-
-    // Clean up working directory
     try {
-      await execAsync(`rm -rf "${workingDir}"`);
-    } catch {}
+      await execAsync(command);
 
-    console.log(`✅ Compressed backup created: ${archivePath}`);
+      // Clean up working directory
+      try {
+        await execAsync(`rm -rf "${workingDir}"`);
+      } catch {}
 
-    res.json({
-      message: 'Full website backup created successfully',
-      backup: backupName,
-      path: archivePath,
-      compressed: true,
-      type: 'full-website-backup',
-      database: {
-        collections: manifest.database.collections.length,
-        records: manifest.database.totalRecords
+      console.log(`✅ Compressed backup created: ${archivePath}`);
+
+      return res.json({
+        message: 'Full website backup created successfully',
+        backup: backupName,
+        path: archivePath,
+        compressed: true,
+        type: 'full-website-backup',
+        database: {
+          collections: manifest.database.collections.length,
+          records: manifest.database.totalRecords
+        }
+      });
+    } catch (tarError) {
+      console.error('❌ Tar archiving failed, falling back to directory copy:', tarError?.message || tarError);
+      // Fallback: create an uncompressed directory backup that download endpoint can zip-stream
+      const dirBackupPath = path.join(backupTargetDir, backupName);
+      await fs.mkdir(dirBackupPath, { recursive: true });
+
+      // Copy working directory contents (database export + manifest)
+      try {
+        await copyDirectory(workingDir, dirBackupPath);
+      } catch (copyErr) {
+        console.error('❌ Failed to copy working directory:', copyErr?.message || copyErr);
+        throw copyErr;
       }
-    });
+
+      // Copy server and client (respecting copyDirectory excludes)
+      const projectServerPath = path.join(projectDir, 'server');
+      const projectClientPath = path.join(projectDir, 'client');
+      try {
+        await fs.access(projectServerPath);
+        await copyDirectory(projectServerPath, path.join(dirBackupPath, 'server'));
+      } catch {}
+      try {
+        await fs.access(projectClientPath);
+        await copyDirectory(projectClientPath, path.join(dirBackupPath, 'client'));
+      } catch {}
+
+      // Copy project config files if they exist
+      for (const f of projectConfigFiles) {
+        try {
+          const src = path.join(projectDir, f);
+          await fs.access(src);
+          const dest = path.join(dirBackupPath, 'config', f);
+          await fs.mkdir(path.dirname(dest), { recursive: true });
+          await fs.copyFile(src, dest);
+        } catch {}
+      }
+      // Copy workspace config files
+      try {
+        const workspaceRootDir = path.join(projectDir, '..');
+        for (const f of workspaceConfigFiles) {
+          try {
+            const src = path.join(workspaceRootDir, f);
+            await fs.access(src);
+            const dest = path.join(dirBackupPath, 'config', f);
+            await fs.mkdir(path.dirname(dest), { recursive: true });
+            await fs.copyFile(src, dest);
+          } catch {}
+        }
+      } catch {}
+
+      // Clean up working directory
+      try {
+        await execAsync(`rm -rf "${workingDir}"`);
+      } catch {}
+
+      console.log(`✅ Directory backup created at: ${dirBackupPath}`);
+      return res.json({
+        message: 'Full website backup created successfully (fallback directory mode)',
+        backup: backupName,
+        path: dirBackupPath,
+        compressed: false,
+        type: 'full-website-backup',
+        database: {
+          collections: manifest.database.collections.length,
+          records: manifest.database.totalRecords
+        },
+        note: 'Tar not available on host; used portable directory copy fallback'
+      });
+    }
 
   } catch (error) {
     console.error('❌ Backup creation failed:', error);
@@ -254,7 +350,7 @@ router.post('/create', auth, requireAdmin, async (req, res) => {
  */
 router.get('/list', auth, requireAdmin, async (req, res) => {
   try {
-    const backupDir = path.join(__dirname, '../backups');
+    const backupDir = process.env.BACKUP_TARGET_DIR || process.env.BACKUP_DIR || path.join(__dirname, '../backups');
     await fs.mkdir(backupDir, { recursive: true });
 
     const files = await fs.readdir(backupDir);
@@ -303,7 +399,7 @@ router.get('/list', auth, requireAdmin, async (req, res) => {
 router.get('/download/:backupName', auth, requireAdmin, async (req, res) => {
   try {
     const { backupName } = req.params;
-    const backupDir = path.join(__dirname, '../backups');
+    const backupDir = process.env.BACKUP_TARGET_DIR || process.env.BACKUP_DIR || path.join(__dirname, '../backups');
     const backupPath = path.join(backupDir, backupName);
     const tarGzPath = path.join(backupDir, `${backupName}.tar.gz`);
 
