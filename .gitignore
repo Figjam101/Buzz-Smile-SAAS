@@ -48,6 +48,7 @@ coverage/
 
 # Backup files
 *.tar.gz
+*.tgz
 system_backup_*.tar.gz
 backup_manifest_*.txt
 
