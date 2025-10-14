@@ -77,6 +77,17 @@ app.use(cors({
       return callback(null, true);
     }
 
+    // Allow Vercel production and preview subdomains for this project
+    try {
+      const { hostname } = new URL(origin);
+      if (
+        hostname === 'buzz-smile-saas.vercel.app' ||
+        (hostname.endsWith('.vercel.app') && hostname.startsWith('buzz-smile-saas'))
+      ) {
+        return callback(null, true);
+      }
+    } catch (_) {}
+
     return callback(new Error('Not allowed by CORS'));
   },
   credentials: true
