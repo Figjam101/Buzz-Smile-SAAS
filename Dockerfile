@@ -8,8 +8,8 @@ RUN apt-get update \
 # Build from the server subdirectory
 WORKDIR /app/server
 
-# Copy package files from server and install production deps
-COPY server/package*.json ./
+# Copy package files from the current (server) context and install production deps
+COPY package*.json ./
 RUN set -eux; \
     if [ -f package-lock.json ]; then \
       npm ci --omit=dev; \
@@ -17,8 +17,8 @@ RUN set -eux; \
       npm install --omit=dev; \
     fi
 
-# Copy the server source
-COPY server/ .
+# Copy the server source from the current context
+COPY . .
 
 ENV NODE_ENV=production
 
