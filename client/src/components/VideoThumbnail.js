@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { FileVideo, Play, AlertCircle, Trash2, Download, Edit3, Check, X } from 'lucide-react';
+import { FileVideo, Play, AlertCircle, Trash2, Download, Edit3, Check, X, Share2 } from 'lucide-react';
 import './VideoThumbnail.css';
 
 const VideoThumbnail = ({ 
@@ -8,6 +8,7 @@ const VideoThumbnail = ({
   onDownload, 
   onDelete, 
   onEdit,
+  onSchedule,
   isEditing,
   editingFilename,
   setEditingFilename,
@@ -209,6 +210,18 @@ const VideoThumbnail = ({
 
         {/* Action Buttons - Top Right */}
         <div className="absolute top-2 right-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          {onSchedule && video.status === 'completed' && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onSchedule(video);
+              }}
+              className="p-2 bg-purple-500 text-white rounded-full hover:bg-purple-600 transition-colors"
+              title="Schedule social media post"
+            >
+              <Share2 className="w-4 h-4" />
+            </button>
+          )}
           {onDownload && (
             <button
               onClick={(e) => {

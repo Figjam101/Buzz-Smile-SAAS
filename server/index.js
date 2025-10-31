@@ -263,6 +263,7 @@ app.use('/api/admin', require('./routes/admin'));
 app.use('/api/debug', require('./routes/debug'));
 app.use('/api/health', require('./routes/health'));
 app.use('/api/google-drive', require('./routes/googleDrive'));
+app.use('/api/social', require('./routes/social'));
 
 // 404 handler
 app.use('*', (req, res) => {

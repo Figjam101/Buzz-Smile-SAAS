@@ -11,6 +11,8 @@ import Navbar from '../components/Navbar';
 import AppleProfileImage from '../components/AppleProfileImage';
 import ProfilePictureUploader from '../components/ProfilePictureUploader';
 import SocialMediaPopup from '../components/SocialMediaPopup';
+import SocialMediaScheduler from '../components/SocialMediaScheduler';
+import SocialMediaCalendar from '../components/SocialMediaCalendar';
 import { 
   Upload, 
   Video, 
@@ -26,7 +28,8 @@ import {
   BarChart3,
   Crown,
   HardDrive,
-  Shield
+  Shield,
+  Share2
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -72,6 +75,8 @@ const Dashboard = () => {
     twitter: '',
     facebook: ''
   });
+  const [showSocialScheduler, setShowSocialScheduler] = useState(false);
+  const [schedulerVideo, setSchedulerVideo] = useState(null);
 
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -654,6 +659,18 @@ const Dashboard = () => {
                 <span className="font-medium">Analytics</span>
               </button>
               
+              <button
+                onClick={() => setActiveSection('social')}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
+                  activeSection === 'social'
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                <Share2 className="w-5 h-5 flex-shrink-0" />
+                <span className="font-medium">Social Media</span>
+              </button>
+              
               {user?.role === 'admin' && (
                 <button
                   onClick={() => setActiveSection('admin')}
@@ -1001,6 +1018,10 @@ const Dashboard = () => {
                         onDownload={() => downloadVideo(video)}
                         onDelete={() => deleteVideo(video._id)}
                         onEdit={() => startEditingFilename(video)}
+                        onSchedule={(video) => {
+                          setSchedulerVideo(video);
+                          setShowSocialScheduler(true);
+                        }}
                         isEditing={editingVideoId === video._id}
                         editingFilename={editingFilename}
                         setEditingFilename={setEditingFilename}
@@ -1527,6 +1548,15 @@ const Dashboard = () => {
           </div>
         )}
 
+        {/* Social Media Section */}
+        {activeSection === 'social' && (
+          <div className="p-3 lg:p-4 min-h-screen">
+            <div className="max-w-6xl mx-auto space-y-6">
+              <SocialMediaCalendar />
+            </div>
+          </div>
+        )}
+
         {/* Settings Section */}
         {activeSection === 'settings' && (
           <div className="p-3 lg:p-4 min-h-screen">
@@ -1717,6 +1747,21 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Social Media Scheduler Modal */}
+      {showSocialScheduler && schedulerVideo && (
+        <SocialMediaScheduler
+          video={schedulerVideo}
+          onClose={() => {
+            setShowSocialScheduler(false);
+            setSchedulerVideo(null);
+          }}
+          onSchedule={(scheduleData) => {
+            console.log('Post scheduled:', scheduleData);
+            // Refresh calendar or show success message
+          }}
+        />
       )}
     </div>
   );
