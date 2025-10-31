@@ -72,8 +72,18 @@ async function checkDatabase() {
  */
 async function checkFilesystem() {
   try {
-    const uploadsDir = path.join(__dirname, '../../uploads');
-    const tempDir = path.join(__dirname, '../../temp');
+    // Resolve directories relative to server root and ensure they exist
+    const rootDir = path.resolve(__dirname, '..');
+    const uploadsDir = path.join(rootDir, 'uploads');
+    const tempDir = path.join(rootDir, 'temp');
+
+    // Proactively create directories if missing to avoid false "unhealthy" status
+    try {
+      await fs.mkdir(uploadsDir, { recursive: true });
+    } catch {}
+    try {
+      await fs.mkdir(tempDir, { recursive: true });
+    } catch {}
     
     // Check if directories exist and are writable
     const checks = [];
@@ -102,8 +112,8 @@ async function checkFilesystem() {
     const allHealthy = checks.every(check => check.exists && check.writable);
     
     return {
-      status: allHealthy ? STATUS.HEALTHY : STATUS.UNHEALTHY,
-      message: allHealthy ? 'Filesystem accessible' : 'Filesystem issues detected',
+      status: allHealthy ? STATUS.HEALTHY : STATUS.DEGRADED,
+      message: allHealthy ? 'Filesystem accessible' : 'Created missing directories or permissions limited',
       details: { directories: checks }
     };
   } catch (error) {
@@ -182,7 +192,20 @@ async function checkMemory() {
  */
 async function checkFFmpeg() {
   try {
-    const { stdout } = await execAsync('ffmpeg -version');
+    // Resolve ffmpeg path with environment and installer fallbacks
+    const envFfmpeg = process.env.FFMPEG_PATH;
+    let ffmpegPathToUse = envFfmpeg || null;
+
+    if (!ffmpegPathToUse) {
+      try {
+        const installer = require('@ffmpeg-installer/ffmpeg');
+        ffmpegPathToUse = installer.path;
+      } catch (_) {
+        ffmpegPathToUse = 'ffmpeg';
+      }
+    }
+
+    const { stdout } = await execAsync(`"${ffmpegPathToUse}" -version`);
     const versionMatch = stdout.match(/ffmpeg version ([^\s]+)/);
     const version = versionMatch ? versionMatch[1] : 'unknown';
 
@@ -191,7 +214,7 @@ async function checkFFmpeg() {
       message: 'FFmpeg available',
       details: {
         version,
-        path: 'ffmpeg'
+        path: ffmpegPathToUse
       }
     };
   } catch (error) {
@@ -451,9 +474,16 @@ router.get('/detailed', async (req, res) => {
  */
 router.get('/ready', async (req, res) => {
   try {
+    // Allow ignoring certain critical checks via env (comma-separated)
+    const ignoreList = (process.env.HEALTH_READY_IGNORE || '')
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean);
+
     // Check only critical services for readiness
     const criticalChecks = {};
     for (const service of HEALTH_CONFIG.criticalServices) {
+      if (ignoreList.includes(service)) continue;
       switch (service) {
         case 'database':
           criticalChecks.database = await checkDatabase();
@@ -474,7 +504,8 @@ router.get('/ready', async (req, res) => {
     res.status(isReady ? 200 : 503).json({
       ready: isReady,
       timestamp: new Date().toISOString(),
-      checks: criticalChecks
+      checks: criticalChecks,
+      ignored: ignoreList
     });
   } catch (error) {
     res.status(503).json({
@@ -497,6 +528,65 @@ router.get('/live', (req, res) => {
     uptime: Math.round(process.uptime()),
     pid: process.pid
   });
+});
+
+router.get('/ffmpeg', async (req, res) => {
+  try {
+    const result = await checkFFmpeg();
+    res.status(result.status === STATUS.HEALTHY ? 200 : 503).json(result);
+  } catch (e) {
+    res.status(500).json({ status: STATUS.UNHEALTHY, message: 'FFmpeg route failed', error: e.message });
+  }
+});
+
+router.get('/memory', async (req, res) => {
+  try {
+    const result = await checkMemory();
+    res.status(result.status === STATUS.HEALTHY ? 200 : 503).json(result);
+  } catch (e) {
+    res.status(500).json({ status: STATUS.UNHEALTHY, message: 'Memory route failed', error: e.message });
+  }
+});
+
+router.get('/memory/diagnostics', async (req, res) => {
+  try {
+    const v8 = require('v8');
+    const { monitorEventLoopDelay } = require('perf_hooks');
+
+    const memUsage = process.memoryUsage();
+    const heapStats = v8.getHeapStatistics();
+    const heapSpaceStats = v8.getHeapSpaceStatistics();
+    const ru = typeof process.resourceUsage === 'function' ? process.resourceUsage() : null;
+
+    const monitor = monitorEventLoopDelay({ resolution: 10 });
+    monitor.enable();
+    setTimeout(() => {
+      monitor.disable();
+      const payload = {
+        status: STATUS.HEALTHY,
+        message: 'Memory diagnostics collected',
+        details: {
+          process: {
+            rssMB: Math.round(memUsage.rss / 1024 / 1024),
+            heapTotalMB: Math.round(memUsage.heapTotal / 1024 / 1024),
+            heapUsedMB: Math.round(memUsage.heapUsed / 1024 / 1024),
+            externalMB: Math.round(memUsage.external / 1024 / 1024)
+          },
+          heapStats,
+          heapSpaces: heapSpaceStats,
+          resourceUsage: ru,
+          eventLoopDelay: {
+            meanMs: Number((monitor.mean / 1e6).toFixed(2)),
+            maxMs: Number((monitor.max / 1e6).toFixed(2)),
+            stddevMs: Number((monitor.stddev / 1e6).toFixed(2))
+          }
+        }
+      };
+      res.json(payload);
+    }, 200);
+  } catch (e) {
+    res.status(500).json({ status: STATUS.UNHEALTHY, message: 'Memory diagnostics failed', error: e.message });
+  }
 });
 
 module.exports = router;

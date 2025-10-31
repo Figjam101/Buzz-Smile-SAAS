@@ -1,0 +1,35 @@
+# Node and environment files
+node_modules/
+.env
+.env.*
+npm-debug.log*
+yarn-error.log*
+
+# Local data and heavy artifacts
+uploads/
+downloads/
+backups/
+logs/
+mongodb-data/
+mongodb-portable/
+ffmpeg-bin/
+temp/
+
+# Media and archives
+*.mp4
+*.mov
+*.mkv
+*.avi
+*.webm
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.log
+
+# Build outputs
+build/
+dist/
+
+# VCS
+.git/

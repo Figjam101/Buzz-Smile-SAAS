@@ -1,0 +1,29 @@
+# Exclude heavy and non-essential directories/files from Railway upload
+node_modules/
+uploads/
+downloads/
+backups/
+logs/
+mongodb-data/
+mongodb-portable/
+mongodb-macos-aarch64-*/
+ffmpeg-bin/
+.cache/
+.git/
+.env
+
+# Exclude media and archives
+*.mp4
+*.mov
+*.mkv
+*.avi
+*.webm
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.log
+
+# Exclude local build artifacts
+build/
+dist/
