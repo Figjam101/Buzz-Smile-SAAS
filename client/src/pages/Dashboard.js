@@ -996,14 +996,17 @@ const Dashboard = () => {
                 )}
               </div>
 
+              {/* Social Media Management */}
+              <div className="mt-6 mb-6">
+                <SocialMediaCard 
+                  onLinkToCalendar={(account) => {
+                    toast.success(`${account.platform} linked to calendar`);
+                    // You can add additional calendar integration logic here
+                  }}
+                />
+              </div>
+
               {/* Videos Grid */}
-              <SocialMediaCard 
-                onLinkToCalendar={(account) => {
-                  toast.success(`${account.platform} linked to calendar`);
-                  // You can add additional calendar integration logic here
-                }}
-              />
-              
               <div className="bg-white rounded-lg border border-gray-200 p-3">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold text-gray-900">Your Videos</h2>
