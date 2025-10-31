@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { toast } from 'react-hot-toast';
 
 // Helper to safely build API URLs without duplicating '/api'
 const buildApiUrl = (path) => {
@@ -419,7 +420,15 @@ const UserManagement = () => {
         body: JSON.stringify({ amount: amountNum })
       });
       if (response.ok) {
+        const data = await response.json().catch(() => ({}));
         handleCreditsClose();
+        // Success notification with amount and (optional) new balance
+        const newBalance = data?.user?.credits?.balance;
+        const targetEmail = data?.user?.email || creditTarget?.email;
+        const msg = newBalance !== undefined
+          ? `${amountNum} credits added to ${targetEmail}. New balance: ${newBalance}.`
+          : `${amountNum} credits added to ${targetEmail}.`;
+        toast.success(msg);
         fetchUsers();
       } else {
         const err = await response.json().catch(() => ({}));
@@ -660,6 +669,9 @@ const UserManagement = () => {
                   Role
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Credits
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -715,6 +727,11 @@ const UserManagement = () => {
                       <option value="moderator">Moderator</option>
                       <option value="admin">Admin</option>
                     </select>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                      {typeof user?.credits?.balance === 'number' ? user.credits.balance : 0}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button

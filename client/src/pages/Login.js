@@ -89,9 +89,18 @@ const Login = () => {
     }
   };
 
+
+  const getAuthUrl = (provider) => {
+    const base = process.env.REACT_APP_API_URL || '';
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const apiBase = base || origin || 'http://localhost:5000';
+    return `${apiBase.replace(/\/$/, '')}/auth/${provider}`;
+  };
+
+
   const handleGoogleLogin = () => {
     const popup = window.open(
-      'http://localhost:5000/auth/google',
+      getAuthUrl('google'),
       'google-login',
       'width=500,height=600,scrollbars=yes,resizable=yes'
     );
@@ -127,7 +136,7 @@ const Login = () => {
 
   const handleFacebookLogin = () => {
     const popup = window.open(
-      'http://localhost:5000/auth/facebook',
+      getAuthUrl('facebook'),
       'facebook-login',
       'width=500,height=600,scrollbars=yes,resizable=yes'
     );
@@ -163,7 +172,7 @@ const Login = () => {
 
   const handleInstagramLogin = () => {
     const popup = window.open(
-      'http://localhost:5000/auth/instagram',
+      getAuthUrl('instagram'),
       'instagram-login',
       'width=500,height=600,scrollbars=yes,resizable=yes'
     );
@@ -199,7 +208,7 @@ const Login = () => {
 
   const handleTwitterLogin = () => {
     const popup = window.open(
-      'http://localhost:5000/auth/twitter',
+      getAuthUrl('twitter'),
       'twitter-login',
       'width=500,height=600,scrollbars=yes,resizable=yes'
     );
@@ -235,7 +244,7 @@ const Login = () => {
 
   const handleYouTubeLogin = () => {
     const popup = window.open(
-      'http://localhost:5000/auth/youtube',
+      getAuthUrl('youtube'),
       'youtube-login',
       'width=500,height=600,scrollbars=yes,resizable=yes'
     );
