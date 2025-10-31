@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useStats } from '../contexts/StatsContext';
 import AppleProfileImage from './AppleProfileImage';
+import ProfilePictureUploader from './ProfilePictureUploader';
 import '../styles/buzz-animations.css';
 import { 
   Menu, 
@@ -11,7 +12,8 @@ import {
   LayoutDashboard,
   LogOut,
   Shield,
-  Settings
+  Settings,
+  Image as ImageIcon
 } from 'lucide-react';
 
 const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
@@ -19,6 +21,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
   const { stats, formatFileSize } = useStats();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showUploader, setShowUploader] = useState(false);
 
   const isActive = (path) => location.pathname === path;
   const planLabel = user?.role === 'admin'
@@ -99,6 +102,13 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                         <User className="h-4 w-4" />
                       </Link>
                       <button
+                        onClick={() => setShowUploader(true)}
+                        className="flex items-center justify-center p-2 text-gray-700 hover:bg-gray-50 transition-colors rounded-full"
+                        title="Update Photo"
+                      >
+                        <ImageIcon className="h-4 w-4" />
+                      </button>
+                      <button
                         onClick={handleLogout}
                         className="flex items-center justify-center p-2 text-gray-700 hover:bg-gray-50 transition-colors rounded-full"
                         title="Logout"
@@ -107,6 +117,9 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                       </button>
                     </div>
                   </div>
+
+                  {/* Inline uploader popover */}
+                  <ProfilePictureUploader isOpen={showUploader} onClose={() => setShowUploader(false)} />
                 </div>
               ) : (
                 <div className="flex items-center space-x-4">
@@ -174,6 +187,12 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                       <p className="text-sm text-gray-500">{planLabel}</p>
                     </div>
                   </div>
+                  <button
+                    onClick={() => setShowUploader(true)}
+                    className="mt-3 w-full text-sm font-medium text-blue-600 hover:text-blue-700"
+                  >
+                    Update your profile picture
+                  </button>
                 </div>
 
                 {/* Navigation */}
@@ -280,6 +299,12 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                     <p className="text-sm text-gray-500">{planLabel}</p>
                   </div>
                 </div>
+                <button
+                  onClick={() => setShowUploader(true)}
+                  className="mt-3 w-full text-sm font-medium text-blue-600 hover:text-blue-700"
+                >
+                  Update your profile picture
+                </button>
               </div>
 
               {/* Navigation */}
@@ -361,6 +386,12 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                   <p className="text-sm text-gray-500">{planLabel}</p>
                 </div>
               </div>
+              <button
+                onClick={() => setShowUploader(true)}
+                className="mt-3 w-full text-sm font-medium text-blue-600 hover:text-blue-700"
+              >
+                Update your profile picture
+              </button>
             </div>
 
             {/* Navigation */}

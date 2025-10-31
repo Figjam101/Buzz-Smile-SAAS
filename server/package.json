@@ -14,7 +14,7 @@
     "lint": "echo 'Linting would run here - install eslint for full linting'"
   },
   "engines": {
-    "node": ">=18 <21",
+    "node": "20.x",
     "npm": ">=8.0.0"
   },
   "dependencies": {
@@ -45,6 +45,8 @@
     "passport-twitter": "^1.0.4",
     "passport-youtube-v3": "^2.1.0",
     "redis": "^5.8.2",
+    "express-rate-limit": "^7.0.0",
+    "helmet": "^7.0.0",
     "winston": "^3.18.3"
   },
   "devDependencies": {

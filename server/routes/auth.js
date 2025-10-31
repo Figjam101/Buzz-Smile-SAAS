@@ -189,4 +189,36 @@ router.put('/profile', auth, [
   }
 });
 
+// Development-only password reset endpoint
+if ((process.env.NODE_ENV || 'development') !== 'production') {
+  router.post('/dev/reset-password', [
+    body('email').isEmail().normalizeEmail(),
+    body('newPassword').isLength({ min: 6 })
+  ], async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          message: 'Validation failed',
+          errors: errors.array()
+        });
+      }
+
+      const { email, newPassword } = req.body;
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      user.password = newPassword; // Will be hashed by pre-save middleware
+      await user.save();
+
+      return res.json({ message: 'Password reset successfully', email });
+    } catch (error) {
+      console.error('Dev reset password error:', error);
+      return res.status(500).json({ message: 'Server error during dev reset' });
+    }
+  });
+}
+
 module.exports = router;

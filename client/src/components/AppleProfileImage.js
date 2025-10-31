@@ -67,6 +67,10 @@ const AppleProfileImage = ({
 
   // If profile picture is available, show it
   if (profilePicture) {
+    const isAbsolute = /^https?:\/\//i.test(profilePicture);
+    const imageSrc = isAbsolute
+      ? profilePicture
+      : `${process.env.REACT_APP_API_URL || ''}${profilePicture}`;
     return (
       <div 
         className={`${sizeClasses[size]} rounded-full overflow-hidden shadow-lg ${className}`}
@@ -75,7 +79,7 @@ const AppleProfileImage = ({
         }}
       >
         <img 
-          src={profilePicture} 
+          src={imageSrc} 
           alt={`${name}'s profile`}
           className="w-full h-full object-cover"
         />

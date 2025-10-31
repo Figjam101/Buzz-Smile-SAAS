@@ -4,6 +4,7 @@ const User = require('../models/User');
 const Video = require('../models/Video');
 const { auth } = require('../middleware/auth');
 const backupService = require('../services/backupService');
+const { addCredits } = require('../middleware/credits');
 
 // Middleware to check admin privileges
 const requireAdmin = (req, res, next) => {
@@ -315,6 +316,218 @@ router.delete('/video-backups/:userId/:videoId', auth, requireAdmin, async (req,
     res.json({ message: 'Video backup deleted successfully' });
   } catch (error) {
     console.error('Error deleting video backup:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+/**
+ * @route   POST /api/admin/users/:id/credits
+ * @desc    Add credits to a user by ID (admin only)
+ * @access  Admin
+ */
+router.post('/users/:id/credits', auth, requireAdmin, async (req, res) => {
+  try {
+    const { amount } = req.body;
+    const userId = req.params.id;
+
+    if (typeof amount !== 'number' || !Number.isFinite(amount)) {
+      return res.status(400).json({ message: 'Invalid amount. Must be a number.' });
+    }
+
+    await addCredits(userId, amount);
+
+    const updatedUser = await User.findById(userId).select('-password');
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({
+      message: 'Credits updated successfully',
+      user: {
+        id: updatedUser._id,
+        email: updatedUser.email,
+        name: updatedUser.name,
+        credits: updatedUser.credits
+      }
+    });
+  } catch (error) {
+    console.error('Error adding credits:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+/**
+ * @route   POST /api/admin/users/credits/by-email
+ * @desc    Add credits to a user by email (admin only)
+ * @access  Admin
+ */
+router.post('/users/credits/by-email', auth, requireAdmin, async (req, res) => {
+  try {
+    const { email, amount } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+    if (typeof amount !== 'number' || !Number.isFinite(amount)) {
+      return res.status(400).json({ message: 'Invalid amount. Must be a number.' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    await addCredits(user._id, amount);
+
+    const updatedUser = await User.findById(user._id).select('-password');
+
+    res.json({
+      message: 'Credits updated successfully',
+      user: {
+        id: updatedUser._id,
+        email: updatedUser.email,
+        name: updatedUser.name,
+        credits: updatedUser.credits
+      }
+    });
+  } catch (error) {
+    console.error('Error adding credits by email:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+/**
+ * @route   POST /api/admin/users
+ * @desc    Create a new user (admin only)
+ * @access  Admin
+ */
+router.post('/users', auth, requireAdmin, async (req, res) => {
+  try {
+    const { name, email, role = 'user', status = 'active', password } = req.body;
+
+    if (!name || !email) {
+      return res.status(400).json({ message: 'Name and email are required' });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists with this email' });
+    }
+
+    // For local provider users, password is required
+    if (!password) {
+      return res.status(400).json({ message: 'Password is required for new local users' });
+    }
+
+    const user = new User({
+      name,
+      email,
+      role,
+      password,
+      isActive: status === 'active',
+      provider: 'local'
+    });
+
+    await user.save();
+
+    res.status(201).json({
+      message: 'User created successfully',
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        isActive: user.isActive,
+        createdAt: user.createdAt
+      }
+    });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+/**
+ * @route   PUT /api/admin/users/:id
+ * @desc    Update user details (admin only)
+ * @access  Admin
+ */
+router.put('/users/:id', auth, requireAdmin, async (req, res) => {
+  try {
+    const { name, email, role, status, password } = req.body;
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (name !== undefined) user.name = name;
+    if (email !== undefined) user.email = email;
+    if (role !== undefined) user.role = role;
+    if (status !== undefined) user.isActive = status === 'active';
+    if (password) {
+      user.password = password; // Will be hashed by pre-save hook
+    }
+
+    await user.save();
+
+    const safeUser = await User.findById(user._id).select('-password');
+
+    res.json({
+      message: 'User updated successfully',
+      user: safeUser
+    });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+/**
+ * @route   PUT /api/admin/users/:id/status
+ * @desc    Update user active status (admin only)
+ * @access  Admin
+ */
+router.put('/users/:id/status', auth, requireAdmin, async (req, res) => {
+  try {
+    const { isActive } = req.body;
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.isActive = Boolean(isActive);
+    await user.save();
+
+    res.json({ message: 'User status updated', user: await User.findById(user._id).select('-password') });
+  } catch (error) {
+    console.error('Error updating user status:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+/**
+ * @route   POST /api/admin/users/:id/reset-password
+ * @desc    Reset a user password to a temporary one (admin only)
+ * @access  Admin
+ */
+router.post('/users/:id/reset-password', auth, requireAdmin, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Generate a temporary password
+    const temp = Math.random().toString(36).slice(-10);
+    user.password = temp; // Will be hashed by pre-save hook
+    await user.save();
+
+    // TODO: Integrate email service to notify user of temp password
+    res.json({ message: 'Password reset successfully and temporary password generated.' });
+  } catch (error) {
+    console.error('Error resetting user password:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

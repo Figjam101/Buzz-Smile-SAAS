@@ -261,18 +261,23 @@ router.post('/upload', auth, checkCredits, createUploadMiddleware, async (req, r
 // Get video thumbnail
 router.get('/:id/thumbnail', auth, async (req, res) => {
   try {
-    const video = await Video.findOne({ 
-      _id: req.params.id, 
-      owner: req.user._id 
-    });
+    // Allow admins to access any video; regular users only their own
+    let video;
+    if (req.user && req.user.role === 'admin') {
+      video = await Video.findById(req.params.id);
+    } else {
+      video = await Video.findOne({
+        _id: req.params.id,
+        owner: req.user._id
+      });
+    }
 
     if (!video) {
       return res.status(404).json({ message: 'Video not found' });
     }
 
-    // Check if thumbnail exists
+    // Check if thumbnail exists; attempt regeneration if missing
     if (!video.thumbnailPath || !fs.existsSync(video.thumbnailPath)) {
-      // Try to generate thumbnail if it doesn't exist
       try {
         const thumbnailPath = await thumbnailService.generateOptimalThumbnail(video.filePath, video._id);
         await Video.findByIdAndUpdate(video._id, { thumbnailPath });
@@ -653,10 +658,16 @@ router.get('/:id/status', auth, async (req, res) => {
 // Stream original video for client-side thumbnail generation
 router.get('/:id/stream', auth, async (req, res) => {
   try {
-    const video = await Video.findOne({ 
-      _id: req.params.id, 
-      owner: req.user._id 
-    });
+    // Allow admins to stream any video; regular users only their own
+    let video;
+    if (req.user && req.user.role === 'admin') {
+      video = await Video.findById(req.params.id);
+    } else {
+      video = await Video.findOne({
+        _id: req.params.id,
+        owner: req.user._id
+      });
+    }
 
     if (!video) {
       return res.status(404).json({ message: 'Video not found' });

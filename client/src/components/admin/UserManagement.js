@@ -1,4 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+
+// Helper to safely build API URLs without duplicating '/api'
+const buildApiUrl = (path) => {
+  const baseRaw = process.env.REACT_APP_API_URL || '';
+  const base = baseRaw.replace(/\/$/, ''); // trim trailing slash
+  const hasApiSuffix = /\/api$/.test(base);
+  const prefix = hasApiSuffix ? '' : '/api';
+  return `${base}${prefix}${path}`;
+};
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -23,6 +32,34 @@ const UserManagement = () => {
     confirmPassword: ''
   });
 
+  // Credits modal state
+  const [showCreditsModal, setShowCreditsModal] = useState(false);
+  const [creditTarget, setCreditTarget] = useState(null);
+  const [creditAmount, setCreditAmount] = useState('');
+  const [creditsLoading, setCreditsLoading] = useState(false);
+  const [creditsError, setCreditsError] = useState('');
+
+  const passwordInputRef = useRef(null);
+  const [focusPassword, setFocusPassword] = useState(false);
+
+  // Add Escape-to-close for modal(s)
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (showUserModal) handleModalClose();
+        if (showCreditsModal) handleCreditsClose();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [showUserModal, showCreditsModal]);
+
+  useEffect(() => {
+    if (focusPassword && showUserModal && passwordInputRef.current) {
+      passwordInputRef.current.focus();
+    }
+  }, [focusPassword, showUserModal]);
+
   useEffect(() => {
     fetchUsers();
     fetchUserStats();
@@ -34,7 +71,7 @@ const UserManagement = () => {
       console.log('Fetching users with token:', token ? 'Token exists' : 'No token');
       console.log('API URL:', process.env.REACT_APP_API_URL);
       
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/users`, {
+      const response = await fetch(buildApiUrl('/admin/users'), {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -65,7 +102,7 @@ const UserManagement = () => {
       const token = localStorage.getItem('token');
       console.log('Fetching user stats with token:', token ? 'Token exists' : 'No token');
       
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/stats`, {
+      const response = await fetch(buildApiUrl('/admin/stats'), {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -89,7 +126,7 @@ const UserManagement = () => {
   const updateUserRole = async (userId, newRole) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/users/${userId}/role`, {
+      const response = await fetch(buildApiUrl(`/admin/users/${userId}/role`), {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -112,7 +149,7 @@ const UserManagement = () => {
   const updateUserStatus = async (userId, isActive) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/users/${userId}/status`, {
+      const response = await fetch(buildApiUrl(`/admin/users/${userId}/status`), {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -139,7 +176,7 @@ const UserManagement = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/users/${userId}`, {
+      const response = await fetch(buildApiUrl(`/admin/users/${userId}`), {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -162,7 +199,7 @@ const UserManagement = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/users/bulk`, {
+      const response = await fetch(buildApiUrl('/admin/users/bulk'), {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -237,7 +274,22 @@ const UserManagement = () => {
         confirmPassword: ''
       });
     }
+    setFocusPassword(false);
     setShowUserModal(true);
+  };
+
+  // Credits modal open/close
+  const handleCreditsOpen = (user) => {
+    setCreditTarget(user);
+    setCreditAmount('');
+    setCreditsError('');
+    setShowCreditsModal(true);
+  };
+  const handleCreditsClose = () => {
+    setShowCreditsModal(false);
+    setCreditTarget(null);
+    setCreditAmount('');
+    setCreditsError('');
   };
 
   const handleFormSubmit = async (e) => {
@@ -269,7 +321,7 @@ const UserManagement = () => {
       let response;
       if (editingUser) {
         // Update existing user
-        response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/users/${editingUser._id}`, {
+        response = await fetch(buildApiUrl(`/admin/users/${editingUser._id}`), {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -279,7 +331,7 @@ const UserManagement = () => {
         });
       } else {
         // Create new user
-        response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/users`, {
+        response = await fetch(buildApiUrl('/admin/users'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -312,7 +364,7 @@ const UserManagement = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/users/${userId}/reset-password`, {
+      const response = await fetch(buildApiUrl(`/admin/users/${userId}/reset-password`), {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -330,6 +382,57 @@ const UserManagement = () => {
       setError('Failed to reset password');
     }
   };
+
+
+
+  const openChangePassword = (user) => {
+    handleModalOpen(user);
+    setFocusPassword(true);
+    setTimeout(() => {
+      passwordInputRef.current?.focus();
+    }, 0);
+  };
+
+  // Replace old addCredits prompt-based function with modal submit handler
+  const submitAddCredits = async (e) => {
+    e.preventDefault();
+    const amountNum = parseFloat(creditAmount);
+    if (Number.isNaN(amountNum) || amountNum <= 0) {
+      setCreditsError('Please enter a valid positive number.');
+      return;
+    }
+    if (!creditTarget?._id) {
+      setCreditsError('No user selected.');
+      return;
+    }
+    try {
+      setCreditsLoading(true);
+      setCreditsError('');
+      const token = localStorage.getItem('token');
+      const url = buildApiUrl(`/admin/users/${creditTarget._id}/credits`);
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ amount: amountNum })
+      });
+      if (response.ok) {
+        handleCreditsClose();
+        fetchUsers();
+      } else {
+        const err = await response.json().catch(() => ({}));
+        setCreditsError(err.message || 'Failed to add credits');
+      }
+    } catch (error) {
+      console.error('Error adding credits:', error);
+      setCreditsError('Failed to add credits');
+    } finally {
+      setCreditsLoading(false);
+    }
+  };
+
 
   // Filter and search users
   const filteredUsers = users.filter(user => {
@@ -364,7 +467,7 @@ const UserManagement = () => {
 
   if (loading) {
     return (
-      <div className="p-6">
+      <div className="max-w-6xl mx-auto p-6">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
@@ -373,7 +476,8 @@ const UserManagement = () => {
   }
 
   return (
-    <div className="p-6">
+    <> 
+      <div className="max-w-6xl mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
@@ -388,7 +492,7 @@ const UserManagement = () => {
             <span>Export</span>
           </button>
           <button
-            onClick={() => setShowUserModal(true)}
+            onClick={() => handleModalOpen()}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center space-x-2"
           >
             <span>➕</span>
@@ -633,21 +737,43 @@ const UserManagement = () => {
                           setEditingUser(user);
                           setShowUserModal(true);
                         }}
-                        className="text-blue-600 hover:text-blue-900"
+                        className="text-blue-600 hover:text-blue-900 flex items-center space-x-1"
+                        title="Edit user"
                       >
-                        Edit
+                        <span>✏️</span>
+                        <span className="sr-only">Edit</span>
+                      </button>
+                      <button
+                        onClick={() => openChangePassword(user)}
+                        className="text-indigo-600 hover:text-indigo-900 flex items-center space-x-1"
+                        title="Change password"
+                      >
+                        <span>🔒</span>
+                        <span className="sr-only">Change Password</span>
+                      </button>
+                      <button
+                        onClick={() => handleCreditsOpen(user)}
+                        className="text-amber-600 hover:text-amber-900 flex items-center space-x-1"
+                        title="Add credits"
+                      >
+                        <span>🪙</span>
+                        <span className="sr-only">Add Credits</span>
                       </button>
                       <button
                         onClick={() => resetUserPassword(user._id)}
-                        className="text-yellow-600 hover:text-yellow-900"
+                        className="text-yellow-600 hover:text-yellow-900 flex items-center space-x-1"
+                        title="Reset password"
                       >
-                        Reset Password
+                        <span>♻️</span>
+                        <span className="sr-only">Reset Password</span>
                       </button>
                       <button
                         onClick={() => deleteUser(user._id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-red-600 hover:text-red-900 flex items-center space-x-1"
+                        title="Delete user"
                       >
-                        Delete
+                        <span>🗑️</span>
+                        <span className="sr-only">Delete</span>
                       </button>
                     </div>
                   </td>
@@ -719,6 +845,96 @@ const UserManagement = () => {
         </div>
       )}
     </div>
+
+      {showCreditsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={handleCreditsClose}></div>
+          <div className="relative w-full max-w-md mx-auto px-6 py-5 rounded-2xl border border-white/20 shadow-xl backdrop-blur-xl bg-white/10">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-amber-600 text-xl">🪙</span>
+                <h3 className="text-lg font-semibold text-gray-900">Add Credits</h3>
+              </div>
+              <button onClick={handleCreditsClose} className="p-2 rounded-full hover:bg-white/20" aria-label="Close">✕</button>
+            </div>
+            <p className="text-sm text-gray-700 mb-4">Add credits to <span className="font-medium">{creditTarget?.email}</span></p>
+            {creditsError && (
+              <div className="mb-3 bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2 text-sm">{creditsError}</div>
+            )}
+            <form onSubmit={submitAddCredits} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+                <div className="flex items-center gap-2 bg-white/30 border border-white/30 rounded-lg px-3 py-2">
+                  <span className="text-amber-600">🪙</span>
+                  <input type="number" min="1" step="1" value={creditAmount} onChange={(e) => setCreditAmount(e.target.value)} placeholder="Enter credits, e.g., 10" className="w-full bg-transparent outline-none placeholder-gray-500" />
+                </div>
+              </div>
+              <div className="flex justify-end gap-3">
+                <button type="button" onClick={handleCreditsClose} className="px-4 py-2 rounded-lg bg-white/30 hover:bg-white/40 text-gray-800">Cancel</button>
+                <button type="submit" disabled={creditsLoading} className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60">{creditsLoading ? 'Adding…' : 'Add Credits'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showUserModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={handleModalClose}></div>
+          <div className="relative w-full max-w-lg mx-auto px-6 py-5 rounded-2xl border border-white/20 shadow-xl backdrop-blur-xl bg-white/10">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-blue-600 text-xl">👤</span>
+                <h3 className="text-lg font-semibold text-gray-900">{editingUser ? 'Edit User' : 'Add User'}</h3>
+              </div>
+              <button onClick={handleModalClose} className="p-2 rounded-full hover:bg-white/20" aria-label="Close">✕</button>
+            </div>
+            {error && (
+              <div className="mb-3 bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2 text-sm">{error}</div>
+            )}
+            <form onSubmit={handleFormSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="Full name" className="w-full bg-white/30 border border-white/30 rounded-lg px-3 py-2 outline-none placeholder-gray-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} placeholder="email@example.com" className="w-full bg-white/30 border border-white/30 rounded-lg px-3 py-2 outline-none placeholder-gray-500" />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                  <select value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="w-full bg-white/30 border border-white/30 rounded-lg px-3 py-2 outline-none">
+                    <option value="user">User</option>
+                    <option value="premium">Premium</option>
+                    <option value="moderator">Moderator</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+                <div className="flex items-center gap-3">
+                  <input id="isActive" type="checkbox" checked={formData.isActive} onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })} />
+                  <label htmlFor="isActive" className="text-sm text-gray-700">Active</label>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                  <input ref={passwordInputRef} type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} placeholder="Optional" className="w-full bg-white/30 border border-white/30 rounded-lg px-3 py-2 outline-none placeholder-gray-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                  <input type="password" value={formData.confirmPassword} onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })} placeholder="Optional" className="w-full bg-white/30 border border-white/30 rounded-lg px-3 py-2 outline-none placeholder-gray-500" />
+                </div>
+              </div>
+              <div className="flex justify-end gap-3">
+                <button type="button" onClick={handleModalClose} className="px-4 py-2 rounded-lg bg-white/30 hover:bg-white/40 text-gray-800">Cancel</button>
+                <button type="submit" disabled={modalLoading} className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60">{editingUser ? (modalLoading ? 'Saving…' : 'Save') : (modalLoading ? 'Creating…' : 'Create')}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

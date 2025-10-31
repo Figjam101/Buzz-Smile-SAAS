@@ -185,7 +185,7 @@ const SystemMonitoring = () => {
 
   if (loading) {
     return (
-      <div className="p-6">
+      <div className="max-w-6xl mx-auto p-6">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
@@ -194,7 +194,7 @@ const SystemMonitoring = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="max-w-6xl mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">System Monitoring</h2>

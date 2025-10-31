@@ -17,6 +17,7 @@ const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const ShareVideo = React.lazy(() => import('./pages/ShareVideo'));
 const BuzzAnimationDemo = React.lazy(() => import('./components/BuzzAnimationDemo'));
 const GoogleDriveConnected = React.lazy(() => import('./pages/GoogleDriveConnected'));
+const DebugAPI = React.lazy(() => import('./pages/DebugAPI'));
 
 // Component to handle page title and meta updates
 const PageTitleHandler = () => {
@@ -119,6 +120,7 @@ function App() {
                   <Route path="/register" element={<Register />} />
                   <Route path="/share/:videoId" element={<ShareVideo />} />
                   <Route path="/buzz-demo" element={<BuzzAnimationDemo />} />
+                  <Route path="/debug-api" element={<DebugAPI />} />
                   <Route 
                     path="/integrations/google-drive/connected" 
                     element={

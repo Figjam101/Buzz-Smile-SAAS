@@ -43,6 +43,11 @@ class MonitoringService {
     this.startTime = Date.now();
     this.requestTimes = [];
     this.maxRequestTimes = 1000; // Keep last 1000 request times
+
+    // Alert throttling state
+    this.alertCooldownMs = parseInt(process.env.MONITORING_ALERT_COOLDOWN_MS || '60000', 10);
+    this.lastCriticalByMessage = new Map();
+    this.suppressedCountByMessage = new Map();
     
     // Start monitoring intervals
     this.startSystemMonitoring();
@@ -247,8 +252,24 @@ class MonitoringService {
   }
 
   async sendCriticalAlert(alert) {
-    // Placeholder for external alerting (Slack, email, etc.)
-    console.error('🚨 CRITICAL ALERT:', alert.message);
+    // Throttle critical alerts by message
+    const now = Date.now();
+    const key = alert.message;
+    const last = this.lastCriticalByMessage.get(key) || 0;
+    const withinCooldown = now - last < this.alertCooldownMs;
+
+    if (withinCooldown) {
+      const suppressed = (this.suppressedCountByMessage.get(key) || 0) + 1;
+      this.suppressedCountByMessage.set(key, suppressed);
+      return; // Suppress logging during cooldown
+    }
+
+    const suppressedCount = this.suppressedCountByMessage.get(key) || 0;
+    this.suppressedCountByMessage.set(key, 0);
+    this.lastCriticalByMessage.set(key, now);
+
+    const suffix = suppressedCount > 0 ? ` (suppressed ${suppressedCount} duplicates)` : '';
+    console.error('🚨 CRITICAL ALERT:', `${alert.message}${suffix}`);
     
     // TODO: Implement actual alerting mechanisms
     // - Send to Slack webhook

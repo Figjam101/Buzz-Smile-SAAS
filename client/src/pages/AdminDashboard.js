@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { 
   BarChart3, 
   Monitor, 
@@ -15,18 +15,22 @@ import {
   Video
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import AppleProfileImage from '../components/AppleProfileImage';
+import ProfilePictureUploader from '../components/ProfilePictureUploader';
 import SystemMonitoring from '../components/admin/SystemMonitoring';
 import BackupManager from '../components/admin/BackupManager';
 import LogsViewer from '../components/admin/LogsViewer';
 import UserManagement from '../components/admin/UserManagement';
 import VideoManagement from '../components/admin/VideoManagement';
 import Settings from '../components/admin/Settings';
+import AdminTests from '../components/admin/AdminTests';
 
 const AdminDashboard = () => {
   const { user, loading } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [systemHealth, setSystemHealth] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showUploader, setShowUploader] = useState(false);
   const [serverResetEnabled, setServerResetEnabled] = useState(false);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
 
@@ -35,6 +39,16 @@ const AdminDashboard = () => {
       fetchSystemHealth();
     }
   }, [user]);
+
+  const location = useLocation();
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const requestedTab = params.get('tab') || (location.state && location.state.tab);
+    const validTabs = ['overview','monitoring','backups','logs','users','videos','server-settings','settings','tests'];
+    if (requestedTab && validTabs.includes(requestedTab)) {
+      setActiveTab(requestedTab);
+    }
+  }, [location.search, location.state]);
 
   const fetchSystemHealth = async () => {
     try {
@@ -76,15 +90,17 @@ const AdminDashboard = () => {
     { id: 'users', name: 'User Management', icon: Users },
     { id: 'videos', name: 'Video Management', icon: Video },
     { id: 'server-settings', name: 'Server Settings', icon: Server },
-    { id: 'settings', name: 'General Settings', icon: SettingsIcon }
+    { id: 'settings', name: 'General Settings', icon: SettingsIcon },
+    { id: 'tests', name: 'Tests', icon: RotateCcw }
   ];
+
 
   const handleServerReset = async () => {
     if (!serverResetEnabled) return;
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/reset`, {
+      const response = await fetch(`/api/admin/reset`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -145,6 +161,8 @@ const AdminDashboard = () => {
         return <Settings />;
       case 'settings':
         return <Settings />;
+      case 'tests':
+        return <AdminTests />;
       default:
         return <OverviewTab systemHealth={systemHealth} />;
     }
@@ -155,10 +173,10 @@ const AdminDashboard = () => {
       {/* Navbar */}
       <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       
-      {/* Sidebar - Hidden on mobile and tablet */}
+      {/* Sidebar - Visible on large screens, hidden on mobile/tablet */}
       <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } hidden lg:translate-x-0 lg:static lg:inset-0`}>
+      } hidden lg:block lg:translate-x-0 lg:static lg:inset-0`}>
         <div className="flex flex-col h-full">
           {/* Sidebar Header */}
           <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
@@ -168,6 +186,23 @@ const AdminDashboard = () => {
               className="sm:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
             >
               <Home className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Admin User Profile */}
+          <div className="px-4 py-4 border-b border-gray-200">
+            <div className="flex items-center space-x-3">
+              <AppleProfileImage size="lg" name={user?.name || 'User'} profilePicture={user?.profilePicture} />
+              <div className="min-w-0">
+                <p className="font-medium text-gray-900 truncate">{user?.name || 'User'}</p>
+                <p className="text-sm text-gray-500">Administrator</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowUploader(true)}
+              className="mt-3 w-full text-sm font-medium text-blue-600 hover:text-blue-700"
+            >
+              Update your profile picture
             </button>
           </div>
           
@@ -197,279 +232,102 @@ const AdminDashboard = () => {
             <div className="space-y-3">
               {/* Maintenance Mode Toggle */}
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">Maintenance Mode</span>
+                <span className="text-sm text-gray-600">Maintenance Mode</span>
                 <button
                   onClick={() => handleMaintenanceToggle(!maintenanceMode)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    maintenanceMode ? 'bg-red-600' : 'bg-gray-200'
-                  }`}
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${maintenanceMode ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}
                 >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      maintenanceMode ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
+                  {maintenanceMode ? 'Disable' : 'Enable'}
                 </button>
               </div>
-              
-              {/* Server Reset Toggle */}
+
+              {/* Server Reset */}
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">Server Reset</span>
-                <button
-                  onClick={() => setServerResetEnabled(!serverResetEnabled)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    serverResetEnabled ? 'bg-orange-600' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      serverResetEnabled ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-              
-              {/* Reset Button */}
-              {serverResetEnabled && (
-                <button
-                  onClick={handleServerReset}
-                  className="w-full flex items-center justify-center space-x-2 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  <span className="text-sm font-medium">Reset Server</span>
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Sidebar Overlay - Only for large screens */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 hidden lg:block"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-      
-      {/* Main Content */}
-      <div className="lg:ml-64">
-        <div className="px-4 py-6">
-          {/* Header */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  {tabs.find(tab => tab.id === activeTab)?.name || 'Admin Dashboard'}
-                </h1>
-                <p className="text-gray-600 mt-1">Manage your Buzz Smile SaaS platform</p>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2 bg-white rounded-lg px-3 py-2 shadow-sm border">
-                  <div className={`w-2 h-2 rounded-full ${systemHealth?.status === 'healthy' ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                  <span className="text-sm font-medium text-gray-700">
-                    {systemHealth?.status || 'Unknown'}
-                  </span>
+                <span className="text-sm text-gray-600">Server Reset</span>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => setServerResetEnabled(!serverResetEnabled)}
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${serverResetEnabled ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'}`}
+                  >
+                    {serverResetEnabled ? 'Enabled' : 'Disabled'}
+                  </button>
+                  <button
+                    onClick={handleServerReset}
+                    className="px-3 py-1 rounded-full text-xs font-medium bg-red-600 text-white hover:bg-red-700"
+                  >
+                    <Power className="w-4 h-4 inline mr-1" /> Restart
+                  </button>
                 </div>
-                <button
-                  onClick={fetchSystemHealth}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                >
-                  Refresh
-                </button>
               </div>
             </div>
           </div>
-          
-          {/* Content */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-            {renderTabContent()}
-          </div>
         </div>
       </div>
+
+      {/* Main Content */}
+      <main className="lg:ml-64 p-4 sm:p-6">
+        {renderTabContent()}
+      </main>
+
+      {/* Profile Picture Uploader Modal */}
+      {showUploader && (
+        <ProfilePictureUploader onClose={() => setShowUploader(false)} />
+      )}
     </div>
   );
 };
 
 const OverviewTab = ({ systemHealth }) => {
-  const [stats, setStats] = useState(null);
-
-  useEffect(() => {
-    fetchStats();
-  }, []);
-
-  const fetchStats = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      console.log('Fetching admin stats with token:', token ? 'Token exists' : 'No token');
-      
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/stats`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      console.log('Admin stats response status:', response.status);
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Admin stats data received:', data);
-        setStats(data);
-      } else {
-        const errorText = await response.text();
-        console.error('Admin stats API error:', response.status, errorText);
-      }
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-    }
-  };
-
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">System Overview</h2>
-        <p className="text-gray-600">Monitor your platform's key metrics and performance</p>
-      </div>
-      
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <div className="group bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 rounded-2xl p-6 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 hover:scale-105">
+    <div className="max-w-6xl mx-auto">
+      {/* System Health Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div className="bg-white rounded-lg shadow-sm border p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-blue-100 text-sm font-medium mb-1">Total Users</p>
-              <p className="text-4xl font-bold mb-2">{stats?.users || 0}</p>
-              <div className="flex items-center text-blue-200 text-xs">
-                <span className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
-                Active Platform
-              </div>
+              <p className="text-sm font-medium text-gray-600">System Health</p>
+              <p className="text-2xl font-bold text-gray-900">{systemHealth?.status || 'Unknown'}</p>
             </div>
-            <div className="text-5xl opacity-80 group-hover:scale-110 transition-transform duration-300">👥</div>
+            <span className="text-3xl">🩺</span>
           </div>
         </div>
-
-        <div className="group bg-gradient-to-br from-emerald-500 via-green-600 to-emerald-700 rounded-2xl p-6 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 hover:scale-105">
+        <div className="bg-white rounded-lg shadow-sm border p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-emerald-100 text-sm font-medium mb-1">Total Videos</p>
-              <p className="text-4xl font-bold mb-2">{stats?.videos || 0}</p>
-              <div className="flex items-center text-emerald-200 text-xs">
-                <span className="w-2 h-2 bg-yellow-400 rounded-full mr-2 animate-pulse"></span>
-                Content Library
-              </div>
+              <p className="text-sm font-medium text-gray-600">Users</p>
+              <p className="text-2xl font-bold text-green-600">{systemHealth?.users || 0}</p>
             </div>
-            <div className="text-5xl opacity-80 group-hover:scale-110 transition-transform duration-300">🎥</div>
+            <span className="text-3xl">👥</span>
           </div>
         </div>
-
-        <div className="group bg-gradient-to-br from-purple-500 via-violet-600 to-purple-700 rounded-2xl p-6 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 hover:scale-105">
+        <div className="bg-white rounded-lg shadow-sm border p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-purple-100 text-sm font-medium mb-1">System Uptime</p>
-              <p className="text-4xl font-bold mb-2">{systemHealth?.uptime || '563,421'}</p>
-              <div className="flex items-center text-purple-200 text-xs">
-                <span className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
-                Running Smooth
-              </div>
+              <p className="text-sm font-medium text-gray-600">Videos</p>
+              <p className="text-2xl font-bold text-blue-600">{systemHealth?.videos || 0}</p>
             </div>
-            <div className="text-5xl opacity-80 group-hover:scale-110 transition-transform duration-300">⏱️</div>
-          </div>
-        </div>
-
-        <div className="group bg-gradient-to-br from-orange-500 via-amber-600 to-orange-700 rounded-2xl p-6 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 hover:scale-105">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-orange-100 text-sm font-medium mb-1">Admin Users</p>
-              <p className="text-4xl font-bold mb-2">{stats?.admins || 1}</p>
-              <div className="flex items-center text-orange-200 text-xs">
-                <span className="w-2 h-2 bg-blue-400 rounded-full mr-2 animate-pulse"></span>
-                Access Control
-              </div>
-            </div>
-            <div className="text-5xl opacity-80 group-hover:scale-110 transition-transform duration-300">🛡️</div>
+            <span className="text-3xl">🎥</span>
           </div>
         </div>
       </div>
 
-      {/* System Health Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-gray-200/50 hover:shadow-2xl transition-all duration-300">
-          <div className="flex items-center mb-6">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
-              <span className="text-white text-xl">📊</span>
-            </div>
+      {/* Recent Activity */}
+      <div className="bg-white rounded-lg shadow-sm border p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xl font-bold text-gray-900">System Resources</h3>
-              <p className="text-gray-600 text-sm">Real-time performance metrics</p>
+              <p className="text-sm text-gray-700">User registrations</p>
+              <p className="text-xs text-gray-500">Last 24 hours</p>
             </div>
+            <span className="text-xl">📥</span>
           </div>
-          <div className="space-y-6">
+          <div className="flex items-center justify-between">
             <div>
-              <div className="flex justify-between text-sm font-medium text-gray-700 mb-2">
-                <span>CPU Usage</span>
-                <span className="text-blue-600">{systemHealth?.cpu?.usage || 45}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                <div 
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-1000 ease-out" 
-                  style={{ width: `${systemHealth?.cpu?.usage || 45}%` }}
-                ></div>
-              </div>
+              <p className="text-sm text-gray-700">Video uploads</p>
+              <p className="text-xs text-gray-500">Last 24 hours</p>
             </div>
-            <div>
-              <div className="flex justify-between text-sm font-medium text-gray-700 mb-2">
-                <span>Memory Usage</span>
-                <span className="text-green-600">{systemHealth?.memory?.usage || 62}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                <div 
-                  className="bg-gradient-to-r from-green-500 to-emerald-600 h-3 rounded-full transition-all duration-1000 ease-out" 
-                  style={{ width: `${systemHealth?.memory?.usage || 62}%` }}
-                ></div>
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-sm font-medium text-gray-700 mb-2">
-                <span>Disk Usage</span>
-                <span className="text-purple-600">{systemHealth?.disk?.usage || 38}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                <div 
-                  className="bg-gradient-to-r from-purple-500 to-violet-600 h-3 rounded-full transition-all duration-1000 ease-out" 
-                  style={{ width: `${systemHealth?.disk?.usage || 38}%` }}
-                ></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-gray-200/50 hover:shadow-2xl transition-all duration-300">
-          <div className="flex items-center mb-6">
-            <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mr-4">
-              <span className="text-white text-xl">📈</span>
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-gray-900">Recent Activity</h3>
-              <p className="text-gray-600 text-sm">Latest system events</p>
-            </div>
-          </div>
-          <div className="space-y-4">
-            {stats?.recentActivity?.map((activity, index) => (
-              <div key={index} className="flex items-start space-x-4 p-3 rounded-xl bg-gray-50/80 hover:bg-gray-100/80 transition-colors duration-200">
-                <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mt-2 flex-shrink-0"></div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900">{activity.message}</p>
-                  <p className="text-xs text-gray-500 mt-1">{activity.timestamp}</p>
-                </div>
-              </div>
-            )) || (
-              <div className="text-center py-8">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">📋</span>
-                </div>
-                <p className="text-gray-500 font-medium">No recent activity</p>
-                <p className="text-gray-400 text-sm mt-1">System events will appear here</p>
-              </div>
-            )}
+            <span className="text-xl">⬆️</span>
           </div>
         </div>
       </div>

@@ -3,12 +3,15 @@ const fs = require('fs').promises;
 const path = require('path');
 const { exec } = require('child_process');
 const { promisify } = require('util');
+const User = require('../models/User');
+const { uploadFile } = require('./googleDriveService');
 
 const execAsync = promisify(exec);
 
 class BackupService {
   constructor() {
-    this.backupDir = process.env.BACKUP_DIR || path.join(__dirname, '../backups');
+    // Prefer unified backup target dir, fall back to legacy and default
+    this.backupDir = process.env.BACKUP_TARGET_DIR || process.env.BACKUP_DIR || path.join(__dirname, '../backups');
     this.maxBackups = parseInt(process.env.MAX_BACKUPS) || 30; // Keep 30 days of backups
     this.compressionEnabled = true; // Re-enable compression with fixed method
   }
@@ -34,16 +37,20 @@ class BackupService {
       // Always use local backup method for now
       await this.createLocalBackup(dbName, backupPath);
 
-      // Compress backup if enabled
+      // Compress backup if enabled and capture final artifact path
+      let finalPath = backupPath;
       if (this.compressionEnabled) {
-        await this.compressBackup(backupPath);
+        finalPath = (await this.compressBackup(backupPath)) || backupPath;
       }
 
       // Clean up old backups
       await this.cleanupOldBackups();
 
+      // Optionally upload to Google Drive (auto mode)
+      const driveUpload = await this.maybeUploadToDrive(finalPath);
+
       console.log(`✅ Full website backup completed successfully: ${backupName}`);
-      return { success: true, backupName, path: backupPath };
+      return { success: true, backupName, path: finalPath, driveUpload };
 
     } catch (error) {
       console.error('❌ Backup failed:', error);
@@ -468,9 +475,55 @@ class BackupService {
       await execAsync(rmCommand);
       
       console.log(`✅ Backup compressed: ${compressedPath}`);
+      return compressedPath;
     } catch (error) {
       console.error('❌ Compression failed:', error);
       // Don't throw error, just log it so backup still succeeds
+      return null;
+    }
+  }
+
+  /**
+   * Optionally upload a backup archive to Google Drive using an admin's OAuth tokens.
+   * Controlled by env AUTO_UPLOAD_BACKUPS_TO_GOOGLE_DRIVE and optional GOOGLE_DRIVE_ADMIN_EMAIL.
+   */
+  async maybeUploadToDrive(artifactPath) {
+    try {
+      const flag = String(process.env.AUTO_UPLOAD_BACKUPS_TO_GOOGLE_DRIVE || '').toLowerCase();
+      const auto = ['1', 'true', 'yes', 'y'].includes(flag);
+      if (!auto) return { attempted: false };
+
+      // Resolve admin user for credentials
+      const preferredEmail = process.env.GOOGLE_DRIVE_ADMIN_EMAIL;
+      let user = null;
+      if (preferredEmail) {
+        user = await User.findOne({ email: preferredEmail });
+      }
+      if (!user) {
+        user = await User.findOne({ role: 'admin' }).sort({ createdAt: 1 });
+      }
+      if (!user) {
+        console.error('❌ Drive upload skipped: No admin user found');
+        return { attempted: true, uploaded: false, error: 'No admin user found for Drive credentials' };
+      }
+
+      const result = await uploadFile(
+        user,
+        artifactPath,
+        path.basename(artifactPath),
+        artifactPath.endsWith('.zip') ? 'application/zip' : 'application/gzip'
+      );
+
+      console.log(`☁️ Uploaded backup to Google Drive: ${result?.id || '(no id)'}`);
+      return {
+        attempted: true,
+        uploaded: true,
+        fileId: result?.id,
+        name: result?.name || path.basename(artifactPath)
+      };
+    } catch (err) {
+      console.error('❌ Google Drive upload failed:', err?.message || err);
+      return { attempted: true, uploaded: false, error: err?.message || String(err) };
     }
   }
 

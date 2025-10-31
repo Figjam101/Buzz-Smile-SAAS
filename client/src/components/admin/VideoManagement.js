@@ -22,7 +22,7 @@ const VideoManagement = () => {
       console.log('Fetching videos with token:', token ? 'Token exists' : 'No token');
       console.log('API URL:', process.env.REACT_APP_API_URL);
       
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/videos`, {
+      const response = await fetch(`/api/admin/videos`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -33,7 +33,13 @@ const VideoManagement = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Videos data received:', data);
-        setVideos(data.videos || data || []);
+        const rawVideos = data.videos || data || [];
+        // Attach thumbnail URL derived from API for admin viewing
+        const videosWithThumb = rawVideos.map(v => ({
+          ...v,
+          thumbnail: `${process.env.REACT_APP_API_URL}/api/videos/${v._id}/thumbnail?token=${encodeURIComponent(token || '')}`
+        }));
+        setVideos(videosWithThumb);
         setError(null);
       } else {
         const errorText = await response.text();
@@ -51,7 +57,7 @@ const VideoManagement = () => {
   const fetchVideoStats = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/stats`, {
+      const response = await fetch(`/api/admin/stats`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -71,7 +77,7 @@ const VideoManagement = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/videos/${videoId}`, {
+      const response = await fetch(`/api/admin/videos/${videoId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -95,7 +101,7 @@ const VideoManagement = () => {
     try {
       const token = localStorage.getItem('token');
       const promises = selectedVideos.map(videoId =>
-        fetch(`${process.env.REACT_APP_API_URL}/api/admin/videos/${videoId}`, {
+        fetch(`/api/admin/videos/${videoId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`

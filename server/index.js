@@ -7,6 +7,12 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const passport = require('./config/passport');
 const ffmpeg = require('fluent-ffmpeg');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const fs = require('fs');
+const { exec } = require('child_process');
+const { promisify } = require('util');
+const execAsync = promisify(exec);
 
 // Load environment variables
 dotenv.config();
@@ -28,10 +34,32 @@ const errorTracker = require('./middleware/errorTracker');
 try {
   // Check if we're in production environment
   if (process.env.NODE_ENV === 'production') {
-    // Use system FFmpeg in production (Railway/Heroku)
-    ffmpeg.setFfmpegPath('/usr/bin/ffmpeg');
-    ffmpeg.setFfprobePath('/usr/bin/ffprobe');
-    console.log('Using system FFmpeg for production');
+    // Prefer env-configured paths; fallback to @ffmpeg-installer, then PATH-resolved binaries
+    const envFfmpeg = process.env.FFMPEG_PATH;
+    const envFfprobe = process.env.FFPROBE_PATH;
+
+    if (envFfmpeg) {
+      ffmpeg.setFfmpegPath(envFfmpeg);
+      ffmpeg.setFfprobePath(envFfprobe || 'ffprobe');
+      console.log('Using FFmpeg for production (env):', envFfmpeg);
+    } else {
+      try {
+        const installer = require('@ffmpeg-installer/ffmpeg');
+        ffmpeg.setFfmpegPath(installer.path);
+        const derivedProbe = installer.path.replace('ffmpeg', 'ffprobe');
+        if (require('fs').existsSync(derivedProbe)) {
+          ffmpeg.setFfprobePath(derivedProbe);
+          console.log('Using FFprobe from installer:', derivedProbe);
+        } else {
+          ffmpeg.setFfprobePath(envFfprobe || 'ffprobe');
+        }
+        console.log('Using FFmpeg for production (@ffmpeg-installer):', installer.path);
+      } catch (e) {
+        ffmpeg.setFfmpegPath('ffmpeg');
+        ffmpeg.setFfprobePath(envFfprobe || 'ffprobe');
+        console.log('Using FFmpeg for production (PATH fallback): ffmpeg');
+      }
+    }
   } else {
     // Use @ffmpeg-installer for development
     const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
@@ -51,11 +79,70 @@ try {
   }
 }
 
+// Helper to resolve FFmpeg/FFprobe paths and log versions
+async function logFFmpegDiagnostics() {
+  try {
+    // Determine ffmpeg path
+    let ffmpegPathToUse = process.env.FFMPEG_PATH || null;
+    if (!ffmpegPathToUse) {
+      try {
+        const installer = require('@ffmpeg-installer/ffmpeg');
+        ffmpegPathToUse = installer.path;
+      } catch (_) {
+        ffmpegPathToUse = 'ffmpeg';
+      }
+    }
+
+    // Determine ffprobe path
+    let ffprobePathToUse = process.env.FFPROBE_PATH || null;
+    if (!ffprobePathToUse && ffmpegPathToUse && ffmpegPathToUse.includes('ffmpeg')) {
+      const derived = ffmpegPathToUse.replace('ffmpeg', 'ffprobe');
+      if (fs.existsSync(derived)) ffprobePathToUse = derived;
+    }
+    if (!ffprobePathToUse) ffprobePathToUse = 'ffprobe';
+
+    const { stdout: ffOut } = await execAsync(`"${ffmpegPathToUse}" -version`);
+    const ffVersion = (ffOut.match(/ffmpeg version ([^\s]+)/) || [null, 'unknown'])[1];
+
+    let probeVersion = 'unknown';
+    try {
+      const { stdout: fpOut } = await execAsync(`"${ffprobePathToUse}" -version`);
+      probeVersion = (fpOut.match(/ffprobe version ([^\s]+)/) || [null, 'unknown'])[1];
+    } catch (e) {
+      // ignore if ffprobe missing
+    }
+
+    console.log('🎬 FFmpeg diagnostics:', {
+      ffmpegPath: ffmpegPathToUse,
+      ffmpegVersion: ffVersion,
+      ffprobePath: ffprobePathToUse,
+      ffprobeVersion: probeVersion
+    });
+  } catch (e) {
+    console.warn('FFmpeg diagnostics failed:', e.message);
+  }
+}
+
 // Initialize queue monitor
 const { initializeQueue } = require('./services/jobQueue');
+const backupService = require('./services/backupService');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Trust proxy for correct IPs and secure cookies behind Railway/Vercel
+app.set('trust proxy', 1);
+
+// Ensure critical directories exist
+try {
+  const uploadsDir = path.join(__dirname, 'uploads');
+  const tempDir = path.join(__dirname, 'temp');
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  fs.mkdirSync(tempDir, { recursive: true });
+  console.log('Ensured directories:', { uploadsDir, tempDir });
+} catch (e) {
+  console.warn('Failed to ensure uploads/temp directories:', e.message);
+}
 
 // Middleware
 // Enhanced CORS to support multiple dev origins and previews
@@ -82,7 +169,9 @@ app.use(cors({
       const { hostname } = new URL(origin);
       if (
         hostname === 'buzz-smile-saas.vercel.app' ||
-        (hostname.endsWith('.vercel.app') && hostname.startsWith('buzz-smile-saas'))
+        (hostname.endsWith('.vercel.app') && hostname.startsWith('buzz-smile-saas')) ||
+        // Also allow the frontend app and its preview deployments
+        (hostname.endsWith('.vercel.app') && hostname.startsWith('buzz-smile-saas-frontend'))
       ) {
         return callback(null, true);
       }
@@ -92,6 +181,23 @@ app.use(cors({
   },
   credentials: true
 }));
+
+// Security headers
+app.use(helmet({
+  contentSecurityPolicy: false, // keep minimal to avoid blocking existing flows
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  referrerPolicy: { policy: 'no-referrer' }
+}));
+
+// Global rate limiting (env configurable)
+const globalLimiter = rateLimit({
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '60000', 10),
+  max: parseInt(process.env.RATE_LIMIT_MAX || '300', 10),
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many requests, please try again later.' }
+});
+app.use(globalLimiter);
 
 app.use(express.json({ limit: '500mb' }));
 app.use(express.urlencoded({ extended: true, limit: '500mb' }));
@@ -182,7 +288,24 @@ app.use((err, req, res, next) => {
 connectDB().then(async () => {
   // Initialize job queue system
   await initializeQueue();
+  // Optionally enable scheduled backups if explicitly configured
+  try {
+    const enableSchedule = (process.env.ENABLE_BACKUPS_SCHEDULE === 'true') || (
+      process.env.BACKUP_INTERVAL && process.env.BACKUP_INTERVAL !== '0' && process.env.BACKUP_INTERVAL !== 'false'
+    );
+    if (enableSchedule) {
+      backupService.scheduleBackups();
+      console.log('🗓️ Backup scheduling enabled');
+    } else {
+      console.log('🛑 Backup scheduling disabled (set ENABLE_BACKUPS_SCHEDULE=true or BACKUP_INTERVAL>0 to enable)');
+    }
+  } catch (e) {
+    console.warn('⚠️ Failed to start backup scheduler:', e.message);
+  }
   
+  // Log FFmpeg diagnostics post-init
+  logFFmpegDiagnostics();
+
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📡 Backend API available at http://localhost:${PORT}`);

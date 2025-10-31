@@ -24,7 +24,8 @@ router.post('/create', auth, requireAdmin, async (req, res) => {
       res.json({
         message: 'Backup created successfully',
         backup: result.backupName,
-        path: result.path
+        path: result.path,
+        driveUpload: result.driveUpload
       });
     } else {
       res.status(500).json({

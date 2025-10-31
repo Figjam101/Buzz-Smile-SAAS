@@ -8,6 +8,8 @@ const { exec } = require('child_process');
 const { promisify } = require('util');
 const execAsync = promisify(exec);
 const { auth } = require('../middleware/auth');
+const User = require('../models/User');
+const { uploadFile } = require('../services/googleDriveService');
 
 // Middleware to check admin privileges
 const requireAdmin = (req, res, next) => {
@@ -117,6 +119,17 @@ async function copyDirectory(src, dest) {
  */
 router.post('/create', auth, requireAdmin, async (req, res) => {
   try {
+    const uploadToDriveFlag = (
+      String(
+        req.query.uploadToDrive ??
+        req.query.drive ??
+        req.body?.uploadToDrive ??
+        req.body?.drive ??
+        process.env.AUTO_UPLOAD_BACKUPS_TO_GOOGLE_DRIVE ?? ''
+      )
+    ).toLowerCase();
+    const shouldUploadToDrive = ['1', 'true', 'yes', 'y'].includes(uploadToDriveFlag);
+
     // Direct backups to a target directory (allows avoiding Cloud Drive path)
     let backupTargetDir = process.env.BACKUP_TARGET_DIR || process.env.BACKUP_DIR || path.join(__dirname, '../backups');
     try {
@@ -252,6 +265,26 @@ router.post('/create', auth, requireAdmin, async (req, res) => {
       } catch {}
 
       console.log(`✅ Compressed backup created: ${archivePath}`);
+      let driveUpload = { attempted: false };
+      if (shouldUploadToDrive) {
+        driveUpload.attempted = true;
+        try {
+          const user = await User.findById(req.user._id);
+          const result = await uploadFile(
+            user,
+            archivePath,
+            path.basename(archivePath),
+            'application/gzip'
+          );
+          driveUpload.uploaded = true;
+          driveUpload.fileId = result?.id;
+          driveUpload.name = result?.name || path.basename(archivePath);
+        } catch (err) {
+          console.error('❌ Google Drive upload failed:', err?.message || err);
+          driveUpload.uploaded = false;
+          driveUpload.error = err?.message || String(err);
+        }
+      }
 
       return res.json({
         message: 'Full website backup created successfully',
@@ -262,7 +295,8 @@ router.post('/create', auth, requireAdmin, async (req, res) => {
         database: {
           collections: manifest.database.collections.length,
           records: manifest.database.totalRecords
-        }
+        },
+        driveUpload
       });
     } catch (tarError) {
       console.error('❌ Tar archiving failed, falling back to directory copy:', tarError?.message || tarError);
@@ -320,6 +354,44 @@ router.post('/create', auth, requireAdmin, async (req, res) => {
       } catch {}
 
       console.log(`✅ Directory backup created at: ${dirBackupPath}`);
+      let driveUpload = { attempted: false };
+      if (shouldUploadToDrive) {
+        driveUpload.attempted = true;
+        // Create a temporary zip for upload using archiver
+        const tmpZipPath = path.join(require('os').tmpdir(), `${backupName}.zip`);
+        try {
+          await new Promise((resolve, reject) => {
+            const archiver = require('archiver');
+            const output = fsRaw.createWriteStream(tmpZipPath);
+            const archive = archiver('zip', { zlib: { level: 9 } });
+            output.on('close', resolve);
+            output.on('error', reject);
+            archive.on('error', reject);
+            archive.pipe(output);
+            archive.directory(dirBackupPath, backupName);
+            archive.finalize();
+          });
+
+          const user = await User.findById(req.user._id);
+          const result = await uploadFile(
+            user,
+            tmpZipPath,
+            `${backupName}.zip`,
+            'application/zip'
+          );
+          driveUpload.uploaded = true;
+          driveUpload.fileId = result?.id;
+          driveUpload.name = result?.name || `${backupName}.zip`;
+        } catch (err) {
+          console.error('❌ Google Drive upload (zip) failed:', err?.message || err);
+          driveUpload.uploaded = false;
+          driveUpload.error = err?.message || String(err);
+        } finally {
+          // Cleanup temporary zip if it exists
+          try { await fs.unlink(tmpZipPath); } catch {}
+        }
+      }
+
       return res.json({
         message: 'Full website backup created successfully (fallback directory mode)',
         backup: backupName,
@@ -330,7 +402,8 @@ router.post('/create', auth, requireAdmin, async (req, res) => {
           collections: manifest.database.collections.length,
           records: manifest.database.totalRecords
         },
-        note: 'Tar not available on host; used portable directory copy fallback'
+        note: 'Tar not available on host; used portable directory copy fallback',
+        driveUpload
       });
     }
 

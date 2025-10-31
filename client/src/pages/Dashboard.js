@@ -9,6 +9,7 @@ import VideoEditingWizard from '../components/VideoEditingWizard';
 import VideoThumbnail from '../components/VideoThumbnail';
 import Navbar from '../components/Navbar';
 import AppleProfileImage from '../components/AppleProfileImage';
+import ProfilePictureUploader from '../components/ProfilePictureUploader';
 import SocialMediaPopup from '../components/SocialMediaPopup';
 import { 
   Upload, 
@@ -61,6 +62,7 @@ const Dashboard = () => {
   const [showWizard, setShowWizard] = useState(false);
   const [activeSection, setActiveSection] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showUploader, setShowUploader] = useState(false);
 
   const [socialMediaPopupOpen, setSocialMediaPopupOpen] = useState(false);
   const [socialMediaData, setSocialMediaData] = useState({
@@ -90,6 +92,10 @@ const Dashboard = () => {
   const [editingVideoId, setEditingVideoId] = useState(null);
   const [editingFilename, setEditingFilename] = useState('');
 
+  // Resolve API base, falling back to same-origin relative path
+  const API_BASE = (process.env.REACT_APP_API_URL || '').replace(/\/$/, '');
+  const api = (p) => `${API_BASE}${p}`;
+
   const handleVideoClick = useCallback((video) => {
     setSelectedVideo(video);
     setShowPreviewModal(true);
@@ -104,7 +110,7 @@ const Dashboard = () => {
       const token = localStorage.getItem('token');
       
       // Use the stream endpoint for video preview
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/videos/${video._id}/stream`, {
+      const response = await axios.get(`/api/videos/${video._id}/stream`, {
         headers: { Authorization: `Bearer ${token}` },
         responseType: 'blob'
       });
@@ -133,7 +139,7 @@ const Dashboard = () => {
   const handleSaveSocialMedia = async (socialData) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`${process.env.REACT_APP_API_URL}/api/users/social-media`, socialData, {
+      await axios.put(`/api/users/social-media`, socialData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -317,7 +323,7 @@ const Dashboard = () => {
       const token = localStorage.getItem('token');
       
       // Use the stream endpoint for downloading as well
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/videos/${video._id}/stream`, {
+      const response = await axios.get(`/api/videos/${video._id}/stream`, {
         headers: { Authorization: `Bearer ${token}` },
         responseType: 'blob'
       });
@@ -406,14 +412,15 @@ const Dashboard = () => {
         return;
       }
 
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/backup-simple/create`, {}, {
+      const response = await axios.post(api('/api/backup-simple/create'), {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
       clearInterval(progressInterval);
       setBackupProgress(100);
       
-      if (response.data.message === 'Backup created successfully') {
+      // Treat any 200 OK with a backup name as success
+      if (response.status === 200 && response.data && response.data.backup) {
         setCurrentBackup({
           name: response.data.backup,
           path: response.data.path,
@@ -461,7 +468,7 @@ const Dashboard = () => {
   const handleDeleteBackup = async (backupName) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/api/backup/${backupName}`, {
+      const response = await axios.delete(api(`/api/backup/${backupName}`), {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -480,7 +487,7 @@ const Dashboard = () => {
   const handleDownloadBackupFromList = (backupName) => {
     try {
       const token = localStorage.getItem('token');
-      const downloadUrl = `${process.env.REACT_APP_API_URL}/api/backup-simple/download/${backupName}`;
+      const downloadUrl = api(`/api/backup-simple/download/${backupName}`);
       
       // Add authorization header by creating a fetch request
       fetch(downloadUrl, {
@@ -555,7 +562,7 @@ const Dashboard = () => {
   const fetchBackups = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/backup/list`, {
+      const response = await axios.get(`/api/backup/list`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -586,6 +593,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <ProfilePictureUploader isOpen={showUploader} onClose={() => setShowUploader(false)} />
 
       {/* Dashboard Sidebar Navigation */}
       <div className="hidden sm:block fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white border-r border-gray-200 shadow-lg z-40 overflow-y-auto">
@@ -612,6 +620,12 @@ const Dashboard = () => {
                 )}
               </div>
             </div>
+            <button
+              onClick={() => setShowUploader(true)}
+              className="mt-3 w-full text-sm font-medium text-blue-600 hover:text-blue-700"
+            >
+              Update your profile picture
+            </button>
           </div>
 
           <div className="flex-1 p-4">
@@ -753,6 +767,12 @@ const Dashboard = () => {
                       )}
                     </div>
                   </div>
+                  <button
+                    onClick={() => setShowUploader(true)}
+                    className="mx-4 mb-4 w-[calc(100%-2rem)] text-left text-sm font-medium text-blue-600 hover:text-blue-700"
+                  >
+                    Update your profile picture
+                  </button>
                 </div>
                 
                 <div className="flex-1 p-4">
@@ -1223,7 +1243,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                   <div className="p-6 space-y-3">
-                    <button className="w-full flex items-center justify-between p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors group">
+                    <button className="w-full flex items-center justify-between p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors group" onClick={() => navigate('/admin?tab=users')}>
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
                           <Shield className="w-4 h-4 text-blue-600" />

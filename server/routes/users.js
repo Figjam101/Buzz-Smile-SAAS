@@ -122,8 +122,9 @@ router.put('/profile', auth, upload.single('profilePicture'), async (req, res) =
         }
       }
       
-      // Set new profile picture URL
-      user.profilePicture = `/uploads/profiles/${req.file.filename}`;
+      // Set new profile picture URL (absolute for production compatibility)
+      const baseUrl = process.env.API_BASE_URL || `${req.protocol}://${req.get('host')}`;
+      user.profilePicture = `${baseUrl}/uploads/profiles/${req.file.filename}`;
     }
     
     // Handle social media data

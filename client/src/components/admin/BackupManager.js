@@ -11,6 +11,10 @@ const BackupManager = () => {
   const [success, setSuccess] = useState(null);
   const [fullBackups, setFullBackups] = useState([]);
 
+  // Resolve API base, falling back to same-origin relative path
+  const API_BASE = (process.env.REACT_APP_API_URL || '').replace(/\/$/, '');
+  const api = (path) => `${API_BASE}${path}`;
+
   useEffect(() => {
     fetchBackups();
     fetchStatus();
@@ -20,7 +24,7 @@ const BackupManager = () => {
   const fetchBackups = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/backup/list`, {
+      const response = await fetch(api('/api/backup/list'), {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -42,7 +46,7 @@ const BackupManager = () => {
   const fetchStatus = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/backup/status`, {
+      const response = await fetch(api('/api/backup/status'), {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -60,7 +64,7 @@ const BackupManager = () => {
   const fetchFullBackups = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/backup-simple/list`, {
+      const response = await fetch(api('/api/backup-simple/list'), {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -80,7 +84,7 @@ const BackupManager = () => {
     setSuccess(null);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/backup-simple/create`, {
+      const response = await fetch(api('/api/backup-simple/create'), {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -108,7 +112,7 @@ const BackupManager = () => {
   const downloadFullBackup = async (backupName) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/backup-simple/download/${backupName}`, {
+      const response = await fetch(api(`/api/backup-simple/download/${backupName}`), {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -148,7 +152,7 @@ const BackupManager = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/backup/create`, {
+      const response = await fetch(api('/api/backup/create'), {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -183,7 +187,7 @@ const BackupManager = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/backup/restore/${backupName}`, {
+      const response = await fetch(api(`/api/backup/restore/${backupName}`), {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -214,7 +218,7 @@ const BackupManager = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/backup/${backupName}`, {
+      const response = await fetch(api(`/api/backup/${backupName}`), {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -250,7 +254,7 @@ const BackupManager = () => {
 
   if (loading) {
     return (
-      <div className="p-6">
+      <div className="max-w-6xl mx-auto p-6">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
@@ -259,7 +263,7 @@ const BackupManager = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="max-w-6xl mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Backup Manager</h2>
