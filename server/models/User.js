@@ -130,6 +130,10 @@ const userSchema = new mongoose.Schema({
     linkedin: { type: String, default: '' },
     tiktok: { type: String, default: '' }
   },
+  linkedSocialAccounts: {
+    type: [String],
+    default: []
+  },
   integrations: {
     googleDrive: {
       accessToken: { type: String, default: '' },

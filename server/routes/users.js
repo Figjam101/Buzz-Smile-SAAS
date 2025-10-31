@@ -151,12 +151,55 @@ router.put('/profile', auth, upload.single('profilePicture'), async (req, res) =
         name: user.name,
         email: user.email,
         profilePicture: user.profilePicture,
-        socialMedia: user.socialMedia
+        socialMedia: user.socialMedia,
+        linkedSocialAccounts: user.linkedSocialAccounts || []
       }
     });
   } catch (error) {
     console.error('Profile update error:', error);
     res.status(500).json({ message: 'Server error updating profile' });
+  }
+});
+
+// Update social media and linked accounts (without file upload)
+router.put('/social-media', auth, async (req, res) => {
+  try {
+    const user = req.user;
+    const { socialMedia, linkedSocialAccounts } = req.body;
+
+    if (socialMedia) {
+      // Replace social media fields selectively
+      user.socialMedia = {
+        facebook: socialMedia.facebook || user.socialMedia.facebook || '',
+        twitter: socialMedia.twitter || user.socialMedia.twitter || '',
+        instagram: socialMedia.instagram || user.socialMedia.instagram || '',
+        youtube: socialMedia.youtube || user.socialMedia.youtube || '',
+        linkedin: socialMedia.linkedin || user.socialMedia.linkedin || '',
+        tiktok: socialMedia.tiktok || user.socialMedia.tiktok || ''
+      };
+    }
+
+    if (Array.isArray(linkedSocialAccounts)) {
+      // Store the set of linked platforms
+      user.linkedSocialAccounts = linkedSocialAccounts;
+    }
+
+    await user.save();
+
+    res.json({
+      message: 'Social media updated successfully',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profilePicture: user.profilePicture,
+        socialMedia: user.socialMedia,
+        linkedSocialAccounts: user.linkedSocialAccounts || []
+      }
+    });
+  } catch (error) {
+    console.error('Social media update error:', error);
+    res.status(500).json({ message: 'Server error updating social media' });
   }
 });
 

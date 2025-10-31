@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import OAuthTest from '../OAuthTest';
 
 const AdminTests = () => {
   const [results, setResults] = useState({});

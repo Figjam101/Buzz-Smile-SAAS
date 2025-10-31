@@ -169,25 +169,26 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Navbar */}
       <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       
-      {/* Sidebar - Visible on large screens, hidden on mobile/tablet */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } hidden lg:block lg:translate-x-0 lg:static lg:inset-0`}>
-        <div className="flex flex-col h-full">
-          {/* Sidebar Header */}
-          <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Admin Panel</h2>
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="sm:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
-            >
-              <Home className="w-5 h-5" />
-            </button>
-          </div>
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar - Visible on large screens, hidden on mobile/tablet */}
+        <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } lg:relative lg:translate-x-0`}>
+          <div className="flex flex-col h-full">
+            {/* Sidebar Header */}
+            <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900">Admin Panel</h2>
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+              >
+                <Home className="w-5 h-5" />
+              </button>
+            </div>
 
           {/* Admin User Profile */}
           <div className="px-4 py-4 border-b border-gray-200">
@@ -265,9 +266,10 @@ const AdminDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <main className="lg:ml-64 p-4 sm:p-6">
+      <main className="flex-1 p-4 sm:p-6 overflow-auto">
         {renderTabContent()}
       </main>
+        </div>
 
       {/* Profile Picture Uploader Modal */}
       {showUploader && (

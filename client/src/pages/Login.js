@@ -13,7 +13,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const { login } = useAuth();
+  const { login, handleOAuthLogin, oauthLoading } = useAuth();
   const navigate = useNavigate();
   const emailRef = useRef(null);
 
@@ -99,147 +99,19 @@ const Login = () => {
 
 
   const handleGoogleLogin = () => {
-    const popup = window.open(
-      getAuthUrl('google'),
-      'google-login',
-      'width=500,height=600,scrollbars=yes,resizable=yes'
-    );
-
-    // Listen for messages from the popup
-    const messageListener = (event) => {
-      if (event.origin !== window.location.origin) return;
-      
-      if (event.data.type === 'OAUTH_SUCCESS') {
-        localStorage.setItem('token', event.data.token);
-        popup.close();
-        window.removeEventListener('message', messageListener);
-        navigate('/dashboard');
-        window.location.reload(); // Refresh to update auth state
-      } else if (event.data.type === 'OAUTH_ERROR') {
-        popup.close();
-        window.removeEventListener('message', messageListener);
-        // Show error message to user
-        alert(event.data.message || 'OAuth authentication failed');
-      }
-    };
-
-    window.addEventListener('message', messageListener);
-
-    // Check if popup was closed manually
-    const checkClosed = setInterval(() => {
-      if (popup.closed) {
-        clearInterval(checkClosed);
-        window.removeEventListener('message', messageListener);
-      }
-    }, 1000);
+    handleOAuthLogin('google');
   };
 
   const handleFacebookLogin = () => {
-    const popup = window.open(
-      getAuthUrl('facebook'),
-      'facebook-login',
-      'width=500,height=600,scrollbars=yes,resizable=yes'
-    );
-
-    // Listen for messages from the popup
-    const messageListener = (event) => {
-      if (event.origin !== window.location.origin) return;
-      
-      if (event.data.type === 'OAUTH_SUCCESS') {
-        localStorage.setItem('token', event.data.token);
-        popup.close();
-        window.removeEventListener('message', messageListener);
-        navigate('/dashboard');
-        window.location.reload(); // Refresh to update auth state
-      } else if (event.data.type === 'OAUTH_ERROR') {
-        popup.close();
-        window.removeEventListener('message', messageListener);
-        // Show error message to user
-        alert(event.data.message || 'OAuth authentication failed');
-      }
-    };
-
-    window.addEventListener('message', messageListener);
-
-    // Check if popup was closed manually
-    const checkClosed = setInterval(() => {
-      if (popup.closed) {
-        clearInterval(checkClosed);
-        window.removeEventListener('message', messageListener);
-      }
-    }, 1000);
+    handleOAuthLogin('facebook');
   };
 
   const handleInstagramLogin = () => {
-    const popup = window.open(
-      getAuthUrl('instagram'),
-      'instagram-login',
-      'width=500,height=600,scrollbars=yes,resizable=yes'
-    );
-
-    // Listen for messages from the popup
-    const messageListener = (event) => {
-      if (event.origin !== window.location.origin) return;
-      
-      if (event.data.type === 'OAUTH_SUCCESS') {
-        localStorage.setItem('token', event.data.token);
-        popup.close();
-        window.removeEventListener('message', messageListener);
-        navigate('/dashboard');
-        window.location.reload(); // Refresh to update auth state
-      } else if (event.data.type === 'OAUTH_ERROR') {
-        popup.close();
-        window.removeEventListener('message', messageListener);
-        // Show error message to user
-        alert(event.data.message || 'OAuth authentication failed');
-      }
-    };
-
-    window.addEventListener('message', messageListener);
-
-    // Check if popup was closed manually
-    const checkClosed = setInterval(() => {
-      if (popup.closed) {
-        clearInterval(checkClosed);
-        window.removeEventListener('message', messageListener);
-      }
-    }, 1000);
+    handleOAuthLogin('instagram');
   };
 
   const handleTwitterLogin = () => {
-    const popup = window.open(
-      getAuthUrl('twitter'),
-      'twitter-login',
-      'width=500,height=600,scrollbars=yes,resizable=yes'
-    );
-
-    // Listen for messages from the popup
-    const messageListener = (event) => {
-      if (event.origin !== window.location.origin) return;
-      
-      if (event.data.type === 'OAUTH_SUCCESS') {
-        localStorage.setItem('token', event.data.token);
-        popup.close();
-        window.removeEventListener('message', messageListener);
-        navigate('/dashboard');
-        window.location.reload(); // Refresh to update auth state
-      } else if (event.data.type === 'OAUTH_ERROR') {
-        popup.close();
-        window.removeEventListener('message', messageListener);
-        // Show error message to user
-        alert(event.data.message || 'OAuth authentication failed');
-      }
-    };
-
-    window.addEventListener('message', messageListener);
-
-    // Check if popup was closed manually
-    const checkClosed = setInterval(() => {
-      if (popup.closed) {
-        clearInterval(checkClosed);
-        window.removeEventListener('message', messageListener);
-      }
-    }, 1000);
+    handleOAuthLogin('twitter');
   };
 
   const handleYouTubeLogin = () => {

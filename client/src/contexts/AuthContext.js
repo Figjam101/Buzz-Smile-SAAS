@@ -16,11 +16,17 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem('token'));
+  const [oauthLoading, setOauthLoading] = useState(false);
 
   // Configure axios defaults
   useEffect(() => {
     // Set base URL for all axios requests
-    const envBase = process.env.REACT_APP_API_URL;
+    const envBaseRaw = process.env.REACT_APP_API_URL || '';
+    // Normalize base: remove trailing slash and trailing '/api' to avoid double '/api'
+    const envBaseTrimmed = envBaseRaw.replace(/\/$/, '');
+    const envBase = /\/api$/.test(envBaseTrimmed)
+      ? envBaseTrimmed.replace(/\/api$/, '')
+      : envBaseTrimmed;
     let baseURL = envBase;
     if (!baseURL && typeof window !== 'undefined') {
       const origin = window.location.origin;
@@ -28,6 +34,10 @@ export const AuthProvider = ({ children }) => {
       baseURL = origin.includes('localhost:3000') ? 'http://localhost:5000' : '';
     }
     axios.defaults.baseURL = baseURL || '';
+    // Optional: surface configuration in console for quick diagnostics
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[AuthContext] axios baseURL set to:', axios.defaults.baseURL);
+    }
     
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -35,6 +45,23 @@ export const AuthProvider = ({ children }) => {
       delete axios.defaults.headers.common['Authorization'];
     }
   }, [token]);
+  
+  // Listen for OAuth success messages
+  useEffect(() => {
+    const handleOAuthMessage = (event) => {
+      if (event.origin !== window.location.origin) return;
+      
+      if (event.data.type === 'OAUTH_SUCCESS' && event.data.token) {
+        localStorage.setItem('token', event.data.token);
+        setToken(event.data.token);
+        setOauthLoading(false);
+        window.location.reload(); // Refresh to update auth state
+      }
+    };
+    
+    window.addEventListener('message', handleOAuthMessage);
+    return () => window.removeEventListener('message', handleOAuthMessage);
+  }, []);
 
   // Check if user is authenticated on app load
   useEffect(() => {
@@ -141,15 +168,36 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // OAuth login handlers
+  const handleOAuthLogin = (provider) => {
+    setOauthLoading(true);
+    const apiBase = axios.defaults.baseURL || '';
+    const popup = window.open(
+      `${apiBase}/auth/${provider}`,
+      `${provider}-login`,
+      'width=500,height=600,scrollbars=yes,resizable=yes'
+    );
+
+    // Check if popup was closed manually
+    const checkClosed = setInterval(() => {
+      if (popup.closed) {
+        clearInterval(checkClosed);
+        setOauthLoading(false);
+      }
+    }, 1000);
+  };
+
   const value = {
     user,
     token,
     loading,
+    oauthLoading,
     login,
     register,
     logout,
     updateProfile,
     refreshUser,
+    handleOAuthLogin,
     isAuthenticated: !!user
   };
 

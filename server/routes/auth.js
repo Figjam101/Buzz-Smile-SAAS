@@ -60,7 +60,8 @@ router.post('/register', [
         maxVideos: user.maxVideos,
         role: user.role,
         profilePicture: user.profilePicture,
-        socialMedia: user.socialMedia
+        socialMedia: user.socialMedia,
+        linkedSocialAccounts: user.linkedSocialAccounts || []
       }
     });
   } catch (error) {
@@ -118,7 +119,8 @@ router.post('/login', [
         lastLogin: user.lastLogin,
         role: user.role,
         profilePicture: user.profilePicture,
-        socialMedia: user.socialMedia
+        socialMedia: user.socialMedia,
+        linkedSocialAccounts: user.linkedSocialAccounts || []
       }
     });
   } catch (error) {
@@ -141,7 +143,8 @@ router.get('/me', auth, async (req, res) => {
       lastLogin: req.user.lastLogin,
       role: req.user.role,
       profilePicture: req.user.profilePicture,
-      socialMedia: req.user.socialMedia
+      socialMedia: req.user.socialMedia,
+      linkedSocialAccounts: req.user.linkedSocialAccounts || []
     }
   });
 });
@@ -180,7 +183,8 @@ router.put('/profile', auth, [
         maxVideos: user.maxVideos,
         role: user.role,
         profilePicture: user.profilePicture,
-        socialMedia: user.socialMedia
+        socialMedia: user.socialMedia,
+        linkedSocialAccounts: user.linkedSocialAccounts || []
       }
     });
   } catch (error) {
