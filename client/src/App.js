@@ -1,3 +1,4 @@
+// Force deployment - Updated: 2025-10-31 18:37:00
 import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
