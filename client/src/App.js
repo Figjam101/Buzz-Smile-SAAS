@@ -20,6 +20,7 @@ const BuzzAnimationDemo = React.lazy(() => import('./components/BuzzAnimationDem
 const GoogleDriveConnected = React.lazy(() => import('./pages/GoogleDriveConnected'));
 const DebugAPI = React.lazy(() => import('./pages/DebugAPI'));
 const OAuthTest = React.lazy(() => import('./pages/OAuthTest'));
+const AuthSuccess = React.lazy(() => import('./pages/AuthSuccess'));
 
 // Component to handle page title and meta updates
 const PageTitleHandler = () => {
@@ -120,6 +121,7 @@ function App() {
                 <Routes>
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
+                  <Route path="/auth/success" element={<AuthSuccess />} />
                   <Route path="/share/:videoId" element={<ShareVideo />} />
                   <Route path="/buzz-demo" element={<BuzzAnimationDemo />} />
                   <Route path="/debug-api" element={<DebugAPI />} />

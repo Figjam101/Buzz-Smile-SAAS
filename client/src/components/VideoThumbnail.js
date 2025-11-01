@@ -24,6 +24,7 @@ const VideoThumbnail = ({
   const [isHovered, setIsHovered] = useState(false);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [useClientThumbnail, setUseClientThumbnail] = useState(false);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const observerRef = useRef(null);
@@ -113,6 +114,7 @@ const VideoThumbnail = ({
             const thumbnailDataUrl = URL.createObjectURL(blob);
             setThumbnailSrc(thumbnailDataUrl);
             setIsGenerating(false);
+            setUseClientThumbnail(false);
             return;
           }
         } catch (serverError) {
@@ -120,6 +122,7 @@ const VideoThumbnail = ({
         }
 
         // Fallback to client-side generation
+        setUseClientThumbnail(true);
         generateClientThumbnail();
       } catch (err) {
         console.error('Error generating thumbnail:', err);
@@ -319,14 +322,16 @@ const VideoThumbnail = ({
         </div>
       </div>
 
-      {/* Hidden elements for thumbnail generation */}
-      <video
-        ref={videoRef}
-        className="hidden"
-        crossOrigin="anonymous"
-        preload="metadata"
-        src={`${process.env.REACT_APP_API_URL}/api/videos/${video._id}/stream?token=${encodeURIComponent(localStorage.getItem('token') || '')}`}
-      />
+      {/* Hidden elements for thumbnail generation (only when client-side fallback is needed) */}
+      {useClientThumbnail && (
+        <video
+          ref={videoRef}
+          className="hidden"
+          crossOrigin="anonymous"
+          preload="metadata"
+          src={`${process.env.REACT_APP_API_URL}/api/videos/${video._id}/stream?token=${encodeURIComponent(localStorage.getItem('token') || '')}`}
+        />
+      )}
       <canvas ref={canvasRef} className="hidden" />
     </div>
   );
