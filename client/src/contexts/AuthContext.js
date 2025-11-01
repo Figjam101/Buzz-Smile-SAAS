@@ -48,9 +48,15 @@ export const AuthProvider = ({ children }) => {
   
   // Listen for OAuth success messages
   useEffect(() => {
+    const allowedOrigins = new Set([
+      typeof window !== 'undefined' ? window.location.origin : '',
+      'https://buzz-smile-saas.vercel.app'
+    ].filter(Boolean));
+
     const handleOAuthMessage = (event) => {
-      if (event.origin !== window.location.origin) return;
-      
+      // Accept messages from same-origin and our production frontend
+      if (!allowedOrigins.has(event.origin)) return;
+
       if (event.data.type === 'OAUTH_SUCCESS' && event.data.token) {
         localStorage.setItem('token', event.data.token);
         setToken(event.data.token);
@@ -58,7 +64,7 @@ export const AuthProvider = ({ children }) => {
         window.location.reload(); // Refresh to update auth state
       }
     };
-    
+
     window.addEventListener('message', handleOAuthMessage);
     return () => window.removeEventListener('message', handleOAuthMessage);
   }, []);

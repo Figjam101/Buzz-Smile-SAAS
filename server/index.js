@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
-const passport = require('./config/passport');
 const ffmpeg = require('fluent-ffmpeg');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -14,8 +13,11 @@ const { exec } = require('child_process');
 const { promisify } = require('util');
 const execAsync = promisify(exec);
 
-// Load environment variables
+// Load environment variables BEFORE loading Passport config so strategies see env
 dotenv.config();
+
+// Load configured Passport (after envs)
+const passport = require('./config/passport');
 
 // Import enterprise services
 const { loggingService, requestLogger, errorLogger } = require('./services/loggingService');

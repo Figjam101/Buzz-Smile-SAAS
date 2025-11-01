@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff, Mail, Lock, Video } from 'lucide-react';
 import { announceToScreenReader } from '../utils/accessibility';
@@ -16,6 +16,7 @@ const Login = () => {
   const { login, handleOAuthLogin, oauthLoading } = useAuth();
   const navigate = useNavigate();
   const emailRef = useRef(null);
+  const [searchParams] = useSearchParams();
 
   // Focus on email field when component mounts
   useEffect(() => {
@@ -23,6 +24,14 @@ const Login = () => {
       emailRef.current.focus();
     }
   }, []);
+
+  // Auto-trigger Google OAuth when query flag is present
+  useEffect(() => {
+    const auto = searchParams.get('autoGoogle') || searchParams.get('auto');
+    if (auto && (auto === '1' || auto === 'true' || auto === 'google')) {
+      handleOAuthLogin('google');
+    }
+  }, [searchParams, handleOAuthLogin]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

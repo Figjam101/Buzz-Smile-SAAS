@@ -1,5 +1,6 @@
 const express = require('express');
-const passport = require('passport');
+// Use the configured Passport instance to ensure strategies are available
+const passport = require('../config/passport');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 
