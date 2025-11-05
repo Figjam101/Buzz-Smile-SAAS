@@ -26,8 +26,14 @@ const auth = async (req, res, next) => {
       return res.status(401).json({ message: 'Access denied. No token provided.' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret');
     const userId = decoded.userId;
+    
+    // Development fallback: if DB is unavailable and token carries embedded user
+    if (decoded.devUser && process.env.ALLOW_SERVER_WITHOUT_DB === 'true') {
+      req.user = decoded.user;
+      return next();
+    }
     
     // Check cache first
     const cached = userCache.get(userId);

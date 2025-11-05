@@ -14,6 +14,7 @@ import SocialMediaPopup from '../components/SocialMediaPopup';
 import SocialMediaScheduler from '../components/SocialMediaScheduler';
 import SocialMediaCalendar from '../components/SocialMediaCalendar';
 import SocialMediaCard from '../components/SocialMediaCard';
+import ProcessingStatusModal from './ProcessingStatusModal';
 import { 
   Upload, 
   Video, 
@@ -68,6 +69,12 @@ const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showUploader, setShowUploader] = useState(false);
 
+  // Processing modal & status polling
+  const [processingModalOpen, setProcessingModalOpen] = useState(false);
+  const [processingVideo, setProcessingVideo] = useState(null); // { id, title }
+  const [processingStatus, setProcessingStatus] = useState(null); // { status, progress, errorMessage }
+  const [statusPollId, setStatusPollId] = useState(null);
+
   const [socialMediaPopupOpen, setSocialMediaPopupOpen] = useState(false);
   const [socialMediaData, setSocialMediaData] = useState({
     instagram: '',
@@ -108,7 +115,7 @@ const Dashboard = () => {
     if (video.status === 'ready' || video.status === 'completed') {
       loadVideoBlob(video);
     }
-  }, []);
+  }, [loadVideoBlob]);
 
   const loadVideoBlob = async (video) => {
     setVideoLoading(true);
@@ -116,7 +123,7 @@ const Dashboard = () => {
       const token = localStorage.getItem('token');
       
       // Use the stream endpoint for video preview
-      const response = await axios.get(`/api/videos/${video._id}/stream`, {
+      const response = await axios.get(api(`/api/videos/${video._id}/stream`), {
         headers: { Authorization: `Bearer ${token}` },
         responseType: 'blob'
       });
@@ -259,36 +266,69 @@ const Dashboard = () => {
     setUploadProgress(0);
     
     try {
-      // Handle the data structure from VideoEditingWizard
-      const file = videoData.file || (videoData.orderedFiles && videoData.orderedFiles[0]?.file) || videoData.orderedFiles?.[0];
-      
-      if (!file) {
-        console.error('No file found in videoData:', videoData);
+      // Handle data from VideoEditingWizard: support multiple files and editingData
+      const filesArray = Array.isArray(videoData.orderedFiles)
+        ? videoData.orderedFiles.map(f => f.file || f)
+        : (videoData.file ? [videoData.file] : []);
+
+      if (!filesArray.length) {
+        console.error('No files found in videoData:', videoData);
         toast.error('No file selected for upload');
         return;
       }
 
       const formData = new FormData();
-      formData.append('video', file);
-      formData.append('title', videoData.title || videoData.videoName || file.name);
+      filesArray.forEach(f => formData.append('video', f));
+      const primaryFile = filesArray[0];
+      const title = videoData.title || videoData.videoName || primaryFile.name;
+      formData.append('title', title);
       formData.append('description', videoData.description || '');
-      
-      if (videoData.trimStart !== undefined) {
-        formData.append('trimStart', videoData.trimStart);
-      }
-      if (videoData.trimEnd !== undefined) {
-        formData.append('trimEnd', videoData.trimEnd);
-      }
-      if (videoData.filters && videoData.filters.length > 0) {
-        formData.append('filters', JSON.stringify(videoData.filters));
-      }
+      formData.append('multipleFiles', String(filesArray.length > 1));
+      formData.append('fileCount', String(filesArray.length));
+      formData.append('fileNames', JSON.stringify(filesArray.map(f => f.name)));
+
+      // Collect editing data preferences to match server expectations
+      // Include new platform selection and story mode fields from the wizard
+      const editingData = {
+        videoName: videoData.videoName || title,
+        videoType: videoData.videoType || '',
+        targetAudience: videoData.targetAudience || '',
+        editingStyle: videoData.editingStyle || '',
+        duration: videoData.duration || '',
+        specialRequests: videoData.specialRequests || '',
+        platforms: Array.isArray(videoData.platforms) ? videoData.platforms : [],
+        recommendedDurations: videoData.recommendedDurations || {},
+        storyMode: Boolean(videoData.storyMode || videoData.isStory),
+        estimatedExtraCredits: typeof videoData.estimatedExtraCredits === 'number'
+          ? videoData.estimatedExtraCredits
+          : (videoData.storyMode || videoData.isStory ? 1 : 0)
+      };
+      formData.append('editingData', JSON.stringify(editingData));
 
       const token = localStorage.getItem('token');
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/videos/upload`, formData, {
+      // Helper to retry upload on transient network changes
+      const postWithRetry = async (url, data, config, retries = 2, delayMs = 1000) => {
+        try {
+          return await axios.post(url, data, config);
+        } catch (err) {
+          const isNetworkChanged = err?.code === 'ERR_NETWORK_CHANGED' ||
+            (typeof err?.message === 'string' && err.message.includes('ERR_NETWORK_CHANGED')) ||
+            (typeof err?.toString === 'function' && err.toString().includes('ERR_NETWORK_CHANGED'));
+          if (retries > 0 && isNetworkChanged) {
+            await new Promise(r => setTimeout(r, delayMs));
+            return postWithRetry(url, data, config, retries - 1, delayMs * 2);
+          }
+          throw err;
+        }
+      };
+
+      const response = await postWithRetry(api('/api/videos/upload'), formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`
         },
+        maxBodyLength: Infinity,
+        maxContentLength: Infinity,
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
           setUploadProgress(percentCompleted);
@@ -296,9 +336,11 @@ const Dashboard = () => {
       });
 
       console.log('Upload response:', response.data);
-      toast.success('Video uploaded successfully!');
+      toast.success('Video uploaded successfully! You can process it anytime.');
       
       setPendingVideoFiles(prev => prev.filter(f => f.id !== videoData.id));
+
+      // Refresh lists to show the newly uploaded video in "ready" state
       fetchVideos();
       fetchStats();
     } catch (error) {
@@ -308,6 +350,56 @@ const Dashboard = () => {
       setUploading(false);
       setUploadProgress(0);
     }
+  };
+
+  // Explicitly start processing for a video when user clicks Process
+  const processVideo = async (video) => {
+    try {
+      const token = localStorage.getItem('token');
+      const { data } = await axios.post(api(`/api/videos/${video._id}/process`), {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success(data?.message || 'Processing started');
+      setProcessingVideo({ id: video._id, title: video.title || video.filename });
+      setProcessingModalOpen(true);
+      startStatusPolling(video._id);
+    } catch (error) {
+      const msg = error?.response?.data?.message || 'Failed to start processing';
+      toast.error(msg);
+    }
+  };
+
+  // Poll server for processing status every 2 seconds
+  const startStatusPolling = (videoId) => {
+    if (statusPollId) {
+      clearInterval(statusPollId);
+      setStatusPollId(null);
+    }
+    const poller = setInterval(async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const { data } = await axios.get(api(`/api/videos/${videoId}/status`), {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setProcessingStatus(data);
+        const st = (data?.status || '').toLowerCase();
+        if (st === 'ready' || st === 'completed' || st === 'failed') {
+          clearInterval(poller);
+          setStatusPollId(null);
+          setProcessingModalOpen(false);
+          fetchVideos();
+          fetchStats();
+          if (st === 'failed') {
+            toast.error(data?.errorMessage || 'Video processing failed');
+          } else {
+            toast.success('Video processing completed');
+          }
+        }
+      } catch (err) {
+        console.error('Status polling error:', err);
+      }
+    }, 2000);
+    setStatusPollId(poller);
   };
 
   const getStatusIcon = (status) => {
@@ -329,7 +421,7 @@ const Dashboard = () => {
       const token = localStorage.getItem('token');
       
       // Use the stream endpoint for downloading as well
-      const response = await axios.get(`/api/videos/${video._id}/stream`, {
+      const response = await axios.get(api(`/api/videos/${video._id}/stream`), {
         headers: { Authorization: `Bearer ${token}` },
         responseType: 'blob'
       });
@@ -1033,6 +1125,7 @@ const Dashboard = () => {
                           setSchedulerVideo(video);
                           setShowSocialScheduler(true);
                         }}
+                        onProcess={processVideo}
                         isEditing={editingVideoId === video._id}
                         editingFilename={editingFilename}
                         setEditingFilename={setEditingFilename}
@@ -1639,6 +1732,16 @@ const Dashboard = () => {
           setPendingVideoFiles([]);
         }}
         onProcessVideo={handleVideoProcessing}
+      />
+
+      {/* Processing Status Modal */}
+      <ProcessingStatusModal
+        isOpen={processingModalOpen}
+        videoTitle={processingVideo?.title}
+        status={processingStatus?.status}
+        progress={processingStatus?.progress}
+        errorMessage={processingStatus?.errorMessage}
+        onClose={() => setProcessingModalOpen(false)}
       />
 
       {/* Social Media Popup */}

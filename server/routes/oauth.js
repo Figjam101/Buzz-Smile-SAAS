@@ -9,6 +9,29 @@ const isStrategyRegistered = (strategyName) => {
   return passport._strategies && passport._strategies[strategyName];
 };
 
+// Diagnostic: OAuth configuration status (does not leak secrets)
+router.get('/status', (req, res) => {
+  const env = process.env;
+  const safeValue = (val) => (val ? true : false);
+  const isNonPlaceholder = (val) => Boolean(val && val !== 'placeholder-google-client-id');
+
+  const providers = {
+    google: Boolean(isStrategyRegistered('google'))
+  };
+
+  const config = {
+    nodeEnv: env.NODE_ENV || 'development',
+    clientUrl: env.CLIENT_URL || null,
+    clientUrls: (env.CLIENT_URLS || '').split(',').map(s => s.trim()).filter(Boolean),
+    google: {
+      clientIdSet: isNonPlaceholder(env.GOOGLE_CLIENT_ID),
+      clientSecretSet: safeValue(env.GOOGLE_CLIENT_SECRET)
+    }
+  };
+
+  res.json({ providers, config });
+});
+
 // Google OAuth routes
 router.get('/google', (req, res, next) => {
   if (!isStrategyRegistered('google')) {
@@ -66,233 +89,13 @@ router.get('/google/callback',
   }
 );
 
-// Facebook OAuth routes
-router.get('/facebook', (req, res, next) => {
-  if (!isStrategyRegistered('facebook')) {
-    return res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>OAuth Not Available</title>
-        <style>
-          body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
-          .error { color: #d32f2f; margin: 20px 0; }
-          .message { color: #666; margin: 20px 0; }
-        </style>
-      </head>
-      <body>
-        <h2>Facebook OAuth Not Available</h2>
-        <div class="error">Facebook OAuth is not configured.</div>
-        <div class="message">Please contact the administrator to set up Facebook authentication.</div>
-        <script>
-          setTimeout(() => {
-            if (window.opener) {
-              window.opener.postMessage({ type: 'OAUTH_ERROR', message: 'Facebook OAuth is not configured' }, '*');
-              window.close();
-            }
-          }, 2000);
-        </script>
-      </body>
-      </html>
-    `);
-  }
-  passport.authenticate('facebook', { scope: ['email'] })(req, res, next);
-});
+// Removed non-Google OAuth routes (Facebook) to keep only Google login
 
-router.get('/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/login?error=oauth_failed' }),
-  async (req, res) => {
-    try {
-      // Generate JWT token
-      const token = jwt.sign(
-        { userId: req.user._id },
-        process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-      );
+// Removed non-Google OAuth routes (Instagram) to keep only Google login
 
-      // Update last login
-      req.user.lastLogin = new Date();
-      await req.user.save();
+// Removed non-Google OAuth routes (Twitter) to keep only Google login
 
-      // Redirect to frontend with token
-      res.redirect(`${process.env.CLIENT_URL}/auth/success?token=${token}`);
-    } catch (error) {
-      console.error('OAuth callback error:', error);
-      res.redirect('/login?error=oauth_failed');
-    }
-  }
-);
-
-// Instagram OAuth routes
-router.get('/instagram', (req, res, next) => {
-  if (!isStrategyRegistered('instagram')) {
-    return res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>OAuth Not Available</title>
-        <style>
-          body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
-          .error { color: #d32f2f; margin: 20px 0; }
-          .message { color: #666; margin: 20px 0; }
-        </style>
-      </head>
-      <body>
-        <h2>Instagram OAuth Not Available</h2>
-        <div class="error">Instagram OAuth is not configured.</div>
-        <div class="message">Please contact the administrator to set up Instagram authentication.</div>
-        <script>
-          setTimeout(() => {
-            if (window.opener) {
-              window.opener.postMessage({ type: 'OAUTH_ERROR', message: 'Instagram OAuth is not configured' }, '*');
-              window.close();
-            }
-          }, 2000);
-        </script>
-      </body>
-      </html>
-    `);
-  }
-  passport.authenticate('instagram')(req, res, next);
-});
-
-router.get('/instagram/callback',
-  passport.authenticate('instagram', { failureRedirect: '/login?error=oauth_failed' }),
-  async (req, res) => {
-    try {
-      // Generate JWT token
-      const token = jwt.sign(
-        { userId: req.user._id },
-        process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-      );
-
-      // Update last login
-      req.user.lastLogin = new Date();
-      await req.user.save();
-
-      // Redirect to frontend with token
-      res.redirect(`${process.env.CLIENT_URL}/auth/success?token=${token}`);
-    } catch (error) {
-      console.error('OAuth callback error:', error);
-      res.redirect('/login?error=oauth_failed');
-    }
-  }
-);
-
-// Twitter OAuth routes
-router.get('/twitter', (req, res, next) => {
-  if (!isStrategyRegistered('twitter')) {
-    return res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>OAuth Not Available</title>
-        <style>
-          body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
-          .error { color: #d32f2f; margin: 20px 0; }
-          .message { color: #666; margin: 20px 0; }
-        </style>
-      </head>
-      <body>
-        <h2>Twitter OAuth Not Available</h2>
-        <div class="error">Twitter OAuth is not configured.</div>
-        <div class="message">Please contact the administrator to set up Twitter authentication.</div>
-        <script>
-          setTimeout(() => {
-            if (window.opener) {
-              window.opener.postMessage({ type: 'OAUTH_ERROR', message: 'Twitter OAuth is not configured' }, '*');
-              window.close();
-            }
-          }, 2000);
-        </script>
-      </body>
-      </html>
-    `);
-  }
-  passport.authenticate('twitter')(req, res, next);
-});
-
-router.get('/twitter/callback',
-  passport.authenticate('twitter', { failureRedirect: '/login?error=oauth_failed' }),
-  async (req, res) => {
-    try {
-      // Generate JWT token
-      const token = jwt.sign(
-        { userId: req.user._id },
-        process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-      );
-
-      // Update last login
-      req.user.lastLogin = new Date();
-      await req.user.save();
-
-      // Redirect to frontend with token
-      res.redirect(`${process.env.CLIENT_URL}/auth/success?token=${token}`);
-    } catch (error) {
-      console.error('OAuth callback error:', error);
-      res.redirect('/login?error=oauth_failed');
-    }
-  }
-);
-
-// YouTube OAuth routes
-router.get('/youtube', (req, res, next) => {
-  if (!isStrategyRegistered('youtube')) {
-    return res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>OAuth Not Available</title>
-        <style>
-          body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
-          .error { color: #d32f2f; margin: 20px 0; }
-          .message { color: #666; margin: 20px 0; }
-        </style>
-      </head>
-      <body>
-        <h2>YouTube OAuth Not Available</h2>
-        <div class="error">YouTube OAuth is not configured.</div>
-        <div class="message">Please contact the administrator to set up YouTube authentication.</div>
-        <script>
-          setTimeout(() => {
-            if (window.opener) {
-              window.opener.postMessage({ type: 'OAUTH_ERROR', message: 'YouTube OAuth is not configured' }, '*');
-              window.close();
-            }
-          }, 2000);
-        </script>
-      </body>
-      </html>
-    `);
-  }
-  passport.authenticate('youtube')(req, res, next);
-});
-
-router.get('/youtube/callback',
-  passport.authenticate('youtube', { failureRedirect: '/login?error=oauth_failed' }),
-  async (req, res) => {
-    try {
-      // Generate JWT token
-      const token = jwt.sign(
-        { userId: req.user._id },
-        process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-      );
-
-      // Update last login
-      req.user.lastLogin = new Date();
-      await req.user.save();
-
-      // Redirect to frontend with token
-      res.redirect(`${process.env.CLIENT_URL}/auth/success?token=${token}`);
-    } catch (error) {
-      console.error('OAuth callback error:', error);
-      res.redirect('/login?error=oauth_failed');
-    }
-  }
-);
+// Removed non-Google OAuth routes (YouTube) to keep only Google login
 
 // OAuth success route (for handling the redirect)
 router.get('/success', (req, res) => {

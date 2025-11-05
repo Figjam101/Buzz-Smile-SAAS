@@ -39,13 +39,72 @@ router.get('/users', auth, requireAdmin, async (req, res) => {
  */
 router.get('/videos', auth, requireAdmin, async (req, res) => {
   try {
-    const videos = await Video.find({})
-      .populate('user', 'name email')
-      .sort({ createdAt: -1 });
-    
-    res.json(videos);
+    // Query params: pagination, status filter, search
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.min(Math.max(parseInt(req.query.limit) || 20, 1), 100);
+    const status = req.query.status; // e.g., 'public' or 'private' or actual status field
+    const q = (req.query.q || '').trim();
+
+    const query = {};
+
+    // Filter public/private flag
+    if (status === 'public') query.isPublic = true;
+    if (status === 'private') query.isPublic = false;
+
+    // Text search across title/description
+    if (q) {
+      query.$or = [
+        { title: { $regex: q, $options: 'i' } },
+        { description: { $regex: q, $options: 'i' } }
+      ];
+    }
+
+    const total = await Video.countDocuments(query);
+    const videos = await Video.find(query)
+      .populate('owner', 'name email')
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
+
+    // Map owner to user for UI compatibility and add safe fields
+    const mapped = videos.map(v => ({
+      ...v,
+      user: v.owner ? { name: v.owner.name, email: v.owner.email } : undefined,
+    }));
+
+    res.json({
+      videos: mapped,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.max(Math.ceil(total / limit), 1)
+      }
+    });
   } catch (error) {
     console.error('Error fetching videos:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+/**
+ * @route   DELETE /api/admin/videos/:id
+ * @desc    Delete any video by ID (admin only)
+ * @access  Admin
+ */
+router.delete('/videos/:id', auth, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const video = await Video.findById(id);
+    if (!video) {
+      return res.status(404).json({ message: 'Video not found' });
+    }
+
+    await Video.findByIdAndDelete(id);
+    res.json({ message: 'Video deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting video:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

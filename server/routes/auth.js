@@ -86,6 +86,49 @@ router.post('/login', [
 
     const { email, password } = req.body;
 
+    // Development-only login bypass when DB is unavailable
+    const mongoose = require('mongoose');
+    const dbUnavailable = mongoose.connection.readyState !== 1 && process.env.ALLOW_SERVER_WITHOUT_DB === 'true';
+    if (dbUnavailable) {
+      if (email === 'test@example.com' && password === 'testpassword123') {
+        const devUser = {
+          _id: 'dev-test-user',
+          email: 'test@example.com',
+          name: 'Test User',
+          businessName: 'Test Business',
+          plan: 'free',
+          videoCount: 0,
+          maxVideos: 10,
+          role: 'user',
+          profilePicture: null,
+          socialMedia: {},
+          linkedSocialAccounts: []
+        };
+        const token = jwt.sign(
+          { userId: devUser._id, devUser: true, user: devUser },
+          process.env.JWT_SECRET || 'dev-secret',
+          { expiresIn: '7d' }
+        );
+        return res.json({
+          message: 'Login successful (dev mode)',
+          token,
+          user: {
+            id: devUser._id,
+            email: devUser.email,
+            name: devUser.name,
+            businessName: devUser.businessName,
+            plan: devUser.plan,
+            videoCount: devUser.videoCount,
+            maxVideos: devUser.maxVideos,
+            role: devUser.role,
+            profilePicture: devUser.profilePicture,
+            socialMedia: devUser.socialMedia,
+            linkedSocialAccounts: devUser.linkedSocialAccounts
+          }
+        });
+      }
+    }
+
     // Find user
     const user = await User.findOne({ email });
     if (!user) {

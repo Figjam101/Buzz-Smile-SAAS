@@ -20,8 +20,10 @@ export default function AuthSuccess() {
           return;
         }
 
-        // Otherwise navigate to dashboard
-        navigate('/dashboard', { replace: true });
+        // Otherwise perform a full page navigation so AuthProvider
+        // re-initializes with the new token from localStorage.
+        // Using window.location ensures a hard reload instead of SPA navigation.
+        window.location.href = '/dashboard';
       } catch (e) {
         // If storage fails, just redirect to login
         navigate('/login', { replace: true });

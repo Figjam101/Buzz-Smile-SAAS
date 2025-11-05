@@ -8,14 +8,14 @@ const ffmpeg = require('fluent-ffmpeg');
 const mongoose = require('mongoose');
 const NodeCache = require('node-cache');
 const Video = require('../models/Video');
+const User = require('../models/User');
 const { auth } = require('../middleware/auth');
 const { checkCredits, deductCredits } = require('../middleware/credits');
-const OpenCutService = require('../services/opencutService');
+const videoEditingService = require('../services/videoEditingService');
 const thumbnailService = require('../services/thumbnailService');
 const backupService = require('../services/backupService');
 
 const router = express.Router();
-const opencutService = new OpenCutService();
 
 // Configure multer for video uploads
 const storage = multer.diskStorage({
@@ -64,7 +64,8 @@ const createUploadMiddleware = (req, res, next) => {
 };
 
 // Upload video(s) - supports both single and multiple files
-router.post('/upload', auth, checkCredits, createUploadMiddleware, async (req, res) => {
+// Upload should NOT require credits; credits apply when processing begins
+router.post('/upload', auth, createUploadMiddleware, async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: 'No video files provided' });
@@ -125,7 +126,7 @@ router.post('/upload', auth, checkCredits, createUploadMiddleware, async (req, r
         fileSize: totalSize,
         format: 'mp4',
         owner: user._id,
-        status: 'processing', // Always processing for multiple files
+        status: 'ready',
         editingPreferences: parsedEditingData,
         sourceFiles: files.map(file => ({
           filename: file.filename,
@@ -147,7 +148,7 @@ router.post('/upload', auth, checkCredits, createUploadMiddleware, async (req, r
         fileSize: file.size,
         format: path.extname(file.originalname).toLowerCase().slice(1),
         owner: user._id,
-        status: parsedEditingData ? 'processing' : 'ready',
+        status: 'ready',
         editingPreferences: parsedEditingData
       });
     }
@@ -198,13 +199,8 @@ router.post('/upload', auth, checkCredits, createUploadMiddleware, async (req, r
       }
     }
 
-    // If editing data is provided, start automatic processing
-    if (parsedEditingData) {
-      // Start background processing with the editing preferences
-      processVideoWithPreferences(video._id, parsedEditingData).catch(error => {
-        console.error('Error in background video processing:', error);
-      });
-    }
+    // Do not start processing automatically on upload.
+    // Save any provided editingPreferences with the video and leave status as 'ready'.
 
     // Update user video count (count as 1 video regardless of source files)
     user.videoCount += 1;
@@ -223,9 +219,7 @@ router.post('/upload', auth, checkCredits, createUploadMiddleware, async (req, r
     }
 
     res.status(201).json({
-      message: parsedEditingData ? 
-        (isMultipleFiles ? `${files.length} videos uploaded and merging started` : 'Video uploaded and processing started') :
-        (isMultipleFiles ? `${files.length} videos uploaded successfully` : 'Video uploaded successfully'),
+      message: isMultipleFiles ? `${files.length} videos uploaded successfully` : 'Video uploaded successfully',
       video: {
         id: video._id,
         title: video.title,
@@ -241,8 +235,7 @@ router.post('/upload', auth, checkCredits, createUploadMiddleware, async (req, r
       }
     });
 
-    // Deduct credits after successful upload
-    await deductCredits(req, res, () => {});
+    // No credit deduction on upload. Credits apply only when processing.
   } catch (error) {
     // Clean up uploaded files on error
     if (req.files && req.files.length > 0) {
@@ -595,7 +588,8 @@ router.delete('/:id', auth, async (req, res) => {
 });
 
 // Process video for editing
-router.post('/:id/process', auth, async (req, res) => {
+// Processing should require credits; enforce check and deduction here
+router.post('/:id/process', auth, checkCredits, async (req, res) => {
   try {
     const video = await Video.findOne({ 
       _id: req.params.id, 
@@ -623,6 +617,13 @@ router.post('/:id/process', auth, async (req, res) => {
       queuedAt: new Date(),
       jobId: job.id
     });
+
+    // Deduct credits after queueing processing job
+    try {
+      await deductCredits(req, res, () => {});
+    } catch (deductErr) {
+      console.error('Credit deduction after queue failed:', deductErr);
+    }
 
     res.json({ 
       message: 'Video processing job added to queue',
@@ -788,13 +789,14 @@ router.get('/:id/download-processed', auth, async (req, res) => {
       return res.status(404).json({ message: 'Video not found' });
     }
 
-    if (!video.opencutProcessing?.outputPath) {
+    const outputPath = video.processedFilePath;
+    if (!outputPath) {
       return res.status(400).json({ message: 'No processed video available' });
     }
 
     // Check if processed file exists
     try {
-      await fsPromises.access(video.opencutProcessing.outputPath);
+      await fsPromises.access(outputPath);
     } catch (error) {
       return res.status(404).json({ message: 'Processed video file not found' });
     }
@@ -804,12 +806,12 @@ router.get('/:id/download-processed', auth, async (req, res) => {
     await video.save();
 
     // Set headers for download
-    const filename = path.basename(video.opencutProcessing.outputPath);
+    const filename = path.basename(outputPath);
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.setHeader('Content-Type', 'video/mp4');
 
     // Stream the file
-    const fileStream = require('fs').createReadStream(video.opencutProcessing.outputPath);
+    const fileStream = require('fs').createReadStream(outputPath);
     fileStream.pipe(res);
 
     fileStream.on('error', (error) => {
@@ -831,7 +833,7 @@ router.get('/processed', auth, async (req, res) => {
   try {
     const videos = await Video.find({ 
       owner: new mongoose.Types.ObjectId(req.user._id),
-      'opencutProcessing.enabled': true
+      processedFilePath: { $exists: true, $ne: null }
     })
     .select('-filePath')
     .sort({ createdAt: -1 });
@@ -892,251 +894,33 @@ router.get('/queue/stats', auth, async (req, res) => {
   }
 });
 
-// Start OpenCut processing for a video
-router.post('/:id/process-opencut', auth, async (req, res) => {
+
+
+
+// Manual step-based processing helper (merges files then invokes editing service)
+async function startManualProcessing(videoId, editingData) {
   try {
-    const video = await Video.findOne({ 
-      _id: req.params.id, 
-      owner: req.user._id 
-    });
+    console.log(`Starting manual processing for ${videoId} with data:`, editingData);
 
-    if (!video) {
-      return res.status(404).json({ message: 'Video not found' });
-    }
-
-    if (video.status !== 'ready') {
-      return res.status(400).json({ message: 'Video must be ready before OpenCut processing' });
-    }
-
-    // Initialize OpenCut service if not already done
-    try {
-      await opencutService.initialize();
-    } catch (error) {
-      console.error('OpenCut initialization failed:', error);
-      return res.status(500).json({ message: 'OpenCut service unavailable' });
-    }
-
-    // Update video status to editing
-    video.status = 'editing';
-    video.opencutProcessing = {
-      enabled: true,
-      status: 'processing',
-      processingId: Date.now().toString(),
-      progress: 0,
-      settings: {
-        outputFormat: req.body.outputFormat || 'mp4',
-        quality: req.body.quality || 'high',
-        includeAudio: req.body.includeAudio !== false
-      },
-      startedAt: new Date()
-    };
-    await video.save();
-
-    // Start background processing
-    processVideoWithOpenCut(video._id, video.filePath, video.opencutProcessing.settings)
-      .catch(error => {
-        console.error('Background OpenCut processing failed:', error);
-        // Update video status to failed
-        Video.findByIdAndUpdate(video._id, {
-          status: 'failed',
-          'opencutProcessing.status': 'failed',
-          'opencutProcessing.error': error.message
-        }).catch(console.error);
-      });
-
-    res.json({ 
-      message: 'OpenCut processing started',
-      processingId: video.opencutProcessing.processingId
-    });
-  } catch (error) {
-    console.error('Start OpenCut processing error:', error);
-    res.status(500).json({ message: 'Server error starting OpenCut processing' });
-  }
-});
-
-// Get OpenCut processing status
-router.get('/:id/opencut-status', auth, async (req, res) => {
-  try {
-    const video = await Video.findOne({ 
-      _id: req.params.id, 
-      owner: req.user._id 
-    }).select('opencutProcessing status');
-
-    if (!video) {
-      return res.status(404).json({ message: 'Video not found' });
-    }
-
-    res.json({ 
-      status: video.status,
-      opencutProcessing: video.opencutProcessing || {
-        enabled: false,
-        status: 'not_started',
-        progress: 0
-      }
-    });
-  } catch (error) {
-    console.error('Get OpenCut status error:', error);
-    res.status(500).json({ message: 'Server error getting OpenCut status' });
-  }
-});
-
-// Background processing function
-async function processVideoWithOpenCut(videoId, videoPath, settings) {
-  try {
-    console.log(`Starting OpenCut processing for video ${videoId}`);
-    
-    // Update progress to 10%
-    await Video.findByIdAndUpdate(videoId, {
-      'opencutProcessing.progress': 10
-    });
-
-    // Ensure temp directory exists
-    await fsPromises.mkdir(path.dirname(videoPath), { recursive: true });
-
-    // Update progress to 30%
-    await Video.findByIdAndUpdate(videoId, {
-      'opencutProcessing.progress': 30
-    });
-
-    // Process video with OpenCut
-    const result = await opencutService.processVideo(videoPath, settings, async (progress) => {
-      // Progress callback to update database during processing
-      await Video.findByIdAndUpdate(videoId, {
-        'opencutProcessing.progress': Math.min(30 + (progress * 0.6), 90) // 30% to 90%
-      });
-    });
-
-    // Update progress to 95%
-    await Video.findByIdAndUpdate(videoId, {
-      'opencutProcessing.progress': 95
-    });
-
-    if (result.success) {
-      // Update video with completion status
-      await Video.findByIdAndUpdate(videoId, {
-        status: 'ready',
-        'opencutProcessing.status': 'completed',
-        'opencutProcessing.progress': 100,
-        'opencutProcessing.outputPath': result.outputPath,
-        'opencutProcessing.completedAt': new Date()
-      });
-
-      console.log(`OpenCut processing completed for video ${videoId}`);
-    } else {
-      throw new Error('OpenCut processing failed');
-    }
-  } catch (error) {
-    console.error(`OpenCut processing failed for video ${videoId}:`, error);
-    
-    await Video.findByIdAndUpdate(videoId, {
-      status: 'failed',
-      'opencutProcessing.status': 'failed',
-      'opencutProcessing.error': error.message
-    });
-  }
-}
-
-// Process video with editing preferences from wizard
-async function processVideoWithPreferences(videoId, editingData) {
-  try {
-    console.log(`Starting automatic video processing for ${videoId} with preferences:`, editingData);
-    
     const video = await Video.findById(videoId);
     if (!video) {
       throw new Error('Video not found');
     }
 
-    // Check if this is a multiple file video that needs merging
-    let videoPath = video.filePath;
+    // If multiple source files exist, merge them into a single input
     if (video.sourceFiles && video.sourceFiles.length > 1) {
       console.log(`Merging ${video.sourceFiles.length} files for video ${videoId}`);
-      
-      // Update progress to 5% for merging
-      await Video.findByIdAndUpdate(videoId, {
-        status: 'processing',
-        'opencutProcessing.status': 'processing',
-        'opencutProcessing.progress': 5,
-        'opencutProcessing.startedAt': new Date()
-      });
-
-      // Merge multiple files into one
       const mergedPath = await mergeVideoFiles(video.sourceFiles, videoId);
-      videoPath = mergedPath;
-      
-      // Update the video record with the merged file path
-      await Video.findByIdAndUpdate(videoId, {
-        filePath: mergedPath,
-        'opencutProcessing.progress': 15
-      });
-    } else {
-      // Update status to processing for single file
-      await Video.findByIdAndUpdate(videoId, {
-        status: 'processing',
-        'opencutProcessing.status': 'processing',
-        'opencutProcessing.progress': 0,
-        'opencutProcessing.startedAt': new Date()
-      });
+      await Video.findByIdAndUpdate(videoId, { filePath: mergedPath });
     }
 
-    // Create processing settings based on wizard data
-    const settings = {
-      videoName: editingData.videoName,
-      videoType: editingData.videoType,
-      targetAudience: editingData.targetAudience,
-      editingStyle: editingData.editingStyle,
-      duration: editingData.duration,
-      specialRequests: editingData.specialRequests,
-      // Map editing style to technical settings
-      quality: getQualityFromStyle(editingData.editingStyle),
-      effects: getEffectsFromStyle(editingData.editingStyle),
-      transitions: getTransitionsFromStyle(editingData.editingStyle),
-      music: getMusicFromAudience(editingData.targetAudience),
-      pacing: getPacingFromDuration(editingData.duration)
-    };
-
-    console.log('Processing settings:', settings);
-
-    // Update progress to 20% (or 10% if no merging was needed)
-    const baseProgress = video.sourceFiles && video.sourceFiles.length > 1 ? 20 : 10;
-    await Video.findByIdAndUpdate(videoId, {
-      'opencutProcessing.progress': baseProgress
-    });
-
-    // Start OpenCut processing with the generated settings
-    const result = await opencutService.processVideo(videoPath, settings, async (progress) => {
-      // Progress callback to update database during processing
-      const adjustedProgress = baseProgress + (progress * (90 - baseProgress) / 100);
-      await Video.findByIdAndUpdate(videoId, {
-        'opencutProcessing.progress': Math.min(adjustedProgress, 90)
-      });
-    });
-
-    // Update progress to 95%
-    await Video.findByIdAndUpdate(videoId, {
-      'opencutProcessing.progress': 95
-    });
-
-    if (result.success) {
-      // Update video with completion status
-      await Video.findByIdAndUpdate(videoId, {
-        status: 'ready',
-        'opencutProcessing.status': 'completed',
-        'opencutProcessing.progress': 100,
-        'opencutProcessing.outputPath': result.outputPath,
-        'opencutProcessing.completedAt': new Date()
-      });
-
-      console.log(`Automatic video processing completed for ${videoId}`);
-    } else {
-      throw new Error('Automatic video processing failed');
-    }
+    // Kick off processing using the manual video editing service
+    await videoEditingService.processVideo(videoId, editingData);
   } catch (error) {
-    console.error(`Automatic video processing failed for ${videoId}:`, error);
-    
+    console.error(`Manual processing failed for ${videoId}:`, error);
     await Video.findByIdAndUpdate(videoId, {
       status: 'failed',
-      'opencutProcessing.status': 'failed',
-      'opencutProcessing.error': error.message
+      'editingJob.errorMessage': error.message
     });
   }
 }

@@ -244,6 +244,10 @@ const connectDB = async () => {
     console.log('✅ Connected to MongoDB');
   } catch (error) {
     console.error('❌ MongoDB connection error:', error);
+    if (process.env.ALLOW_SERVER_WITHOUT_DB === 'true' && process.env.NODE_ENV !== 'production') {
+      console.warn('⚠️ Continuing without database connection for development (ALLOW_SERVER_WITHOUT_DB=true)');
+      return;
+    }
     process.exit(1);
   }
 };
@@ -315,5 +319,15 @@ connectDB().then(async () => {
   });
 }).catch(err => {
   console.error('Failed to start server:', err);
-  process.exit(1);
+  if (process.env.ALLOW_SERVER_WITHOUT_DB === 'true' && process.env.NODE_ENV !== 'production') {
+    console.warn('⚠️ Starting server without DB connection for development (ALLOW_SERVER_WITHOUT_DB=true)');
+    // Still log diagnostics
+    try { logFFmpegDiagnostics(); } catch (e) {}
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📡 Backend API available at http://localhost:${PORT}`);
+    });
+  } else {
+    process.exit(1);
+  }
 });

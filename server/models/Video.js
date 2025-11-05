@@ -97,32 +97,7 @@ const videoSchema = new mongoose.Schema({
     specialRequests: String
   },
   // OpenCut processing fields
-  opencutProcessing: {
-    enabled: {
-      type: Boolean,
-      default: false
-    },
-    status: {
-      type: String,
-      enum: ['not_started', 'processing', 'completed', 'failed'],
-      default: 'not_started'
-    },
-    progress: {
-      type: Number,
-      default: 0,
-      min: 0,
-      max: 100
-    },
-    processingId: String,
-    startedAt: Date,
-    completedAt: Date,
-    outputPath: String,
-    error: String,
-    settings: {
-      type: mongoose.Schema.Types.Mixed,
-      default: {}
-    }
-  },
+  // (Removed) OpenCut processing fields — feature fully deprecated
   // Multiple file support
   isMultipleFiles: {
     type: Boolean,
@@ -140,7 +115,9 @@ const videoSchema = new mongoose.Schema({
     default: 1
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
 });
 
 // Add comprehensive indexes for better query performance
@@ -151,6 +128,14 @@ videoSchema.index({ owner: 1, isPublic: 1 });
 videoSchema.index({ 'editingJob.jobId': 1 }, { sparse: true });
 videoSchema.index({ queuedAt: -1 }, { sparse: true });
 videoSchema.index({ processedAt: -1 }, { sparse: true });
-videoSchema.index({ 'opencutProcessing.processingId': 1 }, { sparse: true });
+// (Removed) index for deprecated OpenCut processingId
+
+// Backward-compatible virtual: map `user` to `owner` for legacy populate calls
+videoSchema.virtual('user', {
+  ref: 'User',
+  localField: 'owner',
+  foreignField: '_id',
+  justOne: true
+});
 
 module.exports = mongoose.model('Video', videoSchema);

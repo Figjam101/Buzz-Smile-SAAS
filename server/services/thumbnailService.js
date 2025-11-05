@@ -64,4 +64,60 @@ function extractThumbnail(videoPath) {
   });
 }
 
-module.exports = { extractThumbnail };
+// Get video duration in seconds using ffprobe via fluent-ffmpeg
+function getVideoDuration(videoPath) {
+  return new Promise((resolve, reject) => {
+    try {
+      ffmpeg.ffprobe(videoPath, (err, data) => {
+        if (err) return reject(err);
+        const seconds = Math.floor((data && data.format && data.format.duration) ? data.format.duration : 0);
+        resolve(Number.isFinite(seconds) ? seconds : 0);
+      });
+    } catch (e) {
+      resolve(0);
+    }
+  });
+}
+
+// Generate a single JPEG thumbnail at a sensible timestamp
+// Falls back gracefully if duration cannot be probed
+async function generateOptimalThumbnail(videoPath, idForName) {
+  const outputDir = path.join(__dirname, '../uploads/thumbnails');
+
+  if (!fs.existsSync(outputDir)) {
+    try {
+      fs.mkdirSync(outputDir, { recursive: true });
+    } catch (e) {
+      throw new Error(`Failed to create thumbnails directory: ${e.message}`);
+    }
+  }
+
+  // Determine a good timemark: midpoint capped at 30s, fallback to 5s
+  let timeMarkSeconds = 5;
+  try {
+    const duration = await getVideoDuration(videoPath);
+    if (duration && duration > 0) {
+      timeMarkSeconds = Math.max(1, Math.min(30, Math.floor(duration / 2)));
+    }
+  } catch (_) {
+    // keep fallback
+  }
+
+  const fileBase = idForName ? String(idForName) : path.basename(videoPath, path.extname(videoPath));
+  const outputPath = path.join(outputDir, `${fileBase}.jpg`);
+
+  return new Promise((resolve, reject) => {
+    ffmpeg(videoPath)
+      .frames(1)
+      .seekInput(timeMarkSeconds)
+      .outputOptions([
+        '-q:v 3' // reasonable JPEG quality
+      ])
+      .output(outputPath)
+      .on('end', () => resolve(outputPath))
+      .on('error', (err) => reject(err))
+      .run();
+  });
+}
+
+module.exports = { extractThumbnail, getVideoDuration, generateOptimalThumbnail };

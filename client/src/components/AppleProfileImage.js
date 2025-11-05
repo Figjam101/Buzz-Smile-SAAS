@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { User } from 'lucide-react';
 
 const AppleProfileImage = ({ 
@@ -66,7 +66,8 @@ const AppleProfileImage = ({
   const [color1, color2] = getGradientColors(name);
 
   // If profile picture is available, show it
-  if (profilePicture) {
+  const [imageError, setImageError] = useState(false);
+  if (profilePicture && !imageError) {
     const isAbsolute = /^https?:\/\//i.test(profilePicture);
     const imageSrc = isAbsolute
       ? profilePicture
@@ -82,6 +83,11 @@ const AppleProfileImage = ({
           src={imageSrc} 
           alt={`${name}'s profile`}
           className="w-full h-full object-cover"
+          crossOrigin="anonymous"
+          referrerPolicy="no-referrer"
+          loading="lazy"
+          decoding="async"
+          onError={() => setImageError(true)}
         />
       </div>
     );

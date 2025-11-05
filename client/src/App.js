@@ -16,10 +16,9 @@ const Register = React.lazy(() => import('./pages/Register'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const ShareVideo = React.lazy(() => import('./pages/ShareVideo'));
-const BuzzAnimationDemo = React.lazy(() => import('./components/BuzzAnimationDemo'));
-const GoogleDriveConnected = React.lazy(() => import('./pages/GoogleDriveConnected'));
-const DebugAPI = React.lazy(() => import('./pages/DebugAPI'));
-const OAuthTest = React.lazy(() => import('./pages/OAuthTest'));
+const Onboarding = React.lazy(() => import('./pages/Onboarding'));
+const UploadScheduler = React.lazy(() => import('./pages/UploadScheduler'));
+// Removed debug/demo components from production build
 const AuthSuccess = React.lazy(() => import('./pages/AuthSuccess'));
 
 // Component to handle page title and meta updates
@@ -46,6 +45,18 @@ const PageTitleHandler = () => {
             title: 'Admin Dashboard - VideoSaaS',
             description: 'Administrative control panel for managing users, system monitoring, and enterprise features.',
             canonical: `${window.location.origin}/admin`
+          };
+        case '/onboarding':
+          return {
+            title: 'Welcome Onboarding - VideoSaaS',
+            description: 'Personalize your setup, connect accounts, and get ready to post.',
+            canonical: `${window.location.origin}/onboarding`
+          };
+        case '/upload':
+          return {
+            title: 'Upload & Schedule - VideoSaaS',
+            description: 'Drag-and-drop upload with step-by-step scheduling across platforms.',
+            canonical: `${window.location.origin}/upload`
           };
         case '/login':
           return {
@@ -123,27 +134,29 @@ function App() {
                   <Route path="/register" element={<Register />} />
                   <Route path="/auth/success" element={<AuthSuccess />} />
                   <Route path="/share/:videoId" element={<ShareVideo />} />
-                  <Route path="/buzz-demo" element={<BuzzAnimationDemo />} />
-                  <Route path="/debug-api" element={<DebugAPI />} />
-                  <Route path="/admin/oauth-test" element={
-                    <ProtectedRoute>
-                      <OAuthTest />
-                    </ProtectedRoute>
-                  } />
-                  <Route 
-                    path="/integrations/google-drive/connected" 
-                    element={
-                      <ProtectedRoute>
-                        <GoogleDriveConnected />
-                      </ProtectedRoute>
-                    }
-                  />
+                  {/* Debug/demo routes removed */}
                   <Route path="/" element={<Home />} />
                   <Route 
                     path="/dashboard" 
                     element={
                       <ProtectedRoute>
                         <Dashboard />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/onboarding" 
+                    element={
+                      <ProtectedRoute>
+                        <Onboarding />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/upload" 
+                    element={
+                      <ProtectedRoute>
+                        <UploadScheduler />
                       </ProtectedRoute>
                     } 
                   />

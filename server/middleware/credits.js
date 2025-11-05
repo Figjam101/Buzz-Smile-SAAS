@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Video = require('../models/Video');
 
 // Middleware to check if user has enough credits
 const checkCredits = async (req, res, next) => {
@@ -15,11 +16,57 @@ const checkCredits = async (req, res, next) => {
       return next();
     }
 
-    // Check if user has credits
-    if (user.credits.balance <= 0) {
-      return res.status(403).json({ 
+    // Compute required credits based on uploaded files and editing options
+    let baseCredits = 1;
+    try {
+      const multipleFilesFlag = req.body?.multipleFiles === 'true' || req.body?.multipleFiles === true;
+      if (Array.isArray(req.files) && req.files.length > 0) {
+        baseCredits = multipleFilesFlag ? 1 : req.files.length;
+      }
+    } catch (_) {}
+
+    let extraCredits = 0;
+    try {
+      // Prefer parsing from request body if present
+      const raw = req.body?.editingData;
+      let parsed = {};
+      if (raw) {
+        parsed = typeof raw === 'string' ? JSON.parse(raw) : (raw || {});
+      }
+      // If not available on body (e.g., /:id/process), read from video.editingPreferences
+      if ((!parsed || Object.keys(parsed).length === 0) && req.params?.id) {
+        const video = await Video.findById(req.params.id);
+        if (video && video.editingPreferences) {
+          parsed = video.editingPreferences;
+        }
+      }
+
+      const isStory = Boolean(parsed?.storyMode || parsed?.isStory);
+      const estExtra = typeof parsed?.estimatedExtraCredits === 'number' ? parsed.estimatedExtraCredits : (isStory ? 1 : 0);
+      extraCredits = isStory ? estExtra : 0;
+    } catch (_) {}
+
+    const requiredCredits = baseCredits + extraCredits;
+
+    if (user.credits.balance < requiredCredits) {
+      // If files were already uploaded, clean them up
+      if (Array.isArray(req.files)) {
+        try {
+          for (const f of req.files) {
+            if (f?.path) {
+              const fs = require('fs');
+              if (fs.existsSync(f.path)) fs.unlinkSync(f.path);
+            }
+          }
+        } catch (cleanupErr) {
+          console.error('Credit check cleanup error:', cleanupErr);
+        }
+      }
+      return res.status(403).json({
         error: 'Insufficient credits',
-        message: 'You need more credits to process videos. Please purchase more credits or upgrade your plan.'
+        message: `You need ${requiredCredits} credits for this operation, but have ${user.credits.balance}. Please purchase more credits or upgrade your plan.`,
+        required: requiredCredits,
+        balance: user.credits.balance
       });
     }
 
@@ -45,17 +92,43 @@ const deductCredits = async (req, res, next) => {
       return next();
     }
 
-    // Deduct 1 credit per video processed
-    const videosProcessed = req.files ? req.files.length : 1;
-    
+    // Compute deduction based on processing request (base 1) and editing options
+    let baseCredits = 1;
+    try {
+      const multipleFilesFlag = req.body?.multipleFiles === 'true' || req.body?.multipleFiles === true;
+      if (Array.isArray(req.files) && req.files.length > 0) {
+        baseCredits = multipleFilesFlag ? 1 : req.files.length;
+      }
+    } catch (_) {}
+
+    let extraCredits = 0;
+    try {
+      const raw = req.body?.editingData;
+      let parsed = {};
+      if (raw) {
+        parsed = typeof raw === 'string' ? JSON.parse(raw) : (raw || {});
+      }
+      if ((!parsed || Object.keys(parsed).length === 0) && req.params?.id) {
+        const video = await Video.findById(req.params.id);
+        if (video && video.editingPreferences) {
+          parsed = video.editingPreferences;
+        }
+      }
+      const isStory = Boolean(parsed?.storyMode || parsed?.isStory);
+      const estExtra = typeof parsed?.estimatedExtraCredits === 'number' ? parsed.estimatedExtraCredits : (isStory ? 1 : 0);
+      extraCredits = isStory ? estExtra : 0;
+    } catch (_) {}
+
+    const totalDeduction = baseCredits + extraCredits;
+
     await User.findByIdAndUpdate(userId, {
       $inc: {
-        'credits.balance': -videosProcessed,
-        'credits.used': videosProcessed
+        'credits.balance': -totalDeduction,
+        'credits.used': totalDeduction
       }
     });
 
-    console.log(`Deducted ${videosProcessed} credits from user ${user.email}`);
+    console.log(`Deducted ${totalDeduction} credits from user ${user.email}`);
     next();
   } catch (error) {
     console.error('Credit deduction error:', error);
