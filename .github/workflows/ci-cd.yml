@@ -200,7 +200,8 @@ jobs:
           vercel-token: ${{ env.VERCEL_TOKEN }}
           vercel-org-id: ${{ env.VERCEL_ORG_ID }}
           vercel-project-id: ${{ env.VERCEL_PROJECT_ID }}
-          working-directory: ./client
+          working-directory: ./
+          vercel-args: '--debug'
         continue-on-error: false
 
       - name: "Fallback: trigger Vercel via GitHub integration (no-op commit)"
@@ -285,8 +286,8 @@ jobs:
           vercel-token: ${{ env.VERCEL_TOKEN }}
           vercel-org-id: ${{ env.VERCEL_ORG_ID }}
           vercel-project-id: ${{ env.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
-          working-directory: ./client
+          vercel-args: '--prod --debug'
+          working-directory: ./
         continue-on-error: false
 
       - name: "Fallback: trigger Vercel via GitHub integration (no-op commit)"
