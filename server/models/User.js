@@ -122,6 +122,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  logo: {
+    type: String,
+    default: null
+  },
   socialMedia: {
     facebook: { type: String, default: '' },
     twitter: { type: String, default: '' },

@@ -17,6 +17,23 @@ const backupService = require('../services/backupService');
 
 const router = express.Router();
 
+// Offline mode support: allow uploads to succeed even if DB is unavailable
+const OFFLINE_MODE = process.env.ALLOW_SERVER_WITHOUT_DB === 'true' && process.env.NODE_ENV !== 'production';
+function isDbConnected() {
+  return !!(mongoose.connection && mongoose.connection.readyState === 1);
+}
+
+// Helper to get storage limit by user plan
+function getStorageLimitForUser(user) {
+  const GB = 1024 * 1024 * 1024;
+  const isGodModeAdmin = user && user.role === 'admin' && (user.subscription?.plan === 'god' || user.plan === 'god');
+  if (isGodModeAdmin) return Number.POSITIVE_INFINITY;
+  const plan = user?.subscription?.plan || user?.plan || 'free';
+  if (plan === 'free' || plan === 'basic') return GB * 1; // 1GB cap for beginner/free
+  if (plan === 'premium' || plan === 'pro' || plan === 'enterprise') return GB * 10; // generous cap for higher tiers
+  return GB * 2; // default 2GB
+}
+
 // Configure multer for video uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -33,13 +50,15 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  const allowedFormats = process.env.ALLOWED_VIDEO_FORMATS?.split(',') || ['mp4', 'mov', 'avi', 'mkv'];
-  const fileExtension = path.extname(file.originalname).toLowerCase().slice(1);
-  
-  if (allowedFormats.includes(fileExtension)) {
+  const videoFormats = process.env.ALLOWED_VIDEO_FORMATS?.split(',') || ['mp4', 'mov', 'avi', 'mkv', 'flv', 'webm', 'wmv'];
+  const imageFormats = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+  const ext = path.extname(file.originalname).toLowerCase().slice(1);
+  const isVideo = (file.mimetype && file.mimetype.startsWith('video/')) || videoFormats.includes(ext);
+  const isImage = (file.mimetype && file.mimetype.startsWith('image/')) || imageFormats.includes(ext);
+  if (isVideo || isImage) {
     cb(null, true);
   } else {
-    cb(new Error(`Invalid file format. Allowed formats: ${allowedFormats.join(', ')}`), false);
+    cb(new Error(`Invalid file type. Allowed: videos (${videoFormats.join(', ')}) and images (${imageFormats.join(', ')})`), false);
   }
 };
 
@@ -60,7 +79,17 @@ const createUploadMiddleware = (req, res, next) => {
     }
   });
   
-  return upload.array('video', 10)(req, res, next);
+  return upload.array('video', 10)(req, res, (err) => {
+    if (err) {
+      if (err instanceof multer.MulterError) {
+        // Known multer error (limits, field issues, etc.)
+        return res.status(400).json({ message: err.message });
+      }
+      // Unknown error (e.g., invalid file type)
+      return res.status(400).json({ message: err.message || 'Invalid upload request' });
+    }
+    next();
+  });
 };
 
 // Upload video(s) - supports both single and multiple files
@@ -74,6 +103,32 @@ router.post('/upload', auth, createUploadMiddleware, async (req, res) => {
     const user = req.user;
     const files = req.files;
     const isMultipleFiles = files.length > 1;
+    const incomingTotalSize = files.reduce((sum, f) => sum + (f.size || 0), 0);
+    const dbConnected = isDbConnected();
+    
+    // Enforce user storage cap before accepting upload
+    const storageLimit = getStorageLimitForUser(user);
+    // If DB is disconnected and offline mode is enabled, skip storage usage query
+    let currentUsed = 0;
+    if (dbConnected) {
+      const userVideos = await Video.find({ owner: user._id }).select('fileSize');
+      currentUsed = userVideos.reduce((sum, v) => sum + (v.fileSize || 0), 0);
+    }
+    if (Number.isFinite(storageLimit) && currentUsed + incomingTotalSize > storageLimit) {
+      // Delete uploaded files immediately
+      files.forEach(file => {
+        if (fs.existsSync(file.path)) {
+          fs.unlinkSync(file.path);
+        }
+      });
+      const remaining = Math.max(0, storageLimit - currentUsed);
+      return res.status(403).json({
+        message: `Storage limit exceeded. You have ${Math.round(remaining / (1024*1024))} MB remaining.`,
+        storageUsed: currentUsed,
+        storageLimit,
+        attemptedSize: incomingTotalSize
+      });
+    }
     
     // Check if user has reached video limit (count all files) - Skip for admin users with god plan
     const isGodModeAdmin = user.role === 'admin' && (user.subscription?.plan === 'god' || user.plan === 'god');
@@ -117,43 +172,87 @@ router.post('/upload', auth, createUploadMiddleware, async (req, res) => {
       const totalSize = files.reduce((sum, file) => sum + file.size, 0);
       const combinedTitle = title || `Combined Video - ${files.map(f => f.originalname).join(', ')}`;
       
-      video = new Video({
-        title: combinedTitle,
-        description: description || '',
-        filename: `merged-${Date.now()}.mp4`, // Will be updated after merging
-        originalName: files.map(f => f.originalname).join(', '),
-        filePath: files[0].path, // Use first file path temporarily, will be updated after merging
-        fileSize: totalSize,
-        format: 'mp4',
-        owner: user._id,
-        status: 'ready',
-        editingPreferences: parsedEditingData,
-        sourceFiles: files.map(file => ({
+      if (dbConnected) {
+        video = new Video({
+          title: combinedTitle,
+          description: description || '',
+          filename: `merged-${Date.now()}.mp4`, // Will be updated after merging
+          originalName: files.map(f => f.originalname).join(', '),
+          filePath: files[0].path, // Use first file path temporarily, will be updated after merging
+          fileSize: totalSize,
+          format: 'mp4',
+          owner: user._id,
+          status: 'ready',
+          editingPreferences: parsedEditingData,
+          sourceFiles: files.map(file => ({
+            filename: file.filename,
+            originalName: file.originalname,
+            filePath: file.path,
+            fileSize: file.size,
+            format: path.extname(file.originalname).toLowerCase().slice(1)
+          }))
+        });
+      } else {
+        video = {
+          _id: uuidv4(),
+          title: combinedTitle,
+          description: description || '',
+          filename: `merged-${Date.now()}.mp4`,
+          originalName: files.map(f => f.originalname).join(', '),
+          filePath: files[0].path,
+          fileSize: totalSize,
+          format: 'mp4',
+          owner: user._id,
+          status: 'ready',
+          editingPreferences: parsedEditingData,
+          sourceFiles: files.map(file => ({
+            filename: file.filename,
+            originalName: file.originalname,
+            filePath: file.path,
+            fileSize: file.size,
+            format: path.extname(file.originalname).toLowerCase().slice(1)
+          })),
+          createdAt: new Date()
+        };
+      }
+    } else {
+      // Single file handling (existing logic)
+      const file = files[0];
+      if (dbConnected) {
+        video = new Video({
+          title: title || file.originalname,
+          description: description || '',
           filename: file.filename,
           originalName: file.originalname,
           filePath: file.path,
           fileSize: file.size,
-          format: path.extname(file.originalname).toLowerCase().slice(1)
-        }))
-      });
-    } else {
-      // Single file handling (existing logic)
-      const file = files[0];
-      video = new Video({
-        title: title || file.originalname,
-        description: description || '',
-        filename: file.filename,
-        originalName: file.originalname,
-        filePath: file.path,
-        fileSize: file.size,
-        format: path.extname(file.originalname).toLowerCase().slice(1),
-        owner: user._id,
-        status: 'ready',
-        editingPreferences: parsedEditingData
-      });
+          format: path.extname(file.originalname).toLowerCase().slice(1),
+          owner: user._id,
+          status: 'ready',
+          editingPreferences: parsedEditingData
+        });
+      } else {
+        video = {
+          _id: uuidv4(),
+          title: title || file.originalname,
+          description: description || '',
+          filename: file.filename,
+          originalName: file.originalname,
+          filePath: file.path,
+          fileSize: file.size,
+          format: path.extname(file.originalname).toLowerCase().slice(1),
+          owner: user._id,
+          status: 'ready',
+          editingPreferences: parsedEditingData,
+          createdAt: new Date()
+        };
+      }
     }
 
-    await video.save();
+    // Persist only if DB is connected
+    if (dbConnected) {
+      await video.save();
+    }
 
     // Backup uploaded video files to admin-only folder
     try {
@@ -185,11 +284,13 @@ router.post('/upload', auth, createUploadMiddleware, async (req, res) => {
         // Extract video duration
         const duration = await thumbnailService.getVideoDuration(videoPath);
         
-        // Update video with thumbnail path and duration
-        await Video.findByIdAndUpdate(video._id, {
-          thumbnailPath: thumbnailPath,
-          duration: duration
-        });
+        // Update video with thumbnail path and duration only if DB is connected
+        if (dbConnected) {
+          await Video.findByIdAndUpdate(video._id, {
+            thumbnailPath: thumbnailPath,
+            duration: duration
+          });
+        }
         
         console.log(`Thumbnail generated for video ${video._id}: ${thumbnailPath}`);
         console.log(`Duration extracted for video ${video._id}: ${duration} seconds`);
@@ -203,8 +304,10 @@ router.post('/upload', auth, createUploadMiddleware, async (req, res) => {
     // Save any provided editingPreferences with the video and leave status as 'ready'.
 
     // Update user video count (count as 1 video regardless of source files)
-    user.videoCount += 1;
-    await user.save();
+    if (dbConnected) {
+      user.videoCount += 1;
+      await user.save();
+    }
 
     // Clear video list cache for this user to ensure fresh data on next fetch
     const userId = user._id.toString();
@@ -322,6 +425,7 @@ router.get('/', auth, async (req, res) => {
     const limit = Math.min(parseInt(req.query.limit) || 10, 50); // Cap at 50
     const skip = (page - 1) * limit;
     const userId = req.user._id.toString();
+    const dbConnected = isDbConnected();
     
     // Debug logging
     console.log('=== DEBUG: Videos API Route ===');
@@ -336,6 +440,24 @@ router.get('/', auth, async (req, res) => {
     if (cached) {
       console.log('Returning cached result');
       return res.json(cached);
+    }
+
+    // If DB is not connected and offline mode is enabled, return an empty list gracefully
+    if (!dbConnected && OFFLINE_MODE) {
+      const result = {
+        videos: [],
+        pagination: {
+          current: page,
+          pages: 0,
+          total: 0
+        }
+      };
+      res.set({
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      });
+      return res.json(result);
     }
 
     console.log('Querying database with owner:', req.user._id);
@@ -391,6 +513,11 @@ router.get('/', auth, async (req, res) => {
 // Get ready downloads count for notification badge
 router.get('/ready-count', auth, async (req, res) => {
   try {
+    const dbConnected = isDbConnected();
+    if (!dbConnected && OFFLINE_MODE) {
+      return res.json({ count: 0 });
+    }
+
     const count = await Video.countDocuments({ 
       owner: new mongoose.Types.ObjectId(req.user._id), 
       status: 'ready' 

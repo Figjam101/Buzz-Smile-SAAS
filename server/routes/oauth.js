@@ -16,7 +16,8 @@ router.get('/status', (req, res) => {
   const isNonPlaceholder = (val) => Boolean(val && val !== 'placeholder-google-client-id');
 
   const providers = {
-    google: Boolean(isStrategyRegistered('google'))
+    google: Boolean(isStrategyRegistered('google')),
+    facebook: Boolean(isStrategyRegistered('facebook'))
   };
 
   const config = {
@@ -70,9 +71,14 @@ router.get('/google/callback',
   async (req, res) => {
     try {
       // Generate JWT token
+      const nodeEnv = process.env.NODE_ENV || 'development';
+      const secret = process.env.JWT_SECRET || (nodeEnv !== 'production' ? 'dev-secret' : null);
+      if (!secret) {
+        throw new Error('JWT_SECRET is not configured in production environment');
+      }
       const token = jwt.sign(
         { userId: req.user._id },
-        process.env.JWT_SECRET,
+        secret,
         { expiresIn: '7d' }
       );
 
@@ -90,6 +96,71 @@ router.get('/google/callback',
 );
 
 // Removed non-Google OAuth routes (Facebook) to keep only Google login
+// Facebook OAuth routes (stubbed when not configured)
+router.get('/facebook', (req, res, next) => {
+  if (!isStrategyRegistered('facebook')) {
+    return res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>OAuth Not Available</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
+          .error { color: #d32f2f; margin: 20px 0; }
+          .message { color: #666; margin: 20px 0; }
+        </style>
+      </head>
+      <body>
+        <h2>Facebook OAuth Not Available</h2>
+        <div class="error">Facebook OAuth is not configured.</div>
+        <div class="message">Please contact the administrator to set up Facebook Business integration.</div>
+        <script>
+          setTimeout(() => {
+            if (window.opener) {
+              window.opener.postMessage({ type: 'OAUTH_ERROR', message: 'Facebook OAuth is not configured' }, '*');
+              window.close();
+            }
+          }, 2000);
+        </script>
+      </body>
+      </html>
+    `);
+  }
+  // If configured, request necessary scopes for business pages posting
+  passport.authenticate('facebook', { scope: [
+    'public_profile',
+    'email',
+    'pages_show_list',
+    'pages_manage_posts',
+    'pages_read_engagement'
+  ] })(req, res, next);
+});
+
+router.get('/facebook/callback', (req, res, next) => {
+  if (!isStrategyRegistered('facebook')) {
+    return res.redirect('/login?error=oauth_failed');
+  }
+  passport.authenticate('facebook', { failureRedirect: '/login?error=oauth_failed' })(req, res, async () => {
+    try {
+      const nodeEnv = process.env.NODE_ENV || 'development';
+      const secret = process.env.JWT_SECRET || (nodeEnv !== 'production' ? 'dev-secret' : null);
+      if (!secret) {
+        throw new Error('JWT_SECRET is not configured in production environment');
+      }
+      const token = jwt.sign(
+        { userId: req.user._id },
+        secret,
+        { expiresIn: '7d' }
+      );
+      req.user.lastLogin = new Date();
+      await req.user.save();
+      res.redirect(`${process.env.CLIENT_URL}/auth/success?token=${token}`);
+    } catch (error) {
+      console.error('Facebook OAuth callback error:', error);
+      res.redirect('/login?error=oauth_failed');
+    }
+  });
+});
 
 // Removed non-Google OAuth routes (Instagram) to keep only Google login
 

@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
 
 const ProfilePictureUploader = ({ isOpen, onClose }) => {
-  const { token, refreshUser } = useAuth();
+  const { token, refreshUser, updateProfile } = useAuth();
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -27,8 +27,8 @@ const ProfilePictureUploader = ({ isOpen, onClose }) => {
       toast.error('Please select a valid image file');
       return;
     }
-    if (selected.size > 5 * 1024 * 1024) {
-      toast.error('Image size must be ≤ 5MB');
+    if (selected.size > 20 * 1024 * 1024) {
+      toast.error('Image size must be ≤ 20MB');
       return;
     }
     setFile(selected);
@@ -45,7 +45,16 @@ const ProfilePictureUploader = ({ isOpen, onClose }) => {
       const formData = new FormData();
       formData.append('profilePicture', file);
 
-      const apiBase = process.env.REACT_APP_API_URL || '';
+      // Resolve API base robustly: normalize env base and fallback to local dev backend
+      const rawBase = process.env.REACT_APP_API_URL || '';
+      const trimmed = rawBase.replace(/\/$/, '');
+      const normalized = /\/api$/.test(trimmed) ? trimmed.replace(/\/api$/, '') : trimmed;
+      let apiBase = normalized;
+      if (!apiBase && typeof window !== 'undefined') {
+        const origin = window.location.origin;
+        apiBase = origin.includes('localhost:3000') ? 'http://localhost:5001' : origin;
+      }
+
       const response = await fetch(`${apiBase}/api/users/profile`, {
         method: 'PUT',
         headers: {
@@ -59,8 +68,14 @@ const ProfilePictureUploader = ({ isOpen, onClose }) => {
         throw new Error(err.message || 'Failed to update profile picture');
       }
 
+      // Immediately update local user state from the response to avoid stale cache issues
+      const data = await response.json().catch(() => null);
+      if (data && data.user) {
+        await updateProfile(data.user);
+      } else {
+        await refreshUser();
+      }
       toast.success('Profile picture updated');
-      await refreshUser();
       onClose?.();
     } catch (error) {
       console.error('Profile picture upload failed:', error);
@@ -108,7 +123,7 @@ const ProfilePictureUploader = ({ isOpen, onClose }) => {
               {uploading ? 'Uploading…' : 'Save'}
             </button>
           </div>
-          <p className="text-xs text-gray-500 text-center">Max 5MB, JPG/PNG/WebP</p>
+          <p className="text-xs text-gray-500 text-center">Max 20MB, JPG/PNG/WebP</p>
         </div>
       </div>
     </div>

@@ -30,8 +30,8 @@ export const AuthProvider = ({ children }) => {
     let baseURL = envBase;
     if (!baseURL && typeof window !== 'undefined') {
       const origin = window.location.origin;
-      // In local dev, default to backend on 5000; in prod, use same-origin
-      baseURL = origin.includes('localhost:3000') ? 'http://localhost:5000' : '';
+      // In local dev, default to backend on 5001; in prod, use same-origin
+      baseURL = origin.includes('localhost:3000') ? 'http://localhost:5001' : '';
     }
     axios.defaults.baseURL = baseURL || '';
     // Optional: surface configuration in console for quick diagnostics

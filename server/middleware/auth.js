@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+// Dev/offline mode flag: allow server to operate without DB in non-production
+const OFFLINE_MODE = (process.env.ALLOW_SERVER_WITHOUT_DB === 'true') && ((process.env.NODE_ENV || 'development') !== 'production');
+
 // Simple in-memory cache for user data
 const userCache = new Map();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
@@ -29,9 +32,24 @@ const auth = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret');
     const userId = decoded.userId;
     
-    // Development fallback: if DB is unavailable and token carries embedded user
-    if (decoded.devUser && process.env.ALLOW_SERVER_WITHOUT_DB === 'true') {
-      req.user = decoded.user;
+    // Development fallback: if DB is unavailable, provide a safe offline user
+    if (OFFLINE_MODE) {
+      const offlineUser = {
+        _id: userId,
+        id: userId,
+        email: decoded.email || 'dev@offline.local',
+        name: decoded.name || 'Offline User',
+        businessName: decoded.businessName || '',
+        plan: decoded.plan || 'free',
+        videoCount: decoded.videoCount || 0,
+        maxVideos: decoded.maxVideos || 5,
+        lastLogin: new Date(),
+        role: decoded.role || 'user',
+        profilePicture: null,
+        socialMedia: {},
+        linkedSocialAccounts: []
+      };
+      req.user = offlineUser;
       return next();
     }
     
@@ -62,6 +80,35 @@ const auth = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
+    // If DB is offline in dev, still allow with offline user
+    if (OFFLINE_MODE) {
+      try {
+        const tokenHeader = req.header('Authorization')?.replace('Bearer ', '');
+        const tokenQuery = req.query?.token;
+        const tokenCookie = req.cookies ? req.cookies.token : null;
+        const token = tokenHeader || tokenQuery || tokenCookie;
+        const decoded = token ? jwt.verify(token, process.env.JWT_SECRET || 'dev-secret') : null;
+        const userId = decoded?.userId || 'offline-user';
+        req.user = {
+          _id: userId,
+          id: userId,
+          email: decoded?.email || 'dev@offline.local',
+          name: decoded?.name || 'Offline User',
+          businessName: decoded?.businessName || '',
+          plan: decoded?.plan || 'free',
+          videoCount: decoded?.videoCount || 0,
+          maxVideos: decoded?.maxVideos || 5,
+          lastLogin: new Date(),
+          role: decoded?.role || 'user',
+          profilePicture: null,
+          socialMedia: {},
+          linkedSocialAccounts: []
+        };
+        return next();
+      } catch (_) {
+        // fall through to error handling below
+      }
+    }
     if (error.name === 'JsonWebTokenError') {
       return res.status(401).json({ message: 'Invalid token.' });
     }
@@ -81,8 +128,28 @@ const optionalAuth = async (req, res, next) => {
     const token = tokenHeader || tokenQuery || tokenCookie;
     
     if (token) {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret');
       const userId = decoded.userId;
+      
+      // In offline mode, supply a safe user and skip DB lookups
+      if (OFFLINE_MODE) {
+        req.user = {
+          _id: userId,
+          id: userId,
+          email: decoded.email || 'dev@offline.local',
+          name: decoded.name || 'Offline User',
+          businessName: decoded.businessName || '',
+          plan: decoded.plan || 'free',
+          videoCount: decoded.videoCount || 0,
+          maxVideos: decoded.maxVideos || 5,
+          lastLogin: new Date(),
+          role: decoded.role || 'user',
+          profilePicture: null,
+          socialMedia: {},
+          linkedSocialAccounts: []
+        };
+        return next();
+      }
       
       // Check cache first
       const cached = userCache.get(userId);

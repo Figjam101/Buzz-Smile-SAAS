@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { FileVideo, Play, AlertCircle, Trash2, Download, Edit3, Check, X, Share2, Wand2 } from 'lucide-react';
+import axios from 'axios';
+import { FileVideo, Play, Trash2, Download, Edit3, Check, X, Share2, Wand2 } from 'lucide-react';
 import './VideoThumbnail.css';
 
 const VideoThumbnail = ({ 
@@ -20,17 +21,11 @@ const VideoThumbnail = ({
   const [thumbnailSrc, setThumbnailSrc] = useState(null);
   const [showFallback, setShowFallback] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [error, setError] = useState(null);
   const [isInView, setIsInView] = useState(true);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [useClientThumbnail, setUseClientThumbnail] = useState(false);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const observerRef = useRef(null);
-  const previewVideoRef = useRef(null);
-  const containerRef = useRef(null);
 
   const generateClientThumbnail = useCallback(async () => {
     if (!video || !videoRef.current || !canvasRef.current) return;
@@ -44,11 +39,15 @@ const VideoThumbnail = ({
       canvas.width = 320;
       canvas.height = 180;
 
-      // Load video and seek to 1 second
-      videoElement.currentTime = 1;
-      
+      // Wait for metadata then seek to a safe timestamp
       await new Promise((resolve, reject) => {
-        const handleSeeked = () => {
+        const cleanup = () => {
+          videoElement.removeEventListener('loadedmetadata', onLoadedMetadata);
+          videoElement.removeEventListener('seeked', onSeeked);
+          videoElement.removeEventListener('error', onError);
+        };
+
+        const onSeeked = () => {
           try {
             ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
             const thumbnailDataUrl = canvas.toDataURL('image/jpeg', 0.8);
@@ -56,22 +55,53 @@ const VideoThumbnail = ({
             setIsGenerating(false);
             resolve();
           } catch (err) {
+            // Gracefully handle cross-origin taint or draw errors
+            setShowFallback(true);
+            setIsGenerating(false);
             reject(err);
           } finally {
-            videoElement.removeEventListener('seeked', handleSeeked);
+            cleanup();
           }
         };
 
-        const handleError = (err) => {
-          videoElement.removeEventListener('error', handleError);
+        const onLoadedMetadata = () => {
+          try {
+            const duration = Number.isFinite(videoElement.duration) ? videoElement.duration : 2;
+            const target = Math.min(1, Math.max(0.2, duration / 4));
+            videoElement.currentTime = target;
+          } catch (err) {
+            reject(err);
+            cleanup();
+          }
+        };
+
+        const onError = (err) => {
+          cleanup();
+          setShowFallback(true);
+          setIsGenerating(false);
           reject(err);
         };
 
-        videoElement.addEventListener('seeked', handleSeeked);
-        videoElement.addEventListener('error', handleError);
+        // Kick off loading explicitly for dynamically mounted video elements
+        try { videoElement.load(); } catch (_) {}
+
+        videoElement.addEventListener('loadedmetadata', onLoadedMetadata);
+        videoElement.addEventListener('seeked', onSeeked);
+        videoElement.addEventListener('error', onError);
+
+        // Timeout safeguard to avoid hanging in some browsers
+        const timeout = setTimeout(() => {
+          cleanup();
+          setShowFallback(true);
+          setIsGenerating(false);
+          reject(new Error('Thumbnail generation timed out'));
+        }, 7000);
+        // Clear timeout on successful resolve
+        const originalResolve = resolve;
+        resolve = (...args) => { clearTimeout(timeout); originalResolve(...args); };
       });
     } catch (err) {
-      console.error('Error generating client-side thumbnail:', err);
+      console.warn('Client-side thumbnail generation fell back:', err?.message || err);
       setShowFallback(true);
       setIsGenerating(false);
     }
@@ -103,7 +133,16 @@ const VideoThumbnail = ({
         
         // Try server-side thumbnail first
         try {
-          const thumbnailUrl = `${process.env.REACT_APP_API_URL}/api/videos/${video._id}/thumbnail`;
+          // Resolve API base robustly
+          const rawBase = process.env.REACT_APP_API_URL || axios.defaults.baseURL || '';
+          const trimmed = (rawBase || '').replace(/\/$/, '');
+          const base = /\/api$/.test(trimmed) ? trimmed.replace(/\/api$/, '') : trimmed;
+          let resolvedBase = base;
+          if (!resolvedBase && typeof window !== 'undefined') {
+            const origin = window.location.origin;
+            resolvedBase = origin.includes('localhost:3000') ? 'http://localhost:5001' : origin;
+          }
+          const thumbnailUrl = `${resolvedBase}/api/videos/${video._id}/thumbnail`;
           const response = await fetch(thumbnailUrl, {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -124,10 +163,13 @@ const VideoThumbnail = ({
 
         // Fallback to client-side generation
         setUseClientThumbnail(true);
-        generateClientThumbnail();
+        // Defer client-side generation to the next tick to ensure the hidden
+        // <video> element is mounted with the correct src
+        setTimeout(() => {
+          generateClientThumbnail();
+        }, 0);
       } catch (err) {
         console.error('Error generating thumbnail:', err);
-        setError(err.message);
         setShowFallback(true);
         setIsGenerating(false);
       }
@@ -136,13 +178,7 @@ const VideoThumbnail = ({
     generateThumbnail();
   }, [video, isInView, generateClientThumbnail]);
 
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
+  // Hover state not used; rely on CSS group-hover effects
 
   const formatFileSize = (bytes) => {
     if (!bytes) return '0 B';
@@ -181,8 +217,6 @@ const VideoThumbnail = ({
       <div 
         ref={thumbnailRef}
         className="relative w-full h-48 cursor-pointer overflow-hidden"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
         onClick={() => onPlay && onPlay(video)}
       >
         {/* Thumbnail Display */}
@@ -337,13 +371,40 @@ const VideoThumbnail = ({
 
       {/* Hidden elements for thumbnail generation (only when client-side fallback is needed) */}
       {useClientThumbnail && (
-        <video
-          ref={videoRef}
-          className="hidden"
-          crossOrigin="anonymous"
-          preload="metadata"
-          src={`${process.env.REACT_APP_API_URL}/api/videos/${video._id}/stream?token=${encodeURIComponent(localStorage.getItem('token') || '')}`}
-        />
+        (() => {
+          // Resolve base URL robustly for client-side stream
+          const rawEnvBase = process.env.REACT_APP_API_URL || axios.defaults.baseURL || '';
+          const trimmed = (rawEnvBase || '').replace(/\/$/, '');
+          const base = /\/api$/.test(trimmed) ? trimmed.replace(/\/api$/, '') : trimmed;
+          let resolvedBase = base;
+          if (!resolvedBase && typeof window !== 'undefined') {
+            const origin = window.location.origin;
+            resolvedBase = origin.includes('localhost:3000') ? 'http://localhost:5001' : origin;
+          }
+          const token = encodeURIComponent(localStorage.getItem('token') || '');
+          const src = `${resolvedBase}/api/videos/${video._id}/stream?token=${token}`;
+          return (
+            <video
+              ref={videoRef}
+              className="hidden"
+              crossOrigin="anonymous"
+              preload="metadata"
+              playsInline
+              muted
+              onError={() => {
+                // Gracefully fall back without noisy errors when stream fails
+                setShowFallback(true);
+                setIsGenerating(false);
+              }}
+              onLoadedMetadata={() => {
+                // Ensure the element has loaded the metadata; some browsers
+                // require an explicit load() call when created dynamically
+                try { videoRef.current && videoRef.current.load && videoRef.current.load(); } catch (_) {}
+              }}
+              src={src}
+            />
+          );
+        })()
       )}
       <canvas ref={canvasRef} className="hidden" />
     </div>

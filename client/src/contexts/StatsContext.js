@@ -64,8 +64,8 @@ export const StatsProvider = ({ children }) => {
         return total + (video.fileSize || 0);
       }, 0);
 
-      // Get user stats from API response
-      const userStats = userResponse.data;
+      // Get user stats from API response (supports { stats: {...} } and flat objects)
+      const userStats = (userResponse.data && userResponse.data.stats) || userResponse.data || {};
       const isGodModeAdmin = user?.role === 'admin' && (user?.subscription?.plan === 'god' || user?.plan === 'god');
 
       const rawPlan = userStats.subscription?.plan || userStats.plan;
@@ -80,7 +80,7 @@ export const StatsProvider = ({ children }) => {
         maxVideos: isGodModeAdmin ? 999999 : (userStats.subscription?.monthlyLimit || userStats.maxVideos || 10),
         plan: displayPlan,
         storageUsed: totalStorageUsed,
-        storageLimit: userStats.storageLimit || (2 * 1024 * 1024 * 1024)
+        storageLimit: (Number.isFinite(userStats.storageLimit) ? userStats.storageLimit : (userStats.storageLimit === Infinity ? Number.POSITIVE_INFINITY : 2 * 1024 * 1024 * 1024))
       }));
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -98,6 +98,7 @@ export const StatsProvider = ({ children }) => {
   };
 
   const formatFileSize = (bytes) => {
+    if (!Number.isFinite(bytes)) return '∞';
     if (bytes === 0) return '0 MB';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];

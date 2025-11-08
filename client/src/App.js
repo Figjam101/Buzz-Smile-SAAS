@@ -145,6 +145,14 @@ function App() {
                     } 
                   />
                   <Route 
+                    path="/my-files" 
+                    element={
+                      <ProtectedRoute>
+                        <Dashboard />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
                     path="/onboarding" 
                     element={
                       <ProtectedRoute>

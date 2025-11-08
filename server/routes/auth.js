@@ -8,7 +8,12 @@ const router = express.Router();
 
 // Generate JWT token
 const generateToken = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  const nodeEnv = process.env.NODE_ENV || 'development';
+  const secret = process.env.JWT_SECRET || (nodeEnv !== 'production' ? 'dev-secret' : null);
+  if (!secret) {
+    throw new Error('JWT_SECRET is not configured in production environment');
+  }
+  return jwt.sign({ userId }, secret, { expiresIn: '7d' });
 };
 
 // Register

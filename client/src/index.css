@@ -253,17 +253,18 @@
 }
 
 /* Focus indicators for keyboard navigation */
-*:focus {
+/* Use focus-visible to avoid highlighting non-interactive containers */
+:focus-visible {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
 
-.btn:focus,
-.input:focus,
-button:focus,
-input:focus,
-textarea:focus,
-select:focus {
+.btn:focus-visible,
+.input:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }

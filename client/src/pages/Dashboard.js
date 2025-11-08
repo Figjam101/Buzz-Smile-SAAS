@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useStats } from '../contexts/StatsContext';
 import { useDropzone } from 'react-dropzone';
@@ -10,10 +10,10 @@ import VideoThumbnail from '../components/VideoThumbnail';
 import Navbar from '../components/Navbar';
 import AppleProfileImage from '../components/AppleProfileImage';
 import ProfilePictureUploader from '../components/ProfilePictureUploader';
+import OnboardingModal from '../components/OnboardingModal';
 import SocialMediaPopup from '../components/SocialMediaPopup';
 import SocialMediaScheduler from '../components/SocialMediaScheduler';
 import SocialMediaCalendar from '../components/SocialMediaCalendar';
-import SocialMediaCard from '../components/SocialMediaCard';
 import ProcessingStatusModal from './ProcessingStatusModal';
 import { 
   Upload, 
@@ -33,10 +33,116 @@ import {
   Shield,
   Share2
 } from 'lucide-react';
+import '../styles/glass.css';
+import DashboardStructure from '../components/DashboardStructure';
 
 const Dashboard = () => {
   const { user, refreshUser } = useAuth();
   const { stats, fetchStats, formatFileSize } = useStats();
+  const location = useLocation();
+  const videosSectionRef = useRef(null);
+  const [flowStep, setFlowStep] = useState(0);
+  const [flowActive, setFlowActive] = useState(true);
+  const scrollToTop = useCallback(() => {
+    try {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (_) {
+      window.scrollTo(0, 0);
+    }
+  }, []);
+
+  // Robust scroll helper for My Files
+  const scrollToVideosSection = useCallback(() => {
+    // Temporarily lock page scroll for a polished guided transition
+    const lockScroll = () => {
+      try {
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+      } catch (_) {}
+    };
+    const unlockScroll = () => {
+      try {
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+      } catch (_) {}
+    };
+    lockScroll();
+    const getScrollParent = (node) => {
+      let p = node?.parentElement;
+      while (p) {
+        const style = window.getComputedStyle(p);
+        const overflowY = style.getPropertyValue('overflow-y');
+        const overflow = style.getPropertyValue('overflow');
+        if (overflowY === 'auto' || overflowY === 'scroll' || overflow === 'auto' || overflow === 'scroll') {
+          return p;
+        }
+        p = p.parentElement;
+      }
+      return window;
+    };
+
+    const attemptScroll = () => {
+      const el = videosSectionRef.current || document.getElementById('videos-section');
+      if (!el) return false;
+
+      const offset = 96; // tuned to align grid below header without exposing Step 1
+      const sp = getScrollParent(el);
+      try {
+        if (sp === window) {
+          const y = el.getBoundingClientRect().top + window.scrollY - offset;
+          window.scrollTo({ top: Math.max(y, 0), behavior: 'smooth' });
+        } else {
+          const parentRect = sp.getBoundingClientRect();
+          const elRect = el.getBoundingClientRect();
+          const targetY = (elRect.top - parentRect.top) + sp.scrollTop - offset;
+          sp.scrollTo({ top: Math.max(targetY, 0), behavior: 'smooth' });
+        }
+        // Move keyboard focus to the videos section to avoid Step 1 focus styles
+        if (typeof el.focus === 'function') {
+          try { el.focus({ preventScroll: true }); } catch (_) { /* ignore */ }
+        }
+        // Auto-unlock scroll once the videos section is in view
+        try {
+          const observer = new IntersectionObserver((entries, obs) => {
+            const visible = entries.some((e) => e.isIntersecting);
+            if (visible) {
+              unlockScroll();
+              obs.disconnect();
+            }
+          }, { root: null, threshold: 0.2 });
+          observer.observe(el);
+        } catch (_) {
+          // Fallback: unlock after a short delay
+          setTimeout(unlockScroll, 1200);
+        }
+        return true;
+      } catch (e) {
+        // Final fallback
+        if (typeof el.scrollIntoView === 'function') {
+          try {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (typeof el.focus === 'function') {
+              try { el.focus({ preventScroll: true }); } catch (_) {}
+            }
+            setTimeout(() => {
+              // Ensure we unlock even if IntersectionObserver fails
+              try {
+                unlockScroll();
+              } catch (_) {}
+            }, 1200);
+            return true;
+          } catch (_) {}
+        }
+      }
+      return false;
+    };
+    if (attemptScroll()) return;
+    // Retry shortly in case element isn't mounted yet
+    const retries = [100, 250, 500];
+    for (const ms of retries) {
+      setTimeout(() => attemptScroll(), ms);
+    }
+  }, []);
   
   console.log('Dashboard Debug - User:', user);
   console.log('Dashboard Debug - Stats:', stats);
@@ -65,6 +171,8 @@ const Dashboard = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [pendingVideoFiles, setPendingVideoFiles] = useState([]);
   const [showWizard, setShowWizard] = useState(false);
+  const [uploadStepComplete, setUploadStepComplete] = useState(false);
+  const [lastUploadedItem, setLastUploadedItem] = useState(null);
   const [activeSection, setActiveSection] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showUploader, setShowUploader] = useState(false);
@@ -109,15 +217,7 @@ const Dashboard = () => {
   const API_BASE = (process.env.REACT_APP_API_URL || '').replace(/\/$/, '');
   const api = (p) => `${API_BASE}${p}`;
 
-  const handleVideoClick = useCallback((video) => {
-    setSelectedVideo(video);
-    setShowPreviewModal(true);
-    if (video.status === 'ready' || video.status === 'completed') {
-      loadVideoBlob(video);
-    }
-  }, [loadVideoBlob]);
-
-  const loadVideoBlob = async (video) => {
+  const loadVideoBlob = useCallback(async (video) => {
     setVideoLoading(true);
     try {
       const token = localStorage.getItem('token');
@@ -137,7 +237,15 @@ const Dashboard = () => {
     } finally {
       setVideoLoading(false);
     }
-  };
+  }, [api]);
+
+  const handleVideoClick = useCallback((video) => {
+    setSelectedVideo(video);
+    setShowPreviewModal(true);
+    if (video.status === 'ready' || video.status === 'completed') {
+      loadVideoBlob(video);
+    }
+  }, [loadVideoBlob]);
 
   const closePreviewModal = () => {
     setShowPreviewModal(false);
@@ -166,9 +274,17 @@ const Dashboard = () => {
   };
 
   const onDrop = useCallback((acceptedFiles) => {
+    const videoFiles = acceptedFiles.filter(f => (f.type || '').startsWith('video/'));
+    const rejected = acceptedFiles.filter(f => !(f.type || '').startsWith('video/'));
+    if (rejected.length > 0) {
+      toast.error(`Only video files are supported. Skipped ${rejected.length} non-video file${rejected.length > 1 ? 's' : ''}.`);
+    }
+    if (videoFiles.length === 0) {
+      return;
+    }
     setPendingVideoFiles(prevFiles => [
       ...prevFiles,
-      ...acceptedFiles.map(file => ({ file, id: Date.now() + Math.random() }))
+      ...videoFiles.map(file => ({ file, id: Date.now() + Math.random() }))
     ]);
   }, []);
 
@@ -197,6 +313,64 @@ const Dashboard = () => {
     multiple: true,
     disabled: uploading
   });
+
+  useEffect(() => {
+    if (location.pathname === '/my-files' || location.hash === '#files') {
+      scrollToVideosSection();
+    }
+  }, [location.pathname, location.hash, scrollToVideosSection]);
+
+  // Horizontal flow controls for the new slider in DashboardStructure
+  const finishFlow = useCallback(() => {
+    setFlowActive(false);
+    try {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    } catch (_) {}
+    scrollToVideosSection();
+  }, [scrollToVideosSection]);
+
+  const nextFlowStep = useCallback(() => {
+    setFlowActive(true);
+    setFlowStep((s) => {
+      if (s >= 3) {
+        // Already at last slide: finish the flow and bounce to videos
+        setTimeout(() => finishFlow(), 0);
+        return s;
+      }
+      return Math.min(s + 1, 3);
+    });
+  }, [finishFlow]);
+
+  const prevFlowStep = useCallback(() => {
+    setFlowStep((s) => Math.max(s - 1, 0));
+  }, []);
+
+  useEffect(() => {
+    // Lock vertical scroll while the horizontal flow is active
+    try {
+      if (flowActive) {
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+      }
+    } catch (_) {}
+    return () => {
+      try {
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+      } catch (_) {}
+    };
+  }, [flowActive]);
+
+  // Ensure we start at top with the horizontal flow visible
+  useEffect(() => {
+    if (flowActive) {
+      try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch (_) { window.scrollTo(0, 0); }
+    }
+  }, [flowActive]);
 
   const fetchVideos = useCallback(async () => {
     try {
@@ -279,6 +453,13 @@ const Dashboard = () => {
 
       const formData = new FormData();
       filesArray.forEach(f => formData.append('video', f));
+      const totalNewSize = filesArray.reduce((sum, f) => sum + (f.size || 0), 0);
+      const limit = stats?.storageLimit || 0;
+      const used = stats?.storageUsed || 0;
+      if (limit > 0 && used + totalNewSize > limit) {
+        toast.error(`Upload exceeds your storage limit. Used ${formatFileSize(used)}, adding ${formatFileSize(totalNewSize)} would exceed ${formatFileSize(limit)}.`);
+        return;
+      }
       const primaryFile = filesArray[0];
       const title = videoData.title || videoData.videoName || primaryFile.name;
       formData.append('title', title);
@@ -339,6 +520,13 @@ const Dashboard = () => {
       toast.success('Video uploaded successfully! You can process it anytime.');
       
       setPendingVideoFiles(prev => prev.filter(f => f.id !== videoData.id));
+
+      // Mark step completion and remember the uploaded item for the next container
+      setUploadStepComplete(true);
+      setLastUploadedItem({
+        name: title,
+        size: primaryFile?.size || 0
+      });
 
       // Refresh lists to show the newly uploaded video in "ready" state
       fetchVideos();
@@ -692,16 +880,27 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-50">
       <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <ProfilePictureUploader isOpen={showUploader} onClose={() => setShowUploader(false)} />
+      {/* Onboarding Modal: show if user hasn’t connected Facebook and hasn’t dismissed */}
+      {(() => {
+        try {
+          const dismissed = typeof window !== 'undefined' ? localStorage.getItem('onboardingDismissed') === 'true' : false;
+          const needsFacebook = !(Array.isArray(user?.linkedSocialAccounts) && user.linkedSocialAccounts.includes('facebook'));
+          const show = needsFacebook && !dismissed;
+          return <OnboardingModal isOpen={show} onClose={() => { if (typeof window !== 'undefined') localStorage.setItem('onboardingDismissed', 'true'); }} />;
+        } catch (_) {
+          return null;
+        }
+      })()}
 
       {/* Dashboard Sidebar Navigation */}
       <div className="hidden sm:block fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white border-r border-gray-200 shadow-lg z-40 overflow-y-auto">
         <div className="flex flex-col h-full">
           <div className="p-6 border-b border-gray-100">
-            <div className="flex items-center space-x-3">
-              <AppleProfileImage size="lg" name={user?.name || 'User'} profilePicture={user?.profilePicture} />
-              <div className="min-w-0 flex-1">
-                <p className="font-medium text-gray-900 text-lg truncate">{user?.name || 'User'}</p>
-                {user?.role === 'admin' ? (
+              <div className="flex items-center space-x-3">
+                <AppleProfileImage size="lg" name={user?.name || 'User'} profilePicture={user?.profilePicture} />
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-gray-900 text-lg truncate">{user?.name || 'User'}</p>
+                  {user?.role === 'admin' ? (
                   <div className="flex items-center space-x-2">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                       <Shield className="w-3 h-3 mr-1" />
@@ -718,18 +917,30 @@ const Dashboard = () => {
                 )}
               </div>
             </div>
-            <button
-              onClick={() => setShowUploader(true)}
-              className="mt-3 w-full text-sm font-medium text-blue-600 hover:text-blue-700"
-            >
-              Update your profile picture
-            </button>
+              <button
+                onClick={() => setShowUploader(true)}
+                className="mt-3 w-full text-sm font-medium text-blue-600 hover:text-blue-700"
+              >
+                Update your profile picture
+              </button>
+              <button
+                onClick={() => {
+                  if (typeof window !== 'undefined') localStorage.removeItem('onboardingDismissed');
+                }}
+                className="mt-2 w-full text-xs text-gray-600 hover:text-gray-800"
+              >
+                Set up your account
+              </button>
           </div>
 
           <div className="flex-1 p-4">
             <nav className="space-y-2">
               <button
-                onClick={() => setActiveSection('dashboard')}
+                onClick={() => {
+                  setActiveSection('dashboard');
+                  navigate('/dashboard');
+                  scrollToTop();
+                }}
                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
                   activeSection === 'dashboard'
                     ? 'bg-blue-50 text-blue-700 border border-blue-200'
@@ -741,15 +952,16 @@ const Dashboard = () => {
               </button>
               
               <button
-                onClick={() => setActiveSection('stats')}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                  activeSection === 'stats'
-                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
+                onClick={() => {
+                  setActiveSection('dashboard');
+                  // keep URL informative
+                  navigate('/dashboard#files');
+                  scrollToVideosSection();
+                }}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-50`}
               >
-                <BarChart3 className="w-5 h-5 flex-shrink-0" />
-                <span className="font-medium">Analytics</span>
+                <HardDrive className="w-5 h-5 flex-shrink-0" />
+                <span className="font-medium">My Files</span>
               </button>
               
               <button
@@ -761,7 +973,7 @@ const Dashboard = () => {
                 }`}
               >
                 <Share2 className="w-5 h-5 flex-shrink-0" />
-                <span className="font-medium">Social Media</span>
+                <span className="font-medium">Social Media Calendar</span>
               </button>
               
               {user?.role === 'admin' && (
@@ -890,6 +1102,8 @@ const Dashboard = () => {
                     <button
                       onClick={() => {
                         setActiveSection('dashboard');
+                        navigate('/dashboard');
+                        scrollToTop();
                         setSidebarOpen(false);
                       }}
                       className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
@@ -904,17 +1118,15 @@ const Dashboard = () => {
                     
                     <button
                       onClick={() => {
-                        setActiveSection('stats');
+                        setActiveSection('dashboard');
+                        navigate('/dashboard#files');
+                        scrollToVideosSection();
                         setSidebarOpen(false);
                       }}
-                      className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                        activeSection === 'stats'
-                          ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }`}
+                      className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-50"
                     >
-                      <BarChart3 className="w-5 h-5 flex-shrink-0" />
-                      <span className="font-medium">Analytics</span>
+                      <HardDrive className="w-5 h-5 flex-shrink-0" />
+                      <span className="font-medium">My Files</span>
                     </button>
                     
                     {user?.role === 'admin' && (
@@ -929,10 +1141,10 @@ const Dashboard = () => {
                             : 'text-gray-700 hover:bg-gray-50'
                         }`}
                       >
-                        <Shield className="w-5 h-5 flex-shrink-0" />
-                        <span className="font-medium">Admin Dashboard</span>
-                      </button>
-                    )}
+                      <Shield className="w-5 h-5 flex-shrink-0" />
+                      <span className="font-medium">Admin Dashboard</span>
+                    </button>
+                  )}
                     
                     <button
                       onClick={() => {
@@ -1009,99 +1221,127 @@ const Dashboard = () => {
         {/* Dashboard Section */}
         {activeSection === 'dashboard' && (
           <div className="p-3 lg:p-4 min-h-screen">
-            <div className="max-w-6xl mx-auto space-y-3">
-              {/* Upload Section */}
-              <div className="bg-white rounded-lg border border-gray-200 p-3">
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-lg font-semibold text-gray-900">Upload Videos</h2>
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
-                    <Video className="w-4 h-4" />
-                    <span>{videos.length} videos</span>
+            {/* Structure prototype wired with real step content */}
+            <DashboardStructure
+              uploadCompleted={uploadStepComplete}
+              uploadContent={(
+                <>
+                  <div className="flex items-center justify-end mb-3">
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                      <Video className="w-4 h-4" />
+                      <span>{videos.length} videos</span>
+                    </div>
                   </div>
-                </div>
-                
-                <div
-                  {...getRootProps()}
-                  className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                    isDragActive
-                      ? 'border-blue-400 bg-blue-50'
-                      : 'border-gray-300 hover:border-gray-400'
-                  } ${uploading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                >
-                  <input {...getInputProps()} />
-                  <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  {uploading ? (
-                    <div className="space-y-2">
-                      <p className="text-gray-600">Uploading... {uploadProgress}%</p>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${uploadProgress}%` }}
-                        ></div>
+
+                  <div
+                    {...getRootProps({ tabIndex: -1 })}
+                    className={`glass-dropzone border-2 border-dashed rounded-xl p-4 text-center transition-colors focus:outline-none outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 ${
+                      isDragActive
+                        ? 'border-blue-300/70 bg-white/20'
+                        : 'border-white/50 hover:border-white/70'
+                    } ${uploading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                  >
+                    <input {...getInputProps()} />
+                    <Upload className="w-8 h-8 text-gray-700 mx-auto mb-3" />
+                    {uploading ? (
+                      <div className="space-y-2">
+                        <p className="text-gray-600">Uploading... {uploadProgress}%</p>
+                        <div className="w-full bg-white/30 rounded-full h-2">
+                          <div
+                            className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${uploadProgress}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    ) : isDragActive ? (
+                      <p className="text-blue-700 font-medium">Drop the videos here...</p>
+                    ) : (
+                      <div>
+                        <p className="text-gray-800 mb-1">
+                          Drag & drop videos here, or <span className="text-blue-600 font-medium">click to browse</span>
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Supports MP4, AVI, MOV, WMV, FLV, WebM, MKV
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {pendingVideoFiles.length > 0 && (
+                    <div className="mt-4 space-y-2">
+                      <h3 className="font-medium text-gray-900">Pending Videos ({pendingVideoFiles.length})</h3>
+                      <div className="space-y-2">
+                        {pendingVideoFiles.map((videoFile) => (
+                          <div key={videoFile.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center space-x-3">
+                              <FileVideo className="w-5 h-5 text-gray-500" />
+                              <span className="text-sm font-medium text-gray-900">{videoFile.file.name}</span>
+                              <span className="text-xs text-gray-500">
+                                {formatFileSize(videoFile.file.size)}
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() => handleVideoProcessing({
+                                  orderedFiles: [videoFile],
+                                  videoName: videoFile.file?.name || 'Untitled',
+                                  description: '',
+                                  platforms: [],
+                                  isStory: false,
+                                  id: videoFile.id
+                                })}
+                                className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors"
+                              >
+                                Upload
+                              </button>
+                              <button
+                                onClick={() => setPendingVideoFiles(prev => prev.filter(f => f.id !== videoFile.id))}
+                                className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  ) : isDragActive ? (
-                    <p className="text-blue-600 font-medium">Drop the videos here...</p>
-                  ) : (
-                    <div>
-                      <p className="text-gray-600 mb-2">
-                        Drag & drop videos here, or <span className="text-blue-600 font-medium">click to browse</span>
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Supports MP4, AVI, MOV, WMV, FLV, WebM, MKV
-                      </p>
+                  )}
+                </>
+              )}
+              processContent={(
+                <>
+                  {uploadStepComplete && (
+                    <div className="mb-3 p-4 bg-blue-50 border border-blue-200 rounded-xl text-blue-900">
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5" />
+                        <div>
+                          <p className="font-medium">Your video is getting ready to be edited.</p>
+                          <p className="text-sm">We’ll notify you when it’s ready to post.</p>
+                          {lastUploadedItem?.name && (
+                            <p className="text-sm mt-1 text-blue-800">File: {lastUploadedItem.name}</p>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   )}
-                </div>
+                </>
+              )}
+              stepIndex={flowStep}
+              onNext={nextFlowStep}
+              onPrev={prevFlowStep}
+              onFinish={finishFlow}
+            />
 
-                {pendingVideoFiles.length > 0 && (
-                  <div className="mt-4 space-y-2">
-                    <h3 className="font-medium text-gray-900">Pending Videos ({pendingVideoFiles.length})</h3>
-                    <div className="space-y-2">
-                      {pendingVideoFiles.map((videoFile) => (
-                        <div key={videoFile.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                          <div className="flex items-center space-x-3">
-                            <FileVideo className="w-5 h-5 text-gray-500" />
-                            <span className="text-sm font-medium text-gray-900">{videoFile.file.name}</span>
-                            <span className="text-xs text-gray-500">
-                              {formatFileSize(videoFile.file.size)}
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <button
-                              onClick={() => setShowWizard(true)}
-                              className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors"
-                            >
-                              Process
-                            </button>
-                            <button
-                              onClick={() => setPendingVideoFiles(prev => prev.filter(f => f.id !== videoFile.id))}
-                              className="p-1 text-gray-400 hover:text-red-500 transition-colors"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+            {/* Overlay removed; horizontal flow is now embedded in DashboardStructure */}
+            <div className="max-w-6xl mx-auto space-y-8">
+              {/* Step 1 and Step 2 are now embedded in the structure above */}
 
-              {/* Social Media Management */}
-              <div className="mt-6 mb-6">
-                <SocialMediaCard 
-                  onLinkToCalendar={(account) => {
-                    toast.success(`${account.platform} linked to calendar`);
-                    // You can add additional calendar integration logic here
-                  }}
-                />
-              </div>
+              {/* Step 3 removed: Social media connect no longer needed */}
 
               {/* Videos Grid */}
-              <div className="bg-white rounded-lg border border-gray-200 p-3">
+              <div id="videos-section" ref={videosSectionRef} tabIndex={-1} className="bg-white rounded-lg border border-gray-200 p-3 scroll-mt-32 focus:outline-none outline-none">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-gray-900">Your Videos</h2>
+                  <h2 className="text-lg font-semibold text-gray-900">{(user?.name ? `${user.name.split(' ')[0]}'s Videos` : 'Your Videos')}</h2>
                   <span className="text-sm text-gray-600">{videos.length} videos</span>
                 </div>
 
@@ -1197,7 +1437,7 @@ const Dashboard = () => {
 
         {/* Admin Section */}
         {activeSection === 'admin' && user?.role === 'admin' && (
-          <div className="p-3 lg:p-4 min-h-screen bg-gray-50">
+          <div className="p-3 lg:p-4 min-h-screen bg-gray-50 mt-32">
             <div className="max-w-6xl mx-auto space-y-6">
               {/* Header */}
               <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">

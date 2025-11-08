@@ -16,6 +16,11 @@ const execAsync = promisify(exec);
 // Load environment variables BEFORE loading Passport config so strategies see env
 dotenv.config();
 
+// In development, default to allowing server to run without DB
+if ((process.env.NODE_ENV || 'development') !== 'production' && !process.env.ALLOW_SERVER_WITHOUT_DB) {
+  process.env.ALLOW_SERVER_WITHOUT_DB = 'true';
+}
+
 // Load configured Passport (after envs)
 const passport = require('./config/passport');
 
@@ -192,12 +197,22 @@ app.use(helmet({
 }));
 
 // Global rate limiting (env configurable)
+// Relax limits for auth and health endpoints to avoid blocking login
 const globalLimiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '60000', 10),
   max: parseInt(process.env.RATE_LIMIT_MAX || '300', 10),
   standardHeaders: true,
   legacyHeaders: false,
-  message: { message: 'Too many requests, please try again later.' }
+  message: { message: 'Too many requests, please try again later.' },
+  skip: (req) => {
+    const p = req.path || '';
+    // Allow login/register and OAuth flows, plus health checks
+    return (
+      p.startsWith('/api/auth') ||
+      p.startsWith('/auth') ||
+      p.startsWith('/api/health')
+    );
+  }
 });
 app.use(globalLimiter);
 
@@ -248,19 +263,20 @@ const connectDB = async () => {
       console.warn('⚠️ Continuing without database connection for development (ALLOW_SERVER_WITHOUT_DB=true)');
       return;
     }
-    process.exit(1);
+    // Surface the error to the outer handler; avoid hard exit here
+    throw error;
   }
 };
 
-connectDB();
+// Initial connection will be handled below with proper fallbacks
 
-// Static file serving for uploads
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// (Removed duplicate static '/uploads' route to avoid redundant middleware)
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/auth', require('./routes/oauth'));
 app.use('/api/users', require('./routes/users'));
+app.use('/api/uploads', require('./routes/uploads'));
 app.use('/api/videos', require('./routes/videos'));
 app.use('/api/backup', require('./routes/backup'));
 app.use('/api/backup-simple', require('./routes/backup-simple'));

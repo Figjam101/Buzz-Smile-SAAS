@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User } from 'lucide-react';
+import axios from 'axios';
 
 const AppleProfileImage = ({ 
   size = 'md', 
@@ -48,12 +48,7 @@ const AppleProfileImage = ({
     xl: 'w-16 h-16'
   };
 
-  const iconSizes = {
-    sm: 'h-4 w-4',
-    md: 'h-5 w-5',
-    lg: 'h-6 w-6',
-    xl: 'h-8 w-8'
-  };
+  // Removed unused iconSizes
 
   const textSizes = {
     sm: 'text-xs',
@@ -69,9 +64,21 @@ const AppleProfileImage = ({
   const [imageError, setImageError] = useState(false);
   if (profilePicture && !imageError) {
     const isAbsolute = /^https?:\/\//i.test(profilePicture);
+    // Resolve base URL robustly: prefer env, then axios base, then sensible local default
+    const envBaseRaw = process.env.REACT_APP_API_URL || '';
+    const envBaseTrimmed = envBaseRaw.replace(/\/$/, '');
+    const envBase = /\/api$/.test(envBaseTrimmed)
+      ? envBaseTrimmed.replace(/\/api$/, '')
+      : envBaseTrimmed;
+    let apiBase = envBase || axios.defaults.baseURL || '';
+    if (!apiBase && typeof window !== 'undefined') {
+      const origin = window.location.origin;
+      // Default to backend on port 5001 in local dev; else same-origin
+      apiBase = origin.includes('localhost:3000') ? 'http://localhost:5001' : origin;
+    }
     const imageSrc = isAbsolute
       ? profilePicture
-      : `${process.env.REACT_APP_API_URL || ''}${profilePicture}`;
+      : `${apiBase.replace(/\/$/, '')}${profilePicture}`;
     return (
       <div 
         className={`${sizeClasses[size]} rounded-full overflow-hidden shadow-lg ${className}`}

@@ -179,9 +179,9 @@ const BusinessSettings = () => {
         return;
       }
 
-      // Validate file size (5MB limit)
-      if (file.size > 5 * 1024 * 1024) {
-        setError('Logo file size must be less than 5MB');
+      // Validate file size (20MB limit)
+      if (file.size > 20 * 1024 * 1024) {
+        setError('Logo file size must be less than 20MB');
         return;
       }
 
@@ -264,7 +264,7 @@ const BusinessSettings = () => {
                   <LogoUploadPlaceholder>
                     <LogoUploadIcon>📷</LogoUploadIcon>
                     <LogoUploadText>Upload Logo</LogoUploadText>
-                    <LogoUploadSubtext>PNG, JPG, GIF up to 5MB</LogoUploadSubtext>
+                    <LogoUploadSubtext>PNG, JPG, GIF up to 20MB</LogoUploadSubtext>
                   </LogoUploadPlaceholder>
                 )}
               </LogoUploadLabel>

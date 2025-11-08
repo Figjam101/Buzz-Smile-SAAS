@@ -1,0 +1,42 @@
+/* Glassmorphism card styles for Upload Video card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 6px 18px rgba(31, 38, 135, 0.18);
+  backdrop-filter: blur(14px) saturate(110%);
+  -webkit-backdrop-filter: blur(14px) saturate(110%);
+}
+
+/* Shiny plastic outline */
+.shiny-outline {
+  position: relative;
+}
+.shiny-outline::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  padding: 1px; /* thin inner highlight */
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.85),
+    rgba(200, 220, 255, 0.65),
+    rgba(255, 255, 255, 0.9)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+/* Dropzone tweaks to feel glassy and premium */
+.glass-dropzone {
+  background: rgba(255, 255, 255, 0.12);
+  transition: background 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+}
+.glass-dropzone:hover {
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 3px 12px rgba(31, 38, 135, 0.16);
+}
