@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Authentication</title>
+</head>
+<body>
+    <h1>Debug Authentication</h1>
+    <div id="output"></div>
+    
+    <script>
+        const output = document.getElementById('output');
+        
+        function log(message) {
+            output.innerHTML += '<p>' + message + '</p>';
+            console.log(message);
+        }
+        
+        // Check localStorage
+        log('Checking localStorage...');
+        const token = localStorage.getItem('token');
+        log('Token in localStorage: ' + (token ? 'EXISTS (' + token.substring(0, 20) + '...)' : 'NOT FOUND'));
+        
+        // Test the auth endpoint
+        async function testAuth() {
+            try {
+                log('Testing auth endpoint...');
+                const response = await fetch('http://localhost:5001/api/auth/me', {
+                    headers: {
+                        'Authorization': token ? `Bearer ${token}` : '',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                log('Auth response status: ' + response.status);
+                log('Auth response: ' + JSON.stringify(data, null, 2));
+                
+                if (response.ok) {
+                    // Test profile update
+                    log('Testing profile update...');
+                    const profileResponse = await fetch('http://localhost:5001/api/auth/profile', {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            businessName: 'Test Business',
+                            businessDescription: 'Test Description',
+                            socialMedia: {
+                                facebook: '',
+                                instagram: '',
+                                twitter: ''
+                            }
+                        })
+                    });
+                    
+                    const profileData = await profileResponse.json();
+                    log('Profile update status: ' + profileResponse.status);
+                    log('Profile update response: ' + JSON.stringify(profileData, null, 2));
+                }
+                
+            } catch (error) {
+                log('Error: ' + error.message);
+            }
+        }
+        
+        testAuth();
+    </script>
+</body>
+</html>

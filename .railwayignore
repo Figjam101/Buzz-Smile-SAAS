@@ -1,0 +1,33 @@
+# Workspace-level Railway ignore to keep uploads small
+
+# Ignore heavy monorepo and backups
+OpenCut/
+backup_*/
+deployment/
+client/
+server/
+project_backup_*.tar.gz
+system_backup_*.tar.gz
+
+# Ignore media and archives
+*.mp4
+*.mov
+*.mkv
+*.avi
+*.webm
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.log
+
+# Ignore caches and VCS
+.git/
+.cache/
+node_modules/
+
+# Explicitly allow backend we deploy via path
+!buzz-smile-saas/server/**
+# Also include top-level server directory so Railway's rootDir=server works
+!server/
+!server/**

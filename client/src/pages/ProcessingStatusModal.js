@@ -1,8 +1,8 @@
 import React from 'react';
 
 const stepsFromProgress = (progress) => {
-  if (progress < 10) return 'Preparing';
-  if (progress < 85) return 'Editing';
+  if (progress < 33) return 'Preparing';
+  if (progress < 66) return 'Editing';
   if (progress < 100) return 'Finalizing';
   return 'Completed';
 };
@@ -24,9 +24,9 @@ export default function ProcessingStatusModal({ isOpen, videoTitle, status, prog
             <div className="bg-blue-600 h-2 rounded-full transition-all" style={{ width: `${Math.min(progress || 0, 100)}%` }} />
           </div>
           <ul className="text-sm text-gray-700 space-y-1">
-            <li className={`${progress >= 10 ? 'text-blue-700' : 'text-gray-500'}`}>• Preparing</li>
-            <li className={`${progress >= 50 ? 'text-blue-700' : 'text-gray-500'}`}>• Editing</li>
-            <li className={`${progress >= 95 ? 'text-blue-700' : 'text-gray-500'}`}>• Finalizing</li>
+            <li className={`${progress >= 1 ? 'text-blue-700' : 'text-gray-500'}`}>• Preparing</li>
+            <li className={`${progress >= 33 ? 'text-blue-700' : 'text-gray-500'}`}>• Editing</li>
+            <li className={`${progress >= 66 ? 'text-blue-700' : 'text-gray-500'}`}>• Finalizing</li>
           </ul>
           {errorMessage && (
             <div className="mt-3 p-3 bg-red-50 text-red-700 rounded">Error: {errorMessage}</div>

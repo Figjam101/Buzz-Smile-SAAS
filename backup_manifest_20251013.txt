@@ -1,0 +1,55 @@
+# System Backup Manifest - Mon Oct 13 15:07:07 ACDT 2025
+## Backup File: system_backup_20251013.tar.gz
+## Created: Mon Oct 13 15:07:07 ACDT 2025
+
+### Contents:
+buzz-smile-saas/
+buzz-smile-saas/ffmpeg-bin/
+buzz-smile-saas/debug_auth_token.html
+buzz-smile-saas/DEPLOYMENT-CHECKLIST.md
+buzz-smile-saas/ENTERPRISE-FEATURES.md
+buzz-smile-saas/mongodb-macos-aarch64-7.0.4/
+buzz-smile-saas/mongodb-portable/
+buzz-smile-saas/server/
+buzz-smile-saas/debug_auth_browser.html
+buzz-smile-saas/package-lock.json
+buzz-smile-saas/package.json
+buzz-smile-saas/debug_auth_check.html
+buzz-smile-saas/.github/
+buzz-smile-saas/client/
+buzz-smile-saas/mongodb-macos-arm64-7.0.4.tgz
+buzz-smile-saas/debug_upload.html
+buzz-smile-saas/client/.env.production
+buzz-smile-saas/client/tailwind.config.js
+buzz-smile-saas/client/public/
+buzz-smile-saas/client/package-lock.json
+buzz-smile-saas/client/package.json
+buzz-smile-saas/client/.env
+buzz-smile-saas/client/postcss.config.js
+buzz-smile-saas/client/src/
+buzz-smile-saas/client/src/contexts/
+buzz-smile-saas/client/src/App.css
+buzz-smile-saas/client/src/index.js
+buzz-smile-saas/client/src/utils/
+buzz-smile-saas/client/src/index.css
+buzz-smile-saas/client/src/styles/
+buzz-smile-saas/client/src/components/
+buzz-smile-saas/client/src/pages/
+buzz-smile-saas/client/src/App.js
+buzz-smile-saas/client/src/pages/Dashboard.css
+buzz-smile-saas/client/src/pages/AdminDashboard.js
+buzz-smile-saas/client/src/pages/Register.js
+buzz-smile-saas/client/src/pages/Home.js
+buzz-smile-saas/client/src/pages/ShareVideo.js
+buzz-smile-saas/client/src/pages/Login.js
+buzz-smile-saas/client/src/pages/Dashboard.js
+buzz-smile-saas/client/src/components/SocialMediaBubbles.js
+buzz-smile-saas/client/src/components/VideoEditingWizard.js
+buzz-smile-saas/client/src/components/VideoList.js
+buzz-smile-saas/client/src/components/MovingBubbles.js
+buzz-smile-saas/client/src/components/AppleProfileImage.js
+buzz-smile-saas/client/src/components/GoogleDriveDashboard.js
+buzz-smile-saas/client/src/components/Navbar.js
+buzz-smile-saas/client/src/components/BusinessSettings.js
+buzz-smile-saas/client/src/components/admin/
+buzz-smile-saas/client/src/components/LoadingSpinner.js

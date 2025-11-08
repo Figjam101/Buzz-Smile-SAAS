@@ -1,0 +1,26 @@
+# Exclude backups, large binaries, and unrelated projects to keep deploy size small
+OpenCut/
+deployment/
+deployment/**
+backup_*/
+project_backup_*.tar.gz
+system_backup_*.tar.gz
+**/*.tgz
+
+# Exclude local duplicate root client/server; use buzz-smile-saas/*
+client/
+server/
+
+# Exclude large toolchains and databases inside buzz-smile-saas
+buzz-smile-saas/ffmpeg-bin/
+buzz-smile-saas/mongodb-data/
+buzz-smile-saas/mongodb-*/
+buzz-smile-saas/mongodb-portable/
+
+# Exclude intermediate deployment outputs
+deployment/public_html/
+deployment/public_html/**
+
+# Exclude archives
+*.zip
+*.tar

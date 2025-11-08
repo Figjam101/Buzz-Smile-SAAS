@@ -1,18 +1,23 @@
 {
-  "name": "buzz-smile-official-website",
+  "name": "video-edit-saas",
   "version": "1.0.0",
-  "description": "Buzz Smile Official Website (SAAS)",
+  "description": "SaaS platform for video upload and API-based editing",
   "main": "server/index.js",
   "scripts": {
-    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
-    "server:dev": "cd server && npm run dev",
-    "client:dev": "cd client && npm start",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm start",
     "build": "cd client && npm run build",
-    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
-    "start": "cd server && npm start"
+    "install-all": "npm install && cd server && npm install && cd ../client && npm install",
+    "link:vercel": "npx --yes vercel link --project buzz-smile-saas-frontend --yes",
+    "pull:vercel": "npx --yes vercel pull --yes --environment=production",
+    "build:vercel": "npx --yes vercel build --prod",
+    "deploy:vercel": "npx --yes vercel deploy --prebuilt --prod --yes",
+    "deploy:vercel:token": "npx --yes vercel deploy --prebuilt --prod --yes --token \"$VERCEL_TOKEN\" --scope \"$VERCEL_SCOPE\"",
+    "frontend:deploy": "npm run link:vercel && npm run pull:vercel && npm run build:vercel && npm run deploy:vercel"
   },
-  "keywords": ["saas", "video", "editing", "react", "node"],
-  "author": "Buzz Smile Media",
+  "keywords": ["saas", "video", "editing", "capcut", "api"],
+  "author": "",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"

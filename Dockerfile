@@ -1,26 +1,25 @@
 FROM node:20
 
-# Install ffmpeg for media processing
+# Install ffmpeg for reliable thumbnail generation (Debian-based image)
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
-# Build from the server subdirectory
-WORKDIR /app/server
+WORKDIR /app
 
-# Copy package files from the current (server) context and install production deps
-COPY package*.json ./
-RUN set -eux; \
-    if [ -f package-lock.json ]; then \
-      npm ci --omit=dev; \
-    else \
-      npm install --omit=dev; \
-    fi
+# Copy and install server dependencies first for better caching
+COPY buzz-smile-saas/server/package*.json ./server/
+RUN cd server && npm ci || npm install
 
-# Copy the server source from the current context
-COPY . .
+# Copy server source
+COPY buzz-smile-saas/server ./server
 
+# Environment
 ENV NODE_ENV=production
+ENV PORT=8080
+
+# Expose port (Railway sets PORT env; server reads it)
+EXPOSE 8080
 
 # Start the server
-CMD ["node", "index.js"]
+CMD ["node", "server/index.js"]
