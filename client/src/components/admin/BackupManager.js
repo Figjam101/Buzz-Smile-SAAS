@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 const BackupManager = () => {
   const [backups, setBackups] = useState([]);
@@ -15,13 +15,7 @@ const BackupManager = () => {
   const API_BASE = (process.env.REACT_APP_API_URL || '').replace(/\/$/, '');
   const api = (path) => `${API_BASE}${path}`;
 
-  useEffect(() => {
-    fetchBackups();
-    fetchStatus();
-    fetchFullBackups();
-  }, []);
-
-  const fetchBackups = async () => {
+  const fetchBackups = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(api('/api/backup/list'), {
@@ -41,9 +35,9 @@ const BackupManager = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_BASE]);
 
-  const fetchStatus = async () => {
+  const fetchStatus = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(api('/api/backup/status'), {
@@ -59,9 +53,9 @@ const BackupManager = () => {
     } catch (error) {
       console.error('Error fetching backup status:', error);
     }
-  };
+  }, [API_BASE]);
 
-  const fetchFullBackups = async () => {
+  const fetchFullBackups = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(api('/api/backup-simple/list'), {
@@ -76,7 +70,13 @@ const BackupManager = () => {
     } catch (error) {
       console.error('Error fetching full backups:', error);
     }
-  };
+  }, [API_BASE]);
+
+  useEffect(() => {
+    fetchBackups();
+    fetchStatus();
+    fetchFullBackups();
+  }, [fetchBackups, fetchStatus, fetchFullBackups]);
 
   const createFullBackup = async () => {
     setCreating(true);
@@ -92,7 +92,7 @@ const BackupManager = () => {
         }
       });
       if (response.ok) {
-        const data = await response.json();
+        await response.json();
         setSuccess('Full website backup created successfully!');
         // Refresh lists
         fetchFullBackups();
@@ -127,7 +127,7 @@ const BackupManager = () => {
       const contentDisposition = response.headers.get('Content-Disposition');
       let filename = `${backupName}.zip`;
       if (contentDisposition) {
-        const match = contentDisposition.match(/filename="([^\"]+)"/);
+        const match = contentDisposition.match(/filename="([^"]+)"/);
         if (match && match[1]) filename = match[1];
       }
       const url = window.URL.createObjectURL(blob);
@@ -161,7 +161,7 @@ const BackupManager = () => {
       });
       
       if (response.ok) {
-        const data = await response.json();
+        await response.json();
         setSuccess('Backup created successfully!');
         fetchBackups();
         fetchStatus();

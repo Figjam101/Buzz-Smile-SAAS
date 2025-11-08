@@ -215,7 +215,7 @@ const Dashboard = () => {
 
   // Resolve API base, falling back to same-origin relative path
   const API_BASE = (process.env.REACT_APP_API_URL || '').replace(/\/$/, '');
-  const api = (p) => `${API_BASE}${p}`;
+  const api = useCallback((p) => `${API_BASE}${p}`, [API_BASE]);
 
   const loadVideoBlob = useCallback(async (video) => {
     setVideoLoading(true);

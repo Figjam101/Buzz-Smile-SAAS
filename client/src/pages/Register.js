@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Eye, EyeOff, User, Mail, Lock, ArrowRight, Video, Building } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { Eye, EyeOff, User, Mail, Lock, Video, Building } from 'lucide-react';
 
 const Register = () => {
   const [formData, setFormData] = useState({

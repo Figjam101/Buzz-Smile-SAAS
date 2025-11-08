@@ -13,7 +13,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const { login, handleOAuthLogin, oauthLoading } = useAuth();
+  const { login, handleOAuthLogin } = useAuth();
   const navigate = useNavigate();
   const emailRef = useRef(null);
   const [searchParams] = useSearchParams();
@@ -96,14 +96,6 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-
-  const getAuthUrl = (provider) => {
-    const base = process.env.REACT_APP_API_URL || '';
-    const origin = typeof window !== 'undefined' ? window.location.origin : '';
-    const apiBase = base || origin || 'http://localhost:5000';
-    return `${apiBase.replace(/\/$/, '')}/auth/${provider}`;
   };
 
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 const LogsViewer = () => {
   const [logs, setLogs] = useState([]);
@@ -23,38 +23,7 @@ const LogsViewer = () => {
     { value: 'month', label: 'Last 30 days' }
   ];
 
-  useEffect(() => {
-    fetchLogs();
-    fetchStats();
-    
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (autoRefresh) {
-      intervalRef.current = setInterval(fetchLogs, 5000); // Refresh every 5 seconds
-    } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    }
-    
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [autoRefresh]);
-
-  useEffect(() => {
-    filterLogs();
-  }, [logs, searchTerm, selectedLevel, selectedCategory, dateRange]);
-
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       const params = new URLSearchParams({
@@ -82,9 +51,9 @@ const LogsViewer = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedLevel, selectedCategory, dateRange]);
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/monitoring/logs/stats`, {
@@ -100,9 +69,9 @@ const LogsViewer = () => {
     } catch (error) {
       console.error('Error fetching log stats:', error);
     }
-  };
+  }, []);
 
-  const filterLogs = () => {
+  const filterLogs = useCallback(() => {
     let filtered = [...logs];
 
     // Filter by search term
@@ -124,7 +93,40 @@ const LogsViewer = () => {
     }
 
     setFilteredLogs(filtered);
-  };
+  }, [logs, searchTerm, selectedLevel, selectedCategory]);
+
+  useEffect(() => {
+    fetchLogs();
+    fetchStats();
+    
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [fetchLogs, fetchStats]);
+
+  useEffect(() => {
+    if (autoRefresh) {
+      intervalRef.current = setInterval(fetchLogs, 5000); // Refresh every 5 seconds
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    }
+    
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [autoRefresh, fetchLogs]);
+
+  useEffect(() => {
+    filterLogs();
+  }, [filterLogs]);
+
+  
 
   const clearLogs = async () => {
     if (!window.confirm('Are you sure you want to clear all logs? This action cannot be undone.')) {
