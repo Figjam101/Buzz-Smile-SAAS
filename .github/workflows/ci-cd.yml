@@ -165,24 +165,22 @@ jobs:
       contents: write
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      # Hard-coded org and project IDs to reduce setup friction
-      # Org (team) ID fetched via API: team_GtwW1mPEHp7q3QitGOckRcq9
-      VERCEL_ORG_ID: team_GtwW1mPEHp7q3QitGOckRcq9
-      # Project ID for the active client app: prj_7rLPVYaP7CKiF3Tde7ZGNUAQT9Sp
-      VERCEL_PROJECT_ID: prj_7rLPVYaP7CKiF3Tde7ZGNUAQT9Sp
+      # Use GitHub Action secrets for org and project IDs
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Preflight: Verify Vercel token/org/project access
+      - name: "Preflight - Verify Vercel token/org/project access"
         run: |
           set -e
           if [ -z "${VERCEL_TOKEN}" ]; then
-            echo "❌ Missing VERCEL_TOKEN secret. Add it in GitHub → Settings → Secrets and variables → Actions."
+            echo "Missing VERCEL_TOKEN secret. Add it in GitHub > Settings > Secrets and variables > Actions."
             exit 1
           fi
-          echo "🔎 Using Org ID: ${VERCEL_ORG_ID}"
-          echo "🔎 Using Project ID: ${VERCEL_PROJECT_ID}"
+          echo "Using Org ID: ${VERCEL_ORG_ID}"
+          echo "Using Project ID: ${VERCEL_PROJECT_ID}"
           # Check project visibility via Vercel API
           HTTP_CODE=$(curl -sS -o /tmp/vercel_project.json -w "%{http_code}" \
             -H "Authorization: Bearer ${VERCEL_TOKEN}" \
@@ -231,24 +229,22 @@ jobs:
       contents: write
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      # Hard-coded org and project IDs to reduce setup friction
-      # Org (team) ID fetched via API: team_GtwW1mPEHp7q3QitGOckRcq9
-      VERCEL_ORG_ID: team_GtwW1mPEHp7q3QitGOckRcq9
-      # Project ID for the active client app: prj_7rLPVYaP7CKiF3Tde7ZGNUAQT9Sp
-      VERCEL_PROJECT_ID: prj_7rLPVYaP7CKiF3Tde7ZGNUAQT9Sp
+      # Use GitHub Action secrets for org and project IDs
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Preflight: Verify Vercel token/org/project access
+      - name: "Preflight - Verify Vercel token/org/project access"
         run: |
           set -e
           if [ -z "${VERCEL_TOKEN}" ]; then
-            echo "❌ Missing VERCEL_TOKEN secret. Add it in GitHub → Settings → Secrets and variables → Actions."
+            echo "Missing VERCEL_TOKEN secret. Add it in GitHub > Settings > Secrets and variables > Actions."
             exit 1
           fi
-          echo "🔎 Using Org ID: ${VERCEL_ORG_ID}"
-          echo "🔎 Using Project ID: ${VERCEL_PROJECT_ID}"
+          echo "Using Org ID: ${VERCEL_ORG_ID}"
+          echo "Using Project ID: ${VERCEL_PROJECT_ID}"
           # Check project visibility via Vercel API
           HTTP_CODE=$(curl -sS -o /tmp/vercel_project.json -w "%{http_code}" \
             -H "Authorization: Bearer ${VERCEL_TOKEN}" \
