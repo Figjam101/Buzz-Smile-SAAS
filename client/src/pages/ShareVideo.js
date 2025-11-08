@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { 
@@ -18,11 +18,7 @@ const ShareVideo = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchVideo();
-  }, [videoId]);
-
-  const fetchVideo = async () => {
+  const fetchVideo = useCallback(async () => {
     try {
       const response = await axios.get(`/api/videos/share/${videoId}`);
       setVideo(response.data);
@@ -32,7 +28,11 @@ const ShareVideo = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [videoId]);
+
+  useEffect(() => {
+    fetchVideo();
+  }, [fetchVideo]);
 
   const downloadVideo = async () => {
     try {
