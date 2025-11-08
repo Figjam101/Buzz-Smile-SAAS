@@ -107,3 +107,86 @@ Hostinger public_html/
 ---
 
 **Remember**: Your local development environment is completely separate from the live site. You can break things locally without affecting what your client sees! 🛡️
+
+## Pre‑Commit: Simple Safety Checks (Beginner Friendly)
+
+Pre‑commit is a friendly helper that runs quick checks before your changes are saved into Git. It helps you avoid two common headaches:
+
+- Accidentally committing huge files (over 50 MB) that slow down pushes.
+- Accidentally committing secrets (like passwords or keys) that should never be in the code.
+
+### One‑Time Setup (per computer)
+
+1) Open Terminal and go to your project folder:
+
+```
+cd "/Users/work/Library/CloudStorage/GoogleDrive-npkalyx@gmail.com/My Drive/Buzz Smile Media /SAAS WEBSITE"
+```
+
+2) Install pre‑commit (pick ONE method that works for you):
+
+```
+# Homebrew (recommended on macOS)
+brew install pre-commit
+
+# OR: Pipx (keeps Python tools tidy)
+brew install pipx && pipx ensurepath
+pipx install pre-commit
+
+# OR: Pip (also fine)
+pip install pre-commit
+```
+
+3) Turn it on for this project:
+
+```
+pre-commit install
+```
+
+4) Try it once on all files (optional, good for a first scan):
+
+```
+pre-commit run --all-files
+```
+
+### What happens when you commit
+
+- You work normally: `git add .` then `git commit -m "your message"`.
+- Pre‑commit runs automatically. If everything is OK, the commit succeeds.
+- If it finds a problem, it stops the commit and tells you what to fix.
+
+### If it finds a problem
+
+- Large file warning (example):
+  - Message: “Added file is too large: deployment/public_html/api/uploads/…/video.mov”
+  - Fix: remove the file from Git (keep it outside the repo):
+    - `git rm --cached path/to/file.mov`
+    - We already ignore uploads by default (`deployment/public_html/api/uploads/`).
+    - If you truly need big files in Git, ask about Git LFS.
+
+- Secret detected (example):
+  - Message: “Potential secret found in path/to/file.json”
+  - Fix: do not commit secrets. Move keys/passwords into environment variables (GitHub Actions/Vercel settings).
+    - Remove the file from Git: `git rm --cached path/to/secret.json`
+
+- Minor fixes (trailing spaces/end‑of‑file):
+  - The tool can auto‑fix these; just commit again.
+
+### Updating or turning off
+
+```
+# Update hooks to latest versions
+pre-commit autoupdate
+
+# Uninstall (not recommended)
+pre-commit uninstall
+```
+
+### Team reminder
+
+- Everyone should run these once on their machine:
+  - Install pre‑commit (brew/pipx/pip)
+  - `pre-commit install`
+  - Optional: `pre-commit run --all-files`
+
+These quick checks keep pushes smooth and prevent accidental leaks.
