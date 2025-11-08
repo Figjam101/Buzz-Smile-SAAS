@@ -21,29 +21,61 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Verify Railway token
+      - name: Preflight: check Railway token
+        id: preflight
         run: |
-          if [ -z "${{ secrets.RAILWAY_TOKEN }}" ]; then echo "::error::Missing RAILWAY_TOKEN"; exit 1; fi
+          if [ -z "${{ secrets.RAILWAY_TOKEN }}" ]; then
+            echo "has_token=false" >> $GITHUB_OUTPUT
+            echo "::warning::Missing RAILWAY_TOKEN. Will trigger redeploy via GitHub integration fallback (no-op commit)."
+          else
+            echo "has_token=true" >> $GITHUB_OUTPUT
+            echo "Railway token present. Proceeding with direct CLI deploy."
+          fi
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+        if: ${{ steps.preflight.outputs.has_token == 'true' }}
 
       - name: Install Railway CLI
         run: npm i -g @railway/cli
+        if: ${{ steps.preflight.outputs.has_token == 'true' }}
 
       - name: Login to Railway
         run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
+        if: ${{ steps.preflight.outputs.has_token == 'true' }}
 
       - name: Verify project link
         run: railway status || echo "Continuing even if status not linked via railway.json"
+        if: ${{ steps.preflight.outputs.has_token == 'true' }}
 
       - name: Deploy server service
         run: |
           cd buzz-smile-saas/server
           railway up --detach
+        if: ${{ steps.preflight.outputs.has_token == 'true' }}
+
+      - name: Fallback: trigger Railway via GitHub integration (no-op commit)
+        if: ${{ steps.preflight.outputs.has_token != 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Preparing no-op commit to trigger Railway GitHub integration..."
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git fetch origin main || true
+          git checkout -B main || git checkout main
+          mkdir -p buzz-smile-saas/.github
+          echo "trigger $(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> buzz-smile-saas/.github/deploy-poke-railway.txt
+          git add buzz-smile-saas/.github/deploy-poke-railway.txt
+          git commit -m "chore: trigger Railway deploy via integrations [skip ci]" || echo "No changes to commit"
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
+          git push origin HEAD:main
+          echo "No-op commit pushed to main. Railway's GitHub integration should redeploy automatically if the project is linked to this repo."

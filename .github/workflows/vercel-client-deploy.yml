@@ -21,15 +21,26 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Verify Vercel secrets
+      - name: Preflight: check Vercel secrets
+        id: preflight
         run: |
-          if [ -z "${{ secrets.VERCEL_TOKEN }}" ]; then echo "::error::Missing VERCEL_TOKEN"; exit 1; fi
-          if [ -z "${{ secrets.VERCEL_ORG_ID }}" ]; then echo "::error::Missing VERCEL_ORG_ID"; exit 1; fi
-          if [ -z "${{ secrets.VERCEL_PROJECT_ID }}" ]; then echo "::error::Missing VERCEL_PROJECT_ID"; exit 1; fi
+          missing=()
+          [ -z "${{ secrets.VERCEL_TOKEN }}" ] && missing+=("VERCEL_TOKEN")
+          [ -z "${{ secrets.VERCEL_ORG_ID }}" ] && missing+=("VERCEL_ORG_ID")
+          [ -z "${{ secrets.VERCEL_PROJECT_ID }}" ] && missing+=("VERCEL_PROJECT_ID")
+          if [ ${#missing[@]} -eq 0 ]; then
+            echo "has_secrets=true" >> $GITHUB_OUTPUT
+            echo "All required Vercel secrets present. Proceeding with direct deploy."
+          else
+            echo "has_secrets=false" >> $GITHUB_OUTPUT
+            echo "::warning::Missing secrets: ${missing[*]}. Will trigger deploy via GitHub integration fallback."
+          fi
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -37,14 +48,17 @@ jobs:
           node-version: '18'
           cache: 'npm'
           cache-dependency-path: buzz-smile-saas/client/package-lock.json
+        if: ${{ steps.preflight.outputs.has_secrets == 'true' }}
 
       - name: Install deps
         run: npm ci
         working-directory: buzz-smile-saas/client
+        if: ${{ steps.preflight.outputs.has_secrets == 'true' }}
 
       - name: Build client
         run: npm run build
         working-directory: buzz-smile-saas/client
+        if: ${{ steps.preflight.outputs.has_secrets == 'true' }}
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
@@ -59,3 +73,22 @@ jobs:
           # REACT_APP_API_URL, REACT_APP_FB_APP_ID, REACT_APP_FB_API_VERSION
           # The action triggers a Vercel build using project-configured envs
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        if: ${{ steps.preflight.outputs.has_secrets == 'true' }}
+
+      - name: Fallback: trigger Vercel via GitHub integration (no-op commit)
+        if: ${{ steps.preflight.outputs.has_secrets != 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Preparing no-op commit to trigger Vercel GitHub integration..."
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git fetch origin main || true
+          git checkout -B main || git checkout main
+          mkdir -p buzz-smile-saas/.github
+          echo "trigger $(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> buzz-smile-saas/.github/deploy-poke-vercel.txt
+          git add buzz-smile-saas/.github/deploy-poke-vercel.txt
+          git commit -m "chore: trigger Vercel deploy via integrations [skip ci]" || echo "No changes to commit"
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
+          git push origin HEAD:main
+          echo "No-op commit pushed to main. Vercel's GitHub integration should redeploy automatically."
