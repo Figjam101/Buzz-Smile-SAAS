@@ -4,9 +4,9 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'buzz-smile-saas/client/**'
-      - 'buzz-smile-saas/vercel.json'
-      - 'buzz-smile-saas/.github/workflows/vercel-client-deploy.yml'
+      - 'client/**'
+      - 'vercel.json'
+      - '.github/workflows/vercel-client-deploy.yml'
   workflow_dispatch:
 
 jobs:
@@ -27,17 +27,17 @@ jobs:
           node-version: 18
 
       - name: Install dependencies (only when deploying directly)
-        if: ${{ secrets.VERCEL_TOKEN && secrets.VERCEL_ORG_ID && secrets.VERCEL_PROJECT_ID }}
+        if: ${{ secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != '' }}
         working-directory: buzz-smile-saas/client
         run: npm ci
 
       - name: Build client (only when deploying directly)
-        if: ${{ secrets.VERCEL_TOKEN && secrets.VERCEL_ORG_ID && secrets.VERCEL_PROJECT_ID }}
+        if: ${{ secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != '' }}
         working-directory: buzz-smile-saas/client
         run: npm run build
 
       - name: Deploy to Vercel (direct)
-        if: ${{ secrets.VERCEL_TOKEN && secrets.VERCEL_ORG_ID && secrets.VERCEL_PROJECT_ID }}
+        if: ${{ secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != '' }}
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -46,8 +46,8 @@ jobs:
           working-directory: buzz-smile-saas/client
           prod: true
 
-      - name: Fallback: trigger Vercel via GitHub integration (no-op commit)
-        if: ${{ !secrets.VERCEL_TOKEN || !secrets.VERCEL_ORG_ID || !secrets.VERCEL_PROJECT_ID }}
+      - name: "Fallback: trigger Vercel via GitHub integration (no-op commit)"
+        if: ${{ secrets.VERCEL_TOKEN == '' || secrets.VERCEL_ORG_ID == '' || secrets.VERCEL_PROJECT_ID == '' }}
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
