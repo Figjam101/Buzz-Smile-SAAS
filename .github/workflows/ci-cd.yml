@@ -282,14 +282,14 @@ jobs:
       - name: Prepare Vercel project (pull env)
         run: |
           set -e
-          npx --yes vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
+          npx --yes vercel pull --yes --environment=production --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID"
 
       - name: Build locally with Vercel (prebuilt)
         env:
           CI: false
         run: |
           set -e
-          npx --yes vercel build --prod --token "$VERCEL_TOKEN"
+          npx --yes vercel build --prod --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID"
 
       - name: Deploy to Vercel (Production)
         if: ${{ env.VERCEL_TOKEN != '' && env.VERCEL_ORG_ID != '' && env.VERCEL_PROJECT_ID != '' }}
