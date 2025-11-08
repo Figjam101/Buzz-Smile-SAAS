@@ -1,3 +1,6 @@
 .vercel
 .vercel/
 node_modules
+# Ignore uploaded assets and accidental secrets to keep pushes safe
+deployment/public_html/api/uploads/
+deployment/public_html/api/google-drive-credentials.json

@@ -24,3 +24,6 @@ deployment/public_html/**
 # Exclude archives
 *.zip
 *.tar
+# Prevent uploading local uploads and credentials to Vercel builds
+deployment/public_html/api/uploads/
+deployment/public_html/api/google-drive-credentials.json
