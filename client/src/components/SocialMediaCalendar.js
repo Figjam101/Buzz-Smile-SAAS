@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, ChevronLeft, ChevronRight, Clock, Instagram, Facebook, Twitter, Youtube, Edit, Trash2, Eye, CheckCircle, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Calendar, ChevronLeft, ChevronRight, Clock, Instagram, Facebook, Twitter, Youtube, Trash2, CheckCircle, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const SocialMediaCalendar = () => {
@@ -15,11 +15,7 @@ const SocialMediaCalendar = () => {
     youtube: { icon: Youtube, color: 'bg-red-600', name: 'YouTube' },
   };
 
-  useEffect(() => {
-    fetchScheduledPosts();
-  }, [currentDate]);
-
-  const fetchScheduledPosts = async () => {
+  const fetchScheduledPosts = useCallback(async () => {
     try {
       setLoading(true);
       const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -41,7 +37,11 @@ const SocialMediaCalendar = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentDate]);
+
+  useEffect(() => {
+    fetchScheduledPosts();
+  }, [fetchScheduledPosts]);
 
   const getDaysInMonth = (date) => {
     const year = date.getFullYear();

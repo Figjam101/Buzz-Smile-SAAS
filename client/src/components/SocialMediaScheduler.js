@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Share2, Instagram, Facebook, Twitter, Youtube, Plus, Settings, CheckCircle, AlertCircle, Trash2, X, Video } from 'lucide-react';
+import { Instagram, Facebook, Twitter, Youtube, Settings, CheckCircle, AlertCircle, X, Video } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const SocialMediaScheduler = ({ video, onClose, onSchedule }) => {
