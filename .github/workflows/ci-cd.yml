@@ -171,57 +171,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: "Preflight - Verify Vercel token/org/project access"
-        run: |
-          set -e
-          if [ -z "${VERCEL_TOKEN}" ]; then
-            echo "Missing VERCEL_TOKEN secret. Add it in GitHub > Settings > Secrets and variables > Actions."
-            exit 1
-          fi
-          echo "Using Org ID: ${VERCEL_ORG_ID}"
-          echo "Using Project ID: ${VERCEL_PROJECT_ID}"
-          # Check project visibility via Vercel API
-          HTTP_CODE=$(curl -sS -o /tmp/vercel_project.json -w "%{http_code}" \
-            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
-            "https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}?teamId=${VERCEL_ORG_ID}")
-          echo "Vercel API status: ${HTTP_CODE}"
-          if [ "${HTTP_CODE}" != "200" ]; then
-            echo "❌ Preflight failed. Response body:" && sed -e '1,200p' /tmp/vercel_project.json || true
-            echo "➡️ Verify that the token has access to the team and project IDs."
-            exit 1
-          fi
-          echo "✅ Preflight succeeded: token has access to project."
-
-      - name: Deploy to Vercel (Staging)
-        if: ${{ env.VERCEL_TOKEN != '' && env.VERCEL_ORG_ID != '' && env.VERCEL_PROJECT_ID != '' }}
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ env.VERCEL_TOKEN }}
-          vercel-org-id: ${{ env.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ env.VERCEL_PROJECT_ID }}
-          working-directory: ./
-          vercel-args: '--debug --prebuilt'
-        continue-on-error: false
-
-      - name: "Fallback: trigger Vercel via GitHub integration (no-op commit)"
-        if: ${{ env.VERCEL_TOKEN == '' || env.VERCEL_ORG_ID == '' || env.VERCEL_PROJECT_ID == '' }}
+      - name: Trigger Vercel (Staging) via GitHub integration
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
-          echo "$(date) – staging integration poke" >> client/public/deploy-poke.txt
-          git add client/public/deploy-poke.txt
+          echo "$(date) – staging integration poke" >> buzz-smile-saas/client/public/deploy-poke.txt
+          git add buzz-smile-saas/client/public/deploy-poke.txt
           git commit -m "chore: poke Vercel staging integration [skip ci]"
-          git fetch origin ${{ github.ref_name }}
-          git pull --rebase origin ${{ github.ref_name }}
-          git push origin HEAD:${{ github.ref_name }}
+          git push origin HEAD:develop
 
-      - name: Deploy to Railway (Staging)
-        run: |
-          echo "🚀 Staging deployment would trigger here"
-          echo "Railway staging deployment configured via webhooks"
-
-  # Deploy to Production (on main branch)
   deploy-production:
     needs: [test-client, test-server, security-scan]
     runs-on: ubuntu-latest
@@ -236,98 +194,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: "Preflight - Verify Vercel token/org/project access"
-        run: |
-          set -e
-          if [ -z "${VERCEL_TOKEN}" ]; then
-            echo "Missing VERCEL_TOKEN secret. Add it in GitHub > Settings > Secrets and variables > Actions."
-            exit 1
-          fi
-          echo "Using Org ID: ${VERCEL_ORG_ID}"
-          echo "Using Project ID: ${VERCEL_PROJECT_ID}"
-          # Check project visibility via Vercel API
-          HTTP_CODE=$(curl -sS -o /tmp/vercel_project.json -w "%{http_code}" \
-            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
-            "https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}?teamId=${VERCEL_ORG_ID}")
-          echo "Vercel API status: ${HTTP_CODE}"
-          if [ "${HTTP_CODE}" != "200" ]; then
-            echo "❌ Preflight failed. Response body:" && sed -e '1,200p' /tmp/vercel_project.json || true
-            echo "➡️ Verify that the token has access to the team and project IDs."
-            exit 1
-          fi
-          echo "✅ Preflight succeeded: token has access to project."
-
-      - name: Download client build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: client-build
-          path: client/build/
-
-      - name: Debug artifacts
-        run: |
-          echo "📦 Listing client/build contents:"
-          ls -la client/build || { echo "❌ client/build not found"; exit 1; }
-          echo "📦 Build size summary:" && du -sh client/build || true
-          echo "📁 Client directory contents:" && ls -la client || true
-
-      - name: Verify Vercel CLI identity
-        run: |
-          set -e
-          npx --yes vercel --version || true
-          npx --yes vercel whoami --token "$VERCEL_TOKEN" || {
-            echo "❌ vercel whoami failed. Check VERCEL_TOKEN secret."; exit 1;
-          }
-
-      - name: Prepare Vercel project (pull env)
-        run: |
-          set -e
-          npx --yes vercel pull --yes --environment=production --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID"
-
-      - name: Build locally with Vercel (prebuilt)
-        env:
-          CI: false
-        run: |
-          set -e
-          npx --yes vercel build --prod --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID"
-
-      - name: Deploy to Vercel (Production)
-        if: ${{ env.VERCEL_TOKEN != '' && env.VERCEL_ORG_ID != '' && env.VERCEL_PROJECT_ID != '' }}
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ env.VERCEL_TOKEN }}
-          vercel-org-id: ${{ env.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ env.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod --prebuilt --debug'
-          working-directory: ./
-        continue-on-error: false
-
-      - name: "Fallback: trigger Vercel via GitHub integration (no-op commit)"
-        if: ${{ env.VERCEL_TOKEN == '' || env.VERCEL_ORG_ID == '' || env.VERCEL_PROJECT_ID == '' }}
+      - name: Trigger Vercel (Production) via GitHub integration
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
-          echo "$(date) – production integration poke" >> client/public/deploy-poke.txt
-          git add client/public/deploy-poke.txt
+          echo "$(date) – production integration poke" >> buzz-smile-saas/client/public/deploy-poke.txt
+          git add buzz-smile-saas/client/public/deploy-poke.txt
           git commit -m "chore: poke Vercel production integration [skip ci]"
-          git fetch origin ${{ github.ref_name }}
-          git pull --rebase origin ${{ github.ref_name }}
-          git push origin HEAD:${{ github.ref_name }}
-
-      - name: Deploy to Railway (Production)
-        run: |
-          echo "🚀 Production deployment would trigger here"
-          echo "Railway production deployment configured via webhooks"
-
-      - name: Create GitHub Release
-        if: github.event_name == 'push'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          tag_name: v${{ github.run_number }}
-          release_name: Release v${{ github.run_number }}
-          body: |
-            Automated release from CI/CD pipeline.
-          draft: false
-          prerelease: false
+          git push origin HEAD:main
