@@ -173,6 +173,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Preflight: Verify Vercel token/org/project access
+        run: |
+          set -e
+          if [ -z "${VERCEL_TOKEN}" ]; then
+            echo "❌ Missing VERCEL_TOKEN secret. Add it in GitHub → Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          echo "🔎 Using Org ID: ${VERCEL_ORG_ID}"
+          echo "🔎 Using Project ID: ${VERCEL_PROJECT_ID}"
+          # Check project visibility via Vercel API
+          HTTP_CODE=$(curl -sS -o /tmp/vercel_project.json -w "%{http_code}" \
+            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+            "https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}?teamId=${VERCEL_ORG_ID}")
+          echo "Vercel API status: ${HTTP_CODE}"
+          if [ "${HTTP_CODE}" != "200" ]; then
+            echo "❌ Preflight failed. Response body:" && sed -e '1,200p' /tmp/vercel_project.json || true
+            echo "➡️ Verify that the token has access to the team and project IDs."
+            exit 1
+          fi
+          echo "✅ Preflight succeeded: token has access to project."
+
       - name: Deploy to Vercel (Staging)
         if: ${{ env.VERCEL_TOKEN != '' && env.VERCEL_ORG_ID != '' && env.VERCEL_PROJECT_ID != '' }}
         uses: amondnet/vercel-action@v25
@@ -181,6 +202,7 @@ jobs:
           vercel-org-id: ${{ env.VERCEL_ORG_ID }}
           vercel-project-id: ${{ env.VERCEL_PROJECT_ID }}
           working-directory: ./client
+        continue-on-error: false
 
       - name: "Fallback: trigger Vercel via GitHub integration (no-op commit)"
         if: ${{ env.VERCEL_TOKEN == '' || env.VERCEL_ORG_ID == '' || env.VERCEL_PROJECT_ID == '' }}
@@ -217,11 +239,47 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Preflight: Verify Vercel token/org/project access
+        run: |
+          set -e
+          if [ -z "${VERCEL_TOKEN}" ]; then
+            echo "❌ Missing VERCEL_TOKEN secret. Add it in GitHub → Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          echo "🔎 Using Org ID: ${VERCEL_ORG_ID}"
+          echo "🔎 Using Project ID: ${VERCEL_PROJECT_ID}"
+          # Check project visibility via Vercel API
+          HTTP_CODE=$(curl -sS -o /tmp/vercel_project.json -w "%{http_code}" \
+            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+            "https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}?teamId=${VERCEL_ORG_ID}")
+          echo "Vercel API status: ${HTTP_CODE}"
+          if [ "${HTTP_CODE}" != "200" ]; then
+            echo "❌ Preflight failed. Response body:" && sed -e '1,200p' /tmp/vercel_project.json || true
+            echo "➡️ Verify that the token has access to the team and project IDs."
+            exit 1
+          fi
+          echo "✅ Preflight succeeded: token has access to project."
+
       - name: Download client build artifacts
         uses: actions/download-artifact@v4
         with:
           name: client-build
           path: client/build/
+
+      - name: Debug artifacts
+        run: |
+          echo "📦 Listing client/build contents:"
+          ls -la client/build || { echo "❌ client/build not found"; exit 1; }
+          echo "📦 Build size summary:" && du -sh client/build || true
+          echo "📁 Client directory contents:" && ls -la client || true
+
+      - name: Verify Vercel CLI identity
+        run: |
+          set -e
+          npx --yes vercel --version || true
+          npx --yes vercel whoami --token "$VERCEL_TOKEN" || {
+            echo "❌ vercel whoami failed. Check VERCEL_TOKEN secret."; exit 1;
+          }
 
       - name: Deploy to Vercel (Production)
         if: ${{ env.VERCEL_TOKEN != '' && env.VERCEL_ORG_ID != '' && env.VERCEL_PROJECT_ID != '' }}
@@ -232,6 +290,7 @@ jobs:
           vercel-project-id: ${{ env.VERCEL_PROJECT_ID }}
           vercel-args: '--prod'
           working-directory: ./client
+        continue-on-error: false
 
       - name: "Fallback: trigger Vercel via GitHub integration (no-op commit)"
         if: ${{ env.VERCEL_TOKEN == '' || env.VERCEL_ORG_ID == '' || env.VERCEL_PROJECT_ID == '' }}
