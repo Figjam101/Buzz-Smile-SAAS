@@ -171,14 +171,52 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Trigger Vercel (Staging) via GitHub integration
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: buzz-smile-saas/client/package-lock.json
+      - name: Install Vercel CLI
+        run: npm i -g vercel@latest
+      - name: Preflight – check Vercel secrets
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          git config user.email "actions@github.com"
-          git config user.name "GitHub Actions"
-          echo "$(date) – staging integration poke" >> buzz-smile-saas/client/public/deploy-poke.txt
-          git add buzz-smile-saas/client/public/deploy-poke.txt
-          git commit -m "chore: poke Vercel staging integration [skip ci]"
-          git push origin HEAD:develop
+          missing=0
+          for n in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            val="${!n}"
+            if [ -z "$val" ]; then
+              echo "::error::${n} is missing. Add it in Settings → Secrets → Actions."
+              missing=1
+            else
+              echo "::notice::${n} is present."
+            fi
+          done
+          if [ "$missing" -eq 1 ]; then
+            echo "Secrets check failed"; exit 1;
+          fi
+      - name: Prepare Vercel project (pull env: preview)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel pull --yes --environment=preview --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN"
+      - name: Build locally with Vercel (prebuilt)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel build --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN" --debug
+      - name: Deploy to Vercel (Staging, prebuilt)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel deploy --prebuilt --yes --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN" --debug
 
   deploy-production:
     needs: [test-client, test-server, security-scan]
@@ -194,11 +232,49 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Trigger Vercel (Production) via GitHub integration
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: buzz-smile-saas/client/package-lock.json
+      - name: Install Vercel CLI
+        run: npm i -g vercel@latest
+      - name: Preflight – check Vercel secrets
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          git config user.email "actions@github.com"
-          git config user.name "GitHub Actions"
-          echo "$(date) – production integration poke" >> buzz-smile-saas/client/public/deploy-poke.txt
-          git add buzz-smile-saas/client/public/deploy-poke.txt
-          git commit -m "chore: poke Vercel production integration [skip ci]"
-          git push origin HEAD:main
+          missing=0
+          for n in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            val="${!n}"
+            if [ -z "$val" ]; then
+              echo "::error::${n} is missing. Add it in Settings → Secrets → Actions."
+              missing=1
+            else
+              echo "::notice::${n} is present."
+            fi
+          done
+          if [ "$missing" -eq 1 ]; then
+            echo "Secrets check failed"; exit 1;
+          fi
+      - name: Prepare Vercel project (pull env: production)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel pull --yes --environment=production --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN"
+      - name: Build locally with Vercel (prebuilt, prod)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel build --prod --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN" --debug
+      - name: Deploy to Vercel (Production, prebuilt)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel deploy --prebuilt --yes --prod --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN" --debug
