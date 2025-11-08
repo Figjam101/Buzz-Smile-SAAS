@@ -7,9 +7,8 @@ project_backup_*.tar.gz
 system_backup_*.tar.gz
 **/*.tgz
 
-# Exclude local duplicate root client/server; use buzz-smile-saas/*
-client/
-server/
+# Keep top-level client and server in Vercel builds
+# (We removed the duplicate unused project; this ensures correct build.)
 
 # Exclude large toolchains and databases inside buzz-smile-saas
 buzz-smile-saas/ffmpeg-bin/

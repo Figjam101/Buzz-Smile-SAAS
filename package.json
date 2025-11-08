@@ -7,7 +7,7 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd server && npm run dev",
     "client": "cd client && npm start",
-    "build": "cd buzz-smile-saas/client && npm run build",
+    "build": "cd client && npm run build",
     "install-all": "npm install && cd server && npm install && cd ../client && npm install",
     "link:vercel": "npx --yes vercel link --project buzz-smile-saas-frontend --yes",
     "pull:vercel": "npx --yes vercel pull --yes --environment=production",
