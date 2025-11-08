@@ -170,7 +170,7 @@ jobs:
           working-directory: ./client
           alias-domains: staging-buzz-smile.vercel.app
 
-      - name: Fallback: trigger Vercel via GitHub integration (no-op commit)
+      - name: "Fallback: trigger Vercel via GitHub integration (no-op commit)"
         if: ${{ !secrets.VERCEL_TOKEN || !secrets.VERCEL_ORG_ID || !secrets.VERCEL_PROJECT_ID }}
         run: |
           git config user.email "actions@github.com"
@@ -214,7 +214,7 @@ jobs:
           vercel-args: '--prod'
           working-directory: ./client
 
-      - name: Fallback: trigger Vercel via GitHub integration (no-op commit)
+      - name: "Fallback: trigger Vercel via GitHub integration (no-op commit)"
         if: ${{ !secrets.VERCEL_TOKEN || !secrets.VERCEL_ORG_ID || !secrets.VERCEL_PROJECT_ID }}
         run: |
           git config user.email "actions@github.com"
