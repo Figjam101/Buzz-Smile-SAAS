@@ -13,7 +13,7 @@ const BackupManager = () => {
 
   // Resolve API base, falling back to same-origin relative path
   const API_BASE = (process.env.REACT_APP_API_URL || '').replace(/\/$/, '');
-  const api = (path) => `${API_BASE}${path}`;
+  const api = useCallback((path) => `${API_BASE}${path}`, [API_BASE]);
 
   const fetchBackups = useCallback(async () => {
     try {
@@ -35,7 +35,7 @@ const BackupManager = () => {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE]);
+  }, [api]);
 
   const fetchStatus = useCallback(async () => {
     try {
@@ -53,7 +53,7 @@ const BackupManager = () => {
     } catch (error) {
       console.error('Error fetching backup status:', error);
     }
-  }, [API_BASE]);
+  }, [api]);
 
   const fetchFullBackups = useCallback(async () => {
     try {
@@ -70,7 +70,7 @@ const BackupManager = () => {
     } catch (error) {
       console.error('Error fetching full backups:', error);
     }
-  }, [API_BASE]);
+  }, [api]);
 
   useEffect(() => {
     fetchBackups();
