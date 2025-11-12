@@ -14,6 +14,12 @@ system_backup_*.tar.gz
 client/
 client/**
 
+# Exclude server code (we only deploy static frontend to Vercel)
+server/
+server/**
+buzz-smile-saas/server/
+buzz-smile-saas/server/**
+
 # Exclude large toolchains and databases inside buzz-smile-saas
 buzz-smile-saas/ffmpeg-bin/
 buzz-smile-saas/mongodb-data/
