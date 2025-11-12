@@ -1,2 +1,1 @@
-// Force rebuild Wed Nov 12 23:52:10 UTC 2025 — unify trigger
-Wed Nov 12 23:52:10 UTC 2025: Force rebuild for deployment
+// Force rebuild Wed Nov 12 07:05:00 UTC 2025 — resolve conflict v4
