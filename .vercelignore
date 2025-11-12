@@ -10,6 +10,10 @@ system_backup_*.tar.gz
 # Keep top-level client and server in Vercel builds
 # (We removed the duplicate unused project; this ensures correct build.)
 
+# Ignore the legacy top-level client so only nested client deploys
+client/
+client/**
+
 # Exclude large toolchains and databases inside buzz-smile-saas
 buzz-smile-saas/ffmpeg-bin/
 buzz-smile-saas/mongodb-data/
