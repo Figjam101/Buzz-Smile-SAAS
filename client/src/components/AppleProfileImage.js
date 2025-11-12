@@ -42,19 +42,19 @@ const AppleProfileImage = ({
   };
 
   const sizeClasses = {
-    sm: 'w-8 h-8',
-    md: 'w-10 h-10',
-    lg: 'w-12 h-12',
-    xl: 'w-16 h-16'
+    sm: 'w-10 h-10',
+    md: 'w-12 h-12',
+    lg: 'w-14 h-14',
+    xl: 'w-20 h-20'
   };
 
   // Removed unused iconSizes
 
   const textSizes = {
-    sm: 'text-xs',
-    md: 'text-sm',
-    lg: 'text-base',
-    xl: 'text-lg'
+    sm: 'text-sm',
+    md: 'text-base',
+    lg: 'text-lg',
+    xl: 'text-xl'
   };
 
   const initials = getInitials(name);
@@ -83,7 +83,7 @@ const AppleProfileImage = ({
       <div 
         className={`${sizeClasses[size]} rounded-full overflow-hidden shadow-lg ${className}`}
         style={{
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8)'
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)'
         }}
       >
         <img 
@@ -106,7 +106,7 @@ const AppleProfileImage = ({
       className={`${sizeClasses[size]} rounded-full flex items-center justify-center font-semibold text-white shadow-lg ${className}`}
       style={{
         background: `linear-gradient(135deg, ${color1}, ${color2})`,
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.25)'
       }}
     >
       <span className={textSizes[size]}>{initials}</span>

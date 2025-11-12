@@ -20,7 +20,7 @@
   }
   
   body {
-    background: linear-gradient(135deg, #ff6b9d 0%, #c44569 25%, #6c5ce7 75%, #74b9ff 100%);
+    background: #F0F0F7;
     min-height: 100vh;
     color: #1a1a1a;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -72,43 +72,58 @@
   }
 
   .btn-secondary {
-    @apply text-gray-700;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-    border: 1px solid #cbd5e1;
+    @apply text-white;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border: 1px solid #2563eb;
+    border-radius: 25px;
     box-shadow: 
-      0 8px 32px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.8),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+      0 8px 32px rgba(59, 130, 246, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   }
 
   .btn-secondary:hover {
-    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
     transform: translateY(-2px);
     box-shadow: 
-      0 12px 40px rgba(0, 0, 0, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.9),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+      0 12px 40px rgba(59, 130, 246, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   }
 
   .btn-outline {
-    @apply text-blue-600 bg-transparent;
-    border: 2px solid #3b82f6;
-    background: rgba(59, 130, 246, 0.05);
+    @apply text-white;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border: 1px solid #2563eb;
+    border-radius: 25px;
     box-shadow: 
-      0 8px 32px rgba(59, 130, 246, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1),
-      inset 0 -1px 0 rgba(59, 130, 246, 0.1);
+      0 8px 32px rgba(59, 130, 246, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  /* Elevated shadow variant for header buttons */
+  .btn-elevated {
+    box-shadow:
+      0 14px 44px rgba(59, 130, 246, 0.48),
+      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.12);
+    transform: translateY(0);
+  }
+  .btn-elevated:hover {
+    box-shadow:
+      0 18px 56px rgba(59, 130, 246, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.32),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   }
 
   .btn-outline:hover {
-    @apply text-white;
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-    border-color: #2563eb;
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
     transform: translateY(-2px);
     box-shadow: 
-      0 12px 40px rgba(59, 130, 246, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+      0 12px 40px rgba(59, 130, 246, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   }
   
   .input {
@@ -297,4 +312,165 @@ select:focus-visible {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-}/* Deployment fix - Fri Oct 31 18:57:13 ACDT 2025 */
+}
+
+/* Bouncing balls background */
+.ball-anim-x {
+  position: absolute;
+  will-change: transform;
+  animation-name: ballX;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.ball {
+  position: absolute;
+  border-radius: 9999px;
+  will-change: transform, opacity;
+  animation-name: ballY;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.ball::after {
+  /* subtle gloss per ball */
+  content: "";
+  position: absolute;
+  left: 20%;
+  top: 12%;
+  width: 60%;
+  height: 38%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.2));
+  filter: blur(0.4px);
+  pointer-events: none;
+}
+
+@keyframes ballX {
+  from { transform: translateX(0); }
+  to { transform: translateX(var(--dx, 240px)); }
+}
+
+@keyframes ballY {
+  from { transform: translateY(0); }
+  to { transform: translateY(var(--dy, 240px)); }
+}
+
+/* Deployment fix - Fri Oct 31 18:57:13 ACDT 2025 */
+
+/* ================= Upload Bubbles (video thumbnails) ================ */
+.upload-bubble-anim-x {
+  position: absolute;
+  transform: translateZ(0);
+  will-change: transform;
+  /* use custom horizontal drift for more natural bubble motion */
+  animation-name: bubbleFloatX;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.upload-bubble {
+  position: absolute;
+  border-radius: 9999px;
+  overflow: hidden; /* clip thumbnail to circle */
+  background: rgba(255,255,255,0.5);
+  transform: translateZ(0) scale(1);
+  will-change: transform;
+  /* use custom vertical drift to pair with horizontal for floaty path */
+  animation-name: bubbleFloatY;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  transition: transform 240ms ease, box-shadow 240ms ease, opacity 180ms ease;
+}
+
+.upload-bubble-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none; /* keep bubbles non-interactive */
+}
+
+.upload-bubble--loading {
+  transform: translateZ(0) scale(0.45);
+  opacity: 0.85;
+}
+
+.upload-bubble--ready {
+  transform: translateZ(0) scale(1);
+  opacity: 1;
+}
+
+/* Accent animation to make upload bubbles more noticeable */
+/* Glow accent without affecting transform animations */
+.upload-bubble--highlight::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: 0 0 0 rgba(59,130,246,0);
+  animation: glowPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%   { box-shadow: 0 0 2px rgba(59,130,246,0.0), 0 0 0 rgba(59,130,246,0.0); }
+  50%  { box-shadow: 0 0 12px rgba(59,130,246,0.55), 0 0 0 rgba(59,130,246,0.0); }
+  100% { box-shadow: 0 0 2px rgba(59,130,246,0.0), 0 0 0 rgba(59,130,246,0.0); }
+}
+
+/* More natural bubble drift: slight, non-linear wander in X/Y */
+@keyframes bubbleFloatX {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(calc(var(--dx, 240px) * 0.25)); }
+  40%  { transform: translateX(calc(var(--dx, 240px) * 0.60)); }
+  60%  { transform: translateX(calc(var(--dx, 240px) * 0.40)); }
+  80%  { transform: translateX(calc(var(--dx, 240px) * 0.85)); }
+  100% { transform: translateX(var(--dx, 240px)); }
+}
+
+@keyframes bubbleFloatY {
+  0%   { transform: translateY(0); }
+  15%  { transform: translateY(calc(var(--dy, 240px) * -0.15)); }
+  35%  { transform: translateY(calc(var(--dy, 240px) * 0.40)); }
+  55%  { transform: translateY(calc(var(--dy, 240px) * 0.10)); }
+  75%  { transform: translateY(calc(var(--dy, 240px) * 0.65)); }
+  100% { transform: translateY(var(--dy, 240px)); }
+}
+
+/* Badge outline for bubbles */
+.upload-bubble--badge {
+  border: 2px solid rgba(255,255,255,0.85);
+  box-shadow:
+    0 10px 22px rgba(0,0,0,0.14),
+    inset 0 1px 0 rgba(255,255,255,0.35),
+    0 0 0 2px rgba(255,255,255,0.65);
+}
+
+/* Success tick overlapping right edge */
+.upload-bubble-tick {
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background: #22c55e; /* green-500 */
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 2px #ffffff, 0 8px 14px rgba(0,0,0,0.15);
+  pointer-events: none;
+}

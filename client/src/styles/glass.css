@@ -9,6 +9,61 @@
   -webkit-backdrop-filter: blur(14px) saturate(110%);
 }
 
+/* Solid glass variant for neutral appearance over vibrant backgrounds */
+.glass-solid {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.40);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 6px 18px rgba(31, 38, 135, 0.18);
+  backdrop-filter: blur(14px) saturate(110%);
+  -webkit-backdrop-filter: blur(14px) saturate(110%);
+}
+
+/* Fully opaque variant for headers over vibrant backgrounds */
+.glass-opaque {
+  background: #ffffff; /* no translucency to avoid color bleed */
+  border: 1px solid rgba(255, 255, 255, 0.40);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 6px 18px rgba(31, 38, 135, 0.18);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* 3D bottom edge to match button bevel effect */
+.edge-bottom-3d {
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+.edge-bottom-3d::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.6), rgba(0, 0, 0, 0.12));
+}
+
+/* Header nav pill buttons with dotted outline and subtle 3D */
+.nav-pill {
+  border-radius: 9999px;
+  border: 1px dotted rgba(0, 0, 0, 0.18);
+  background: linear-gradient(to bottom, #f7f8fb, #e9edf3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+.nav-pill:hover {
+  background: linear-gradient(to bottom, #eef2f7, #dadddf);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 4px 12px rgba(0, 0, 0, 0.10);
+}
+.nav-pill-active {
+  background: linear-gradient(to bottom, #e6e8ee, #cfd3da);
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
 /* Shiny plastic outline */
 .shiny-outline {
   position: relative;
@@ -38,5 +93,24 @@
 }
 .glass-dropzone:hover {
   background: rgba(255, 255, 255, 0.16);
-  box-shadow: 0 3px 12px rgba(31, 38, 135, 0.16);
+  /* Remove hover shadow for a cleaner look on interaction */
+  box-shadow: none;
+}
+
+/* Uniform dotted outline that sits inside the card with equal spacing */
+.dotted-outline {
+  position: relative;
+  /* defaults; can be overridden inline with style vars */
+  --dot-offset: 16px; /* distance from each edge */
+  --dot-radius: 12px; /* roughly matches Tailwind rounded-xl */
+  --dot-color: rgba(0, 0, 0, 0.35);
+  --dot-width: 2px;
+}
+.dotted-outline::before {
+  content: "";
+  position: absolute;
+  inset: var(--dot-offset);
+  border: var(--dot-width) dotted var(--dot-color);
+  border-radius: var(--dot-radius);
+  pointer-events: none;
 }

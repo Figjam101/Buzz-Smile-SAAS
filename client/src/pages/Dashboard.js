@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import '../styles/glass.css';
 import DashboardStructure from '../components/DashboardStructure';
+import UploadBubbles from '../components/UploadBubbles';
 
 const Dashboard = () => {
   const { user, refreshUser } = useAuth();
@@ -43,6 +44,32 @@ const Dashboard = () => {
   const videosSectionRef = useRef(null);
   const [flowStep, setFlowStep] = useState(0);
   const [flowActive, setFlowActive] = useState(true);
+  const renderPlanButton = () => {
+    const isGodPlan = user?.subscription?.plan === 'god' || user?.plan === 'god';
+    const isGod = user?.role === 'admin' || isGodPlan;
+    if (isGod) {
+      return (
+        <button className="w-full btn-primary text-sm font-medium flex items-center justify-center space-x-2 animate-pulse">
+          <Crown className="w-4 h-4" />
+          <span>🔥 GOD MODE 🔥</span>
+        </button>
+      );
+    }
+    if (stats?.plan === 'Free') {
+      return (
+        <button className="w-full px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center space-x-2">
+          <Crown className="w-4 h-4" />
+          <span>Upgrade Plan</span>
+        </button>
+      );
+    }
+    return (
+      <button className="w-full px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center space-x-2">
+        <Crown className="w-4 h-4" />
+        <span>{stats?.plan} Plan</span>
+      </button>
+    );
+  };
   const scrollToTop = useCallback(() => {
     try {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -176,6 +203,7 @@ const Dashboard = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showUploader, setShowUploader] = useState(false);
+  const handleVideoProcessingRef = useRef(null);
 
   // Processing modal & status polling
   const [processingModalOpen, setProcessingModalOpen] = useState(false);
@@ -273,19 +301,35 @@ const Dashboard = () => {
     }
   };
 
-  const onDrop = useCallback((acceptedFiles) => {
-    const videoFiles = acceptedFiles.filter(f => (f.type || '').startsWith('video/'));
-    const rejected = acceptedFiles.filter(f => !(f.type || '').startsWith('video/'));
+  const onDrop = useCallback(async (acceptedFiles) => {
+    const isVideo = (f) => (f.type || '').startsWith('video/') || /\.(mp4|avi|mov|wmv|flv|webm|mkv)$/i.test(f.name || '');
+    const isImage = (f) => (f.type || '').startsWith('image/') || /\.(jpg|jpeg|png|gif|webp|heic|heif)$/i.test(f.name || '');
+    const mediaFiles = acceptedFiles.filter(f => isVideo(f) || isImage(f));
+    const rejected = acceptedFiles.filter(f => !(isVideo(f) || isImage(f)));
     if (rejected.length > 0) {
-      toast.error(`Only video files are supported. Skipped ${rejected.length} non-video file${rejected.length > 1 ? 's' : ''}.`);
+      toast.error(`Only videos or images are supported. Skipped ${rejected.length} unsupported file${rejected.length > 1 ? 's' : ''}.`);
     }
-    if (videoFiles.length === 0) {
+    if (mediaFiles.length === 0) {
       return;
     }
-    setPendingVideoFiles(prevFiles => [
-      ...prevFiles,
-      ...videoFiles.map(file => ({ file, id: Date.now() + Math.random() }))
-    ]);
+
+    // Immediately mark upload step as complete when we start sending to server
+    setUploadStepComplete(true);
+
+    // Add to pending (for bubbles/visuals) and immediately start upload
+    for (const file of mediaFiles) {
+      const pendingId = Date.now() + Math.random();
+      // Add to pending immediately so bubbles render regardless of server response
+      setPendingVideoFiles(prevFiles => ([...prevFiles, { file, id: pendingId }]));
+      const proc = handleVideoProcessingRef.current;
+      if (!proc) break;
+      // Fire upload without awaiting to allow concurrent uploads
+      Promise.resolve(proc({ file, id: pendingId, title: file.name }))
+        .catch(() => {
+          // Keep the bubble even if upload fails; thumbnail generation is client-side
+          // Optional: could mark a failed state here in future without removing bubble
+        });
+    }
   }, []);
 
   const handleConnectGoogleDrive = async () => {
@@ -305,18 +349,23 @@ const Dashboard = () => {
     }
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     accept: {
-      'video/*': ['.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mkv']
+      'video/*': ['.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mkv'],
+      'image/*': ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.heic', '.heif']
     },
     multiple: true,
-    disabled: uploading
+    // Keep dropzone interactive to allow adding more files during ongoing uploads
+    disabled: false
   });
 
   useEffect(() => {
     if (location.pathname === '/my-files' || location.hash === '#files') {
       scrollToVideosSection();
+    }
+    if (location.hash === '#admin') {
+      setActiveSection('admin');
     }
   }, [location.pathname, location.hash, scrollToVideosSection]);
 
@@ -330,7 +379,40 @@ const Dashboard = () => {
     scrollToVideosSection();
   }, [scrollToVideosSection]);
 
+  // Lightweight pop sound played on Next step from Upload slide
+  const playPopSound = useCallback(async () => {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      if (ctx.state === 'suspended') {
+        try { await ctx.resume(); } catch (_) {}
+      }
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      const now = ctx.currentTime;
+      osc.frequency.setValueAtTime(280, now);
+      osc.frequency.exponentialRampToValueAtTime(80, now + 0.12);
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.exponentialRampToValueAtTime(0.35, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.16);
+      osc.onended = () => {
+        try { gain.disconnect(); osc.disconnect(); ctx.close(); } catch (_) {}
+      };
+    } catch (_) {}
+  }, []);
+
   const nextFlowStep = useCallback(() => {
+    // Play pop when leaving upload slide with visible bubbles
+    try {
+      if (flowStep === 0 && pendingVideoFiles && pendingVideoFiles.length > 0) {
+        playPopSound();
+      }
+    } catch (_) {}
     setFlowActive(true);
     setFlowStep((s) => {
       if (s >= 3) {
@@ -340,7 +422,7 @@ const Dashboard = () => {
       }
       return Math.min(s + 1, 3);
     });
-  }, [finishFlow]);
+  }, [finishFlow, flowStep, pendingVideoFiles, playPopSound]);
 
   const prevFlowStep = useCallback(() => {
     setFlowStep((s) => Math.max(s - 1, 0));
@@ -435,7 +517,9 @@ const Dashboard = () => {
     }
   };
 
-  const handleVideoProcessing = async (videoData) => {
+  const handleVideoProcessing = useCallback(async (videoData) => {
+    // Mark step complete immediately at upload start
+    setUploadStepComplete(true);
     setUploading(true);
     setUploadProgress(0);
     
@@ -538,7 +622,11 @@ const Dashboard = () => {
       setUploading(false);
       setUploadProgress(0);
     }
-  };
+  }, [stats, fetchVideos, fetchStats]);
+
+  useEffect(() => {
+    handleVideoProcessingRef.current = handleVideoProcessing;
+  }, [handleVideoProcessing]);
 
   // Explicitly start processing for a video when user clicks Process
   const processVideo = async (video) => {
@@ -892,17 +980,28 @@ const Dashboard = () => {
         }
       })()}
 
-      {/* Dashboard Sidebar Navigation */}
-      <div className="hidden sm:block fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white border-r border-gray-200 shadow-lg z-40 overflow-y-auto">
+      {/* Dashboard Sidebar Navigation - now visible on all screen sizes */}
+      <div className="block fixed left-0 top-24 h-[calc(100vh-6rem)] w-56 sm:w-64 bg-white border-r border-gray-200 shadow-lg z-30 overflow-y-auto">
         <div className="flex flex-col h-full">
-          <div className="p-6 border-b border-gray-100">
+          <div className="p-6 mx-3 my-3 rounded-xl glass-card shiny-outline">
               <div className="flex items-center space-x-3">
-                <AppleProfileImage size="lg" name={user?.name || 'User'} profilePicture={user?.profilePicture} />
+                <div className="relative">
+                  <button
+                    onClick={() => setShowUploader(true)}
+                    aria-label="Update your profile picture"
+                    className="relative rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <AppleProfileImage size="lg" name={user?.name || 'User'} profilePicture={user?.profilePicture} />
+                    <span className="absolute -bottom-1 -right-1 bg-blue-600 text-white rounded-full p-1 shadow ring-2 ring-white">
+                      <Upload className="w-3 h-3" />
+                    </span>
+                  </button>
+                </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-gray-900 text-lg truncate">{user?.name || 'User'}</p>
                   {user?.role === 'admin' ? (
                   <div className="flex items-center space-x-2">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                       <Shield className="w-3 h-3 mr-1" />
                       Administrator
                     </span>
@@ -915,25 +1014,19 @@ const Dashboard = () => {
                     </span>
                   </div>
                 )}
+                  <button
+                    onClick={() => {
+                      if (typeof window !== 'undefined') localStorage.removeItem('onboardingDismissed');
+                    }}
+                    className="mt-1 text-xs text-gray-600 hover:text-gray-800"
+                  >
+                    Set up your account
+                  </button>
+                </div>
               </div>
             </div>
-              <button
-                onClick={() => setShowUploader(true)}
-                className="mt-3 w-full text-sm font-medium text-blue-600 hover:text-blue-700"
-              >
-                Update your profile picture
-              </button>
-              <button
-                onClick={() => {
-                  if (typeof window !== 'undefined') localStorage.removeItem('onboardingDismissed');
-                }}
-                className="mt-2 w-full text-xs text-gray-600 hover:text-gray-800"
-              >
-                Set up your account
-              </button>
-          </div>
 
-          <div className="flex-1 p-4">
+            <div className="p-4 mx-3 my-3 rounded-xl glass-card shiny-outline">
             <nav className="space-y-2">
               <button
                 onClick={() => {
@@ -1000,7 +1093,7 @@ const Dashboard = () => {
             </nav>
           </div>
 
-          <div className="p-4 border-t border-gray-100">
+          <div className="p-4 mx-3 my-3 rounded-xl glass-card shiny-outline">
             <div className="space-y-3">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-600">Videos</span>
@@ -1028,221 +1121,35 @@ const Dashboard = () => {
                   }}
                 ></div>
               </div>
-              {user?.role === 'admin' ? (
-                <button className="w-full px-3 py-2 bg-gradient-to-r from-yellow-500 to-red-600 text-white rounded-lg text-sm font-medium hover:from-yellow-600 hover:to-red-700 transition-all duration-200 flex items-center justify-center space-x-2 animate-pulse">
-                  <Crown className="w-4 h-4" />
-                  <span>🔥 GOD MODE 🔥</span>
-                </button>
-              ) : stats.plan === 'Free' ? (
-                <button className="w-full px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center space-x-2">
-                  <Crown className="w-4 h-4" />
-                  <span>Upgrade Plan</span>
-                </button>
-              ) : (
-                <button className="w-full px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center space-x-2">
-                  <Crown className="w-4 h-4" />
-                  <span>{stats.plan} Plan</span>
-                </button>
-              )}
+              {renderPlanButton()}
             </div>
           </div>
         </div>
       </div>
-
-      {/* Mobile Sidebar */}
-      <div className="sm:hidden">
-        {sidebarOpen && (
-          <div className="fixed inset-0 z-50 sm:hidden">
-            <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setSidebarOpen(false)}></div>
-            <div className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg">
-              <div className="flex flex-col h-full">
-                <div className="p-4 border-b border-gray-200">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold text-gray-900">Menu</h2>
-                    <button
-                      onClick={() => setSidebarOpen(false)}
-                      className="p-2 rounded-lg text-gray-600 hover:bg-gray-100"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-                  
-                  {/* User Profile Section - Mobile */}
-                  <div className="flex items-center space-x-3 mb-4">
-                    <AppleProfileImage size="md" name={user?.name || 'User'} profilePicture={user?.profilePicture} />
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium text-gray-900 text-sm truncate">{user?.name || 'User'}</p>
-                      {user?.role === 'admin' ? (
-                        <div className="flex items-center space-x-1">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                            <Shield className="w-3 h-3 mr-1" />
-                            Administrator
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center space-x-1">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            <Crown className="w-3 h-3 mr-1" />
-                            {stats?.plan || 'Free'} Plan
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => setShowUploader(true)}
-                    className="mx-4 mb-4 w-[calc(100%-2rem)] text-left text-sm font-medium text-blue-600 hover:text-blue-700"
-                  >
-                    Update your profile picture
-                  </button>
-                </div>
-                
-                <div className="flex-1 p-4">
-                  <nav className="space-y-2">
-                    <button
-                      onClick={() => {
-                        setActiveSection('dashboard');
-                        navigate('/dashboard');
-                        scrollToTop();
-                        setSidebarOpen(false);
-                      }}
-                      className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                        activeSection === 'dashboard'
-                          ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      <Home className="w-5 h-5 flex-shrink-0" />
-                      <span className="font-medium">Dashboard</span>
-                    </button>
-                    
-                    <button
-                      onClick={() => {
-                        setActiveSection('dashboard');
-                        navigate('/dashboard#files');
-                        scrollToVideosSection();
-                        setSidebarOpen(false);
-                      }}
-                      className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-50"
-                    >
-                      <HardDrive className="w-5 h-5 flex-shrink-0" />
-                      <span className="font-medium">My Files</span>
-                    </button>
-                    
-                    {user?.role === 'admin' && (
-                      <button
-                        onClick={() => {
-                          setActiveSection('admin');
-                          setSidebarOpen(false);
-                        }}
-                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                          activeSection === 'admin'
-                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                            : 'text-gray-700 hover:bg-gray-50'
-                        }`}
-                      >
-                      <Shield className="w-5 h-5 flex-shrink-0" />
-                      <span className="font-medium">Admin Dashboard</span>
-                    </button>
-                  )}
-                    
-                    <button
-                      onClick={() => {
-                        setActiveSection('settings');
-                        setSidebarOpen(false);
-                      }}
-                      className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                        activeSection === 'settings'
-                          ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      <Settings className="w-5 h-5 flex-shrink-0" />
-                      <span className="font-medium">Settings</span>
-                    </button>
-                  </nav>
-                </div>
-
-                {/* Stats Summary - Mobile */}
-                <div className="p-4 border-t border-gray-100">
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Videos</span>
-                      <span className="font-medium text-gray-900">
-                        {user?.role === 'admin' && (user?.subscription?.plan === 'god' || user?.plan === 'god') 
-                          ? `${stats.videoCount}/∞` 
-                          : `${stats.videoCount}/${stats.maxVideos}`
-                        }
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Storage</span>
-                      <span className="font-medium text-gray-900">
-                        {formatFileSize(stats.storageUsed)}
-                        {stats.storageLimit > 0 && ` / ${formatFileSize(stats.storageLimit)}`}
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                        style={{ 
-                          width: user?.role === 'admin' && (user?.subscription?.plan === 'god' || user?.plan === 'god')
-                            ? '100%' 
-                            : `${Math.min((stats.videoCount / stats.maxVideos) * 100, 100)}%`
-                        }}
-                      ></div>
-                    </div>
-                    {user?.role === 'admin' ? (
-                      <button className="w-full px-3 py-2 bg-gradient-to-r from-yellow-500 to-red-600 text-white rounded-lg text-sm font-medium hover:from-yellow-600 hover:to-red-700 transition-all duration-200 flex items-center justify-center space-x-2 animate-pulse">
-                        <Crown className="w-4 h-4" />
-                        <span>🔥 GOD MODE 🔥</span>
-                      </button>
-                    ) : stats.plan === 'Free' ? (
-                      <button className="w-full px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center space-x-2">
-                        <Crown className="w-4 h-4" />
-                        <span>Upgrade Plan</span>
-                      </button>
-                    ) : (
-                      <button className="w-full px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center space-x-2">
-                        <Crown className="w-4 h-4" />
-                        <span>{stats.plan} Plan</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Main Content */}
-      <main className="sm:ml-64 pt-2" role="main" aria-label="Dashboard content">
+      <main className="ml-56 sm:ml-64 pt-0 bg-gray-50" role="main" aria-label="Dashboard content">
         {/* Dashboard Section */}
         {activeSection === 'dashboard' && (
-          <div className="p-3 lg:p-4 min-h-screen">
+          <div className="p-0 min-h-screen">
             {/* Structure prototype wired with real step content */}
-            <DashboardStructure
-              uploadCompleted={uploadStepComplete}
-              uploadContent={(
-                <>
-                  <div className="flex items-center justify-end mb-3">
-                    <div className="flex items-center space-x-2 text-sm text-gray-600">
-                      <Video className="w-4 h-4" />
-                      <span>{videos.length} videos</span>
+              <DashboardStructure
+                uploadCompleted={uploadStepComplete}
+                onUploadClick={open}
+                uploadContent={(
+                  <>
+                    {/* Floating bubbles for pending uploads (visual only) */}
+                    <UploadBubbles files={pendingVideoFiles} />
+                    <div
+                      {...getRootProps({ tabIndex: -1 })}
+                      className={`relative glass-dropzone rounded-xl p-8 text-center border-2 border-dashed transition-colors focus:outline-none outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 ${
+                        isDragActive
+                          ? 'border-blue-300/70 bg-white/20'
+                          : 'border-gray-600 hover:border-gray-700'
+                      } ${uploading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                    >
+                    <input id="dropzone-input" {...getInputProps()} />
+                    <div className="plastic-badge w-16 h-16 mx-auto -mt-4 mb-3 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center ring-2 ring-blue-300/40 shadow-xl">
+                      <Upload className="w-8 h-8 text-white" />
                     </div>
-                  </div>
-
-                  <div
-                    {...getRootProps({ tabIndex: -1 })}
-                    className={`glass-dropzone border-2 border-dashed rounded-xl p-4 text-center transition-colors focus:outline-none outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 ${
-                      isDragActive
-                        ? 'border-blue-300/70 bg-white/20'
-                        : 'border-white/50 hover:border-white/70'
-                    } ${uploading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                  >
-                    <input {...getInputProps()} />
-                    <Upload className="w-8 h-8 text-gray-700 mx-auto mb-3" />
                     {uploading ? (
                       <div className="space-y-2">
                         <p className="text-gray-600">Uploading... {uploadProgress}%</p>
@@ -1254,58 +1161,29 @@ const Dashboard = () => {
                         </div>
                       </div>
                     ) : isDragActive ? (
-                      <p className="text-blue-700 font-medium">Drop the videos here...</p>
+                      <p className="text-blue-700 font-medium">Drop videos and images here...</p>
                     ) : (
                       <div>
                         <p className="text-gray-800 mb-1">
-                          Drag & drop videos here, or <span className="text-blue-600 font-medium">click to browse</span>
+                          Drag & Drop Videos and Images Here
                         </p>
                         <p className="text-sm text-gray-500">
-                          Supports MP4, AVI, MOV, WMV, FLV, WebM, MKV
+                          Supports MP4, AVI, MOV, WMV, FLV, WebM, MKV; plus JPG, JPEG, PNG, GIF, WEBP, HEIC, HEIF
                         </p>
                       </div>
                     )}
+                    {uploadStepComplete && (
+                      <span
+                        className="fixed right-4 top-1/2 -translate-y-1/2 z-40 pointer-events-none w-7 h-7 rounded-full bg-green-500 text-white text-sm leading-[28px] flex items-center justify-center ring-2 ring-white shadow-xl"
+                        aria-hidden="true"
+                      >
+                        ✓
+                      </span>
+                    )}
                   </div>
 
-                  {pendingVideoFiles.length > 0 && (
-                    <div className="mt-4 space-y-2">
-                      <h3 className="font-medium text-gray-900">Pending Videos ({pendingVideoFiles.length})</h3>
-                      <div className="space-y-2">
-                        {pendingVideoFiles.map((videoFile) => (
-                          <div key={videoFile.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div className="flex items-center space-x-3">
-                              <FileVideo className="w-5 h-5 text-gray-500" />
-                              <span className="text-sm font-medium text-gray-900">{videoFile.file.name}</span>
-                              <span className="text-xs text-gray-500">
-                                {formatFileSize(videoFile.file.size)}
-                              </span>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <button
-                                onClick={() => handleVideoProcessing({
-                                  orderedFiles: [videoFile],
-                                  videoName: videoFile.file?.name || 'Untitled',
-                                  description: '',
-                                  platforms: [],
-                                  isStory: false,
-                                  id: videoFile.id
-                                })}
-                                className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors"
-                              >
-                                Upload
-                              </button>
-                              <button
-                                onClick={() => setPendingVideoFiles(prev => prev.filter(f => f.id !== videoFile.id))}
-                                className="p-1 text-gray-400 hover:text-red-500 transition-colors"
-                              >
-                                <X className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  {/* Pending list replaced by floating bubbles UI */}
+                  {pendingVideoFiles.length > 0 && null}
                 </>
               )}
               processContent={(

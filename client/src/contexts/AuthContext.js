@@ -20,20 +20,11 @@ export const AuthProvider = ({ children }) => {
 
   // Configure axios defaults
   useEffect(() => {
-    // Set base URL for all axios requests
+    // Set base URL for all axios requests from env or same-origin
     const envBaseRaw = process.env.REACT_APP_API_URL || '';
-    // Normalize base: remove trailing slash and trailing '/api' to avoid double '/api'
-    const envBaseTrimmed = envBaseRaw.replace(/\/$/, '');
-    const envBase = /\/api$/.test(envBaseTrimmed)
-      ? envBaseTrimmed.replace(/\/api$/, '')
-      : envBaseTrimmed;
-    let baseURL = envBase;
-    if (!baseURL && typeof window !== 'undefined') {
-      const origin = window.location.origin;
-      // In local dev, default to backend on 5001; in prod, use same-origin
-      baseURL = origin.includes('localhost:3000') ? 'http://localhost:5001' : '';
-    }
-    axios.defaults.baseURL = baseURL || '';
+    const baseURL = (envBaseRaw || (typeof window !== 'undefined' ? window.location.origin : ''))
+      .replace(/\/$/, '');
+    axios.defaults.baseURL = baseURL;
     // Optional: surface configuration in console for quick diagnostics
     if (process.env.NODE_ENV !== 'production') {
       console.log('[AuthContext] axios baseURL set to:', axios.defaults.baseURL);
@@ -74,11 +65,22 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       if (token) {
         try {
-          const response = await axios.get('/api/auth/me');
+          const response = await axios.get('/api/auth/me', {
+            headers: { Authorization: `Bearer ${token}` },
+            // In dev, avoid sending credentials unless needed
+            withCredentials: false
+          });
           setUser(response.data.user);
         } catch (error) {
-          console.error('Auth check failed:', error);
-          logout();
+          // Handle common unauthorized cases quietly to avoid noisy logs in dev
+          const status = error?.response?.status;
+          if (status === 401 || status === 403) {
+            localStorage.removeItem('token');
+            setToken(null);
+            setUser(null);
+          } else {
+            console.warn('Auth check failed:', error?.message || error);
+          }
         }
       }
       setLoading(false);

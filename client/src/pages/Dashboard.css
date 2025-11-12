@@ -259,22 +259,8 @@
   font-size: 1.1rem;
 }
 
-.btn-primary {
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
-}
+/* Unified button styles are defined globally in src/index.css.
+   Removing local .btn-primary overrides to maintain consistency. */
 
 .videos-grid {
   display: grid;

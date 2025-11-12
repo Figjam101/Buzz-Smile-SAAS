@@ -14,6 +14,23 @@ const SocialMediaCard = ({ onLinkToCalendar }) => {
     username: '',
     linked: false
   });
+  const [facebookConfigured, setFacebookConfigured] = useState(false);
+  
+  // Check if Facebook OAuth is configured
+  useEffect(() => {
+    const checkOAuthStatus = async () => {
+      try {
+        const response = await fetch('/auth/status');
+        const data = await response.json();
+        setFacebookConfigured(data.providers?.facebook || false);
+      } catch (error) {
+        console.log('Could not check OAuth status');
+        setFacebookConfigured(false);
+      }
+    };
+    
+    checkOAuthStatus();
+  }, []);
 
   useEffect(() => {
     // Initialize accounts from user data if available
@@ -235,14 +252,16 @@ const SocialMediaCard = ({ onLinkToCalendar }) => {
         </div>
       )}
       
-      <div className="mt-4 pt-3 border-t border-gray-200">
-        <button
-          onClick={() => window.open('/admin/oauth-test', '_blank')}
-          className="text-sm text-blue-500 hover:text-blue-700 flex items-center"
-        >
-          <Link size={14} className="mr-1" /> Connect with OAuth
-        </button>
-      </div>
+      {facebookConfigured && (
+        <div className="mt-4 pt-3 border-t border-gray-200">
+          <button
+            onClick={() => window.open('/admin/oauth-test', '_blank')}
+            className="text-sm text-blue-500 hover:text-blue-700 flex items-center"
+          >
+            <Link size={14} className="mr-1" /> Connect with OAuth
+          </button>
+        </div>
+      )}
     </div>
   );
 };

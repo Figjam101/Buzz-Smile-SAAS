@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Facebook, X } from 'lucide-react';
 import { initFacebookSDK, loginWithFacebook } from '../utils/facebookSdk';
@@ -6,6 +6,25 @@ import { initFacebookSDK, loginWithFacebook } from '../utils/facebookSdk';
 const OnboardingModal = ({ isOpen, onClose }) => {
   const { user, handleOAuthLogin, refreshUser } = useAuth();
   const [connecting, setConnecting] = useState(false);
+  const [facebookConfigured, setFacebookConfigured] = useState(false);
+  
+  // Check if Facebook OAuth is configured
+  useEffect(() => {
+    // Check OAuth configuration status
+    const checkOAuthStatus = async () => {
+      try {
+        const response = await fetch('/auth/status');
+        const data = await response.json();
+        setFacebookConfigured(data.providers?.facebook || false);
+      } catch (error) {
+        console.log('Could not check OAuth status');
+        setFacebookConfigured(false);
+      }
+    };
+    
+    checkOAuthStatus();
+  }, []);
+  
   if (!isOpen) return null;
 
   const isFacebookLinked = Array.isArray(user?.linkedSocialAccounts) && user.linkedSocialAccounts.includes('facebook');
@@ -27,66 +46,82 @@ const OnboardingModal = ({ isOpen, onClose }) => {
         <div className="px-5 pb-5">
           <p className="text-sm text-gray-600 mb-4">Follow these steps to finish onboarding and enable social posting.</p>
 
-          <div className="rounded-xl border border-gray-200 p-4 mb-3">
-            <div className="flex items-center justify-between">
+          {facebookConfigured && (
+            <div className="rounded-xl border border-gray-200 p-4 mb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-full bg-blue-50 text-blue-600">
+                    <Facebook className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Connect Facebook Business</p>
+                    <p className="text-xs text-gray-500">Link your Facebook Business account to post videos directly from the calendar.</p>
+                  </div>
+                </div>
+                <span className={`px-2.5 py-1 rounded-full text-xs ${isFacebookLinked ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-700'}`}>
+                  {isFacebookLinked ? 'Connected' : 'Not connected'}
+                </span>
+              </div>
+
+              <div className="mt-4 flex items-center gap-3">
+                {isFacebookLinked ? (
+                  <button
+                    className="px-4 py-2 rounded-full bg-gray-100 text-gray-800 hover:bg-gray-200"
+                    onClick={onClose}
+                  >
+                    Done
+                  </button>
+                ) : (
+                  <button
+                    className={`px-4 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 ${connecting ? 'opacity-70 cursor-not-allowed' : ''}`}
+                    onClick={async () => {
+                      if (connecting) return;
+                      setConnecting(true);
+                      try {
+                        await initFacebookSDK();
+                        const auth = await loginWithFacebook();
+                        if (auth && auth.accessToken) {
+                          try {
+                            await refreshUser();
+                          } catch (_) {}
+                          onClose();
+                          return;
+                        }
+                        handleOAuthLogin('facebook');
+                      } catch (e) {
+                        handleOAuthLogin('facebook');
+                      } finally {
+                        setConnecting(false);
+                      }
+                    }}
+                  >
+                    {connecting ? 'Connecting…' : 'Connect Facebook'}
+                  </button>
+                )}
+                <button
+                  className="px-4 py-2 rounded-full text-gray-700 hover:bg-gray-100"
+                  onClick={onClose}
+                >
+                  Skip for now
+                </button>
+              </div>
+              <p className="mt-2 text-xs text-gray-500">You can change this later under Settings → Social Accounts.</p>
+            </div>
+          )}
+          
+          {!facebookConfigured && (
+            <div className="rounded-xl border border-gray-200 p-4 mb-3 bg-gray-50">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-full bg-blue-50 text-blue-600">
+                <div className="p-2 rounded-full bg-gray-200 text-gray-500">
                   <Facebook className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">Connect Facebook Business</p>
-                  <p className="text-xs text-gray-500">Link your Facebook Business account to post videos directly from the calendar.</p>
+                  <p className="font-medium text-gray-600">Facebook Business Integration</p>
+                  <p className="text-xs text-gray-500">Facebook integration is not configured. Contact your administrator to enable this feature.</p>
                 </div>
               </div>
-              <span className={`px-2.5 py-1 rounded-full text-xs ${isFacebookLinked ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-700'}`}>
-                {isFacebookLinked ? 'Connected' : 'Not connected'}
-              </span>
             </div>
-
-            <div className="mt-4 flex items-center gap-3">
-              {isFacebookLinked ? (
-                <button
-                  className="px-4 py-2 rounded-full bg-gray-100 text-gray-800 hover:bg-gray-200"
-                  onClick={onClose}
-                >
-                  Done
-                </button>
-              ) : (
-                <button
-                  className={`px-4 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 ${connecting ? 'opacity-70 cursor-not-allowed' : ''}`}
-                  onClick={async () => {
-                    if (connecting) return;
-                    setConnecting(true);
-                    try {
-                      await initFacebookSDK();
-                      const auth = await loginWithFacebook();
-                      if (auth && auth.accessToken) {
-                        try {
-                          await refreshUser();
-                        } catch (_) {}
-                        onClose();
-                        return;
-                      }
-                      handleOAuthLogin('facebook');
-                    } catch (e) {
-                      handleOAuthLogin('facebook');
-                    } finally {
-                      setConnecting(false);
-                    }
-                  }}
-                >
-                  {connecting ? 'Connecting…' : 'Connect Facebook'}
-                </button>
-              )}
-              <button
-                className="px-4 py-2 rounded-full text-gray-700 hover:bg-gray-100"
-                onClick={onClose}
-              >
-                Skip for now
-              </button>
-            </div>
-            <p className="mt-2 text-xs text-gray-500">You can change this later under Settings → Social Accounts.</p>
-          </div>
+          )}
 
           {/* Future steps could go here */}
         </div>
