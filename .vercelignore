@@ -7,24 +7,14 @@ project_backup_*.tar.gz
 system_backup_*.tar.gz
 **/*.tgz
 
-# Keep top-level client and server in Vercel builds
-# (We removed the duplicate unused project; this ensures correct build.)
-
-# Ignore the legacy top-level client so only nested client deploys
-client/
-client/**
-
-# Exclude server code (we only deploy static frontend to Vercel)
+# Only deploy the nested client; exclude server and heavy assets
 server/
 server/**
-buzz-smile-saas/server/
-buzz-smile-saas/server/**
-
-# Exclude large toolchains and databases inside buzz-smile-saas
-buzz-smile-saas/ffmpeg-bin/
-buzz-smile-saas/mongodb-data/
-buzz-smile-saas/mongodb-*/
-buzz-smile-saas/mongodb-portable/
+mongodb-portable/
+ffmpeg-bin/
+# Exclude large toolchains and databases
+mongodb-data/
+mongodb-*/
 
 # Exclude intermediate deployment outputs
 deployment/public_html/
