@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "buzz-smile-saas/client/package.json",
+      "src": "client/package.json",
       "use": "@vercel/static-build",
       "config": {
         "distDir": "build",
@@ -11,7 +11,7 @@
       }
     }
   ],
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD buzz-smile-saas/client/ vercel.json",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- client/ vercel.json",
   "headers": [
     {
       "source": "/static/(.*)",
