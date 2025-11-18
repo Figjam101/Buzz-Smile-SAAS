@@ -14,7 +14,6 @@ import {
   RotateCcw,
   Video
 } from 'lucide-react';
-import Navbar from '../components/Navbar';
 import AppleProfileImage from '../components/AppleProfileImage';
 import ProfilePictureUploader from '../components/ProfilePictureUploader';
 import SystemMonitoring from '../components/admin/SystemMonitoring';
@@ -29,7 +28,7 @@ const AdminDashboard = () => {
   const { user, loading } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [systemHealth, setSystemHealth] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showUploader, setShowUploader] = useState(false);
   const [serverResetEnabled, setServerResetEnabled] = useState(false);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
@@ -53,7 +52,8 @@ const AdminDashboard = () => {
   const fetchSystemHealth = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/monitoring/health`, {
+      const base = (process.env.REACT_APP_API_URL || '').replace(/\/$/, '');
+      const response = await fetch(`${base}/api/health`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -170,8 +170,6 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Navbar */}
-      <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar - Visible on large screens, hidden on mobile/tablet */}

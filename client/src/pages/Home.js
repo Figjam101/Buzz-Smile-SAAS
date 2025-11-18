@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import BouncingBall from '../components/BouncingBall';
 import GSAPTextAnimation from '../components/GSAPTextAnimation';
-import Navbar from '../components/Navbar';
 import { 
   Play, 
   Upload, 
@@ -105,7 +104,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
-      <Navbar />
+      
       
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary-50 to-blue-100 py-12 sm:py-20 relative min-h-screen flex items-center">

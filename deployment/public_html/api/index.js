@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const auth = require('./middleware/auth');
 
 // Load environment variables
 dotenv.config();
@@ -32,6 +33,16 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/videos', require('./routes/videos'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/uploads', require('./routes/upload'));
+
+app.post('/api/social/schedule', auth, (req, res) => {
+  res.json({ message: 'Scheduled', data: req.body });
+});
+app.get('/api/social/scheduled', auth, (req, res) => {
+  res.json([]);
+});
+app.delete('/api/social/scheduled/:id', auth, (req, res) => {
+  res.json({ deleted: true, id: req.params.id });
+});
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
