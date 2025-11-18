@@ -1,6 +1,6 @@
 {
   "name": "buzz-smile-official-website-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Backend server for Buzz Smile Official Website (SAAS)",
   "main": "index.js",
   "scripts": {
