@@ -1,0 +1,3996 @@
+[2025-11-19T01:31:59.827Z] {
+  "level": "info",
+  "message": "Request started: GET /?ide_webview_request_time=1763515919747",
+  "metadata": {
+    "requestId": "req_1763515919825_1",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:31:59.826Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 80330752,
+    "heapTotal": 133300224,
+    "heapUsed": 105155080,
+    "external": 21956926,
+    "arrayBuffers": 18347591
+  }
+}
+[2025-11-19T01:31:59.832Z] {
+  "level": "info",
+  "message": "Request completed: GET /?ide_webview_request_time=1763515919747",
+  "metadata": {
+    "requestId": "req_1763515919825_1",
+    "statusCode": 404,
+    "duration": "7ms"
+  },
+  "timestamp": "2025-11-19T01:31:59.832Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 83197952,
+    "heapTotal": 133300224,
+    "heapUsed": 105301064,
+    "external": 21957006,
+    "arrayBuffers": 18347631
+  }
+}
+[2025-11-19T01:32:00.203Z] {
+  "level": "info",
+  "message": "Request started: GET /@vite/client",
+  "metadata": {
+    "requestId": "req_1763515920203_2",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:32:00.203Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 69320704,
+    "heapTotal": 133300224,
+    "heapUsed": 105536760,
+    "external": 21957006,
+    "arrayBuffers": 18347631
+  }
+}
+[2025-11-19T01:32:00.205Z] {
+  "level": "info",
+  "message": "Request completed: GET /@vite/client",
+  "metadata": {
+    "requestId": "req_1763515920203_2",
+    "statusCode": 404,
+    "duration": "2ms"
+  },
+  "timestamp": "2025-11-19T01:32:00.205Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 69730304,
+    "heapTotal": 133562368,
+    "heapUsed": 105618808,
+    "external": 21957030,
+    "arrayBuffers": 18347655
+  }
+}
+[2025-11-19T01:32:09.276Z] {
+  "level": "info",
+  "message": "Request started: GET /api/health?ide_webview_request_time=1763515929267",
+  "metadata": {
+    "requestId": "req_1763515929276_3",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:32:09.276Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 55050240,
+    "heapTotal": 106823680,
+    "heapUsed": 99082152,
+    "external": 21964159,
+    "arrayBuffers": 18354784
+  }
+}
+[2025-11-19T01:32:09.280Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/health?ide_webview_request_time=1763515929267",
+  "metadata": {
+    "requestId": "req_1763515929276_3",
+    "statusCode": 503,
+    "duration": "4ms"
+  },
+  "timestamp": "2025-11-19T01:32:09.280Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 60440576,
+    "heapTotal": 106823680,
+    "heapUsed": 99185736,
+    "external": 21964183,
+    "arrayBuffers": 18354808
+  }
+}
+[2025-11-19T01:32:09.311Z] {
+  "level": "info",
+  "message": "Request started: GET /@vite/client",
+  "metadata": {
+    "requestId": "req_1763515929311_4",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:32:09.311Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 63913984,
+    "heapTotal": 106823680,
+    "heapUsed": 99335440,
+    "external": 21964183,
+    "arrayBuffers": 18354808
+  }
+}
+[2025-11-19T01:32:09.311Z] {
+  "level": "info",
+  "message": "Request completed: GET /@vite/client",
+  "metadata": {
+    "requestId": "req_1763515929311_4",
+    "statusCode": 404,
+    "duration": "0ms"
+  },
+  "timestamp": "2025-11-19T01:32:09.311Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 64208896,
+    "heapTotal": 106823680,
+    "heapUsed": 99396192,
+    "external": 21964207,
+    "arrayBuffers": 18354832
+  }
+}
+[2025-11-19T01:33:19.826Z] {
+  "level": "info",
+  "message": "Request started: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763515999822_5",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:33:19.825Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 37076992,
+    "heapTotal": 106299392,
+    "heapUsed": 99874312,
+    "external": 21972525,
+    "arrayBuffers": 18363150
+  }
+}
+[2025-11-19T01:33:19.991Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763515999822_5",
+    "statusCode": 200,
+    "duration": "169ms"
+  },
+  "timestamp": "2025-11-19T01:33:19.991Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 44154880,
+    "heapTotal": 106299392,
+    "heapUsed": 100016968,
+    "external": 21972549,
+    "arrayBuffers": 18363174
+  }
+}
+[2025-11-19T01:33:20.028Z] {
+  "level": "info",
+  "message": "Request started: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516000028_6",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:33:20.028Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 49840128,
+    "heapTotal": 107347968,
+    "heapUsed": 99430304,
+    "external": 21972549,
+    "arrayBuffers": 18362976
+  }
+}
+[2025-11-19T01:33:20.034Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516000028_6",
+    "statusCode": 200,
+    "duration": "5ms"
+  },
+  "timestamp": "2025-11-19T01:33:20.033Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 50085888,
+    "heapTotal": 107347968,
+    "heapUsed": 99517440,
+    "external": 21972375,
+    "arrayBuffers": 18363000
+  }
+}
+[2025-11-19T01:33:20.197Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516000197_7",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:33:20.197Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 50642944,
+    "heapTotal": 107610112,
+    "heapUsed": 99736680,
+    "external": 21972375,
+    "arrayBuffers": 18363000
+  }
+}
+[2025-11-19T01:33:20.333Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516000197_7",
+    "statusCode": 200,
+    "duration": "136ms"
+  },
+  "timestamp": "2025-11-19T01:33:20.333Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 51724288,
+    "heapTotal": 107610112,
+    "heapUsed": 99839536,
+    "external": 21972399,
+    "arrayBuffers": 18363024
+  }
+}
+[2025-11-19T01:33:20.347Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516000347_8",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:33:20.347Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 51920896,
+    "heapTotal": 107610112,
+    "heapUsed": 99967456,
+    "external": 21972399,
+    "arrayBuffers": 18363024
+  }
+}
+[2025-11-19T01:33:20.357Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516000347_8",
+    "statusCode": 200,
+    "duration": "9ms"
+  },
+  "timestamp": "2025-11-19T01:33:20.357Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 52232192,
+    "heapTotal": 107610112,
+    "heapUsed": 100039320,
+    "external": 21972423,
+    "arrayBuffers": 18363048
+  }
+}
+[2025-11-19T01:33:36.390Z] {
+  "level": "info",
+  "message": "Request started: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516016388_9",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:33:36.390Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 42336256,
+    "heapTotal": 106561536,
+    "heapUsed": 99794672,
+    "external": 21972510,
+    "arrayBuffers": 18362976
+  }
+}
+[2025-11-19T01:33:36.414Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516016388_9",
+    "statusCode": 200,
+    "duration": "26ms"
+  },
+  "timestamp": "2025-11-19T01:33:36.414Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 45580288,
+    "heapTotal": 106561536,
+    "heapUsed": 99897120,
+    "external": 21980567,
+    "arrayBuffers": 18371192
+  }
+}
+[2025-11-19T01:33:36.422Z] {
+  "level": "info",
+  "message": "Request started: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516016421_10",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:33:36.422Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 47251456,
+    "heapTotal": 106561536,
+    "heapUsed": 100038224,
+    "external": 21980567,
+    "arrayBuffers": 18371192
+  }
+}
+[2025-11-19T01:33:36.424Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516016421_10",
+    "statusCode": 200,
+    "duration": "3ms"
+  },
+  "timestamp": "2025-11-19T01:33:36.424Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 47398912,
+    "heapTotal": 106561536,
+    "heapUsed": 100105496,
+    "external": 21980591,
+    "arrayBuffers": 18371216
+  }
+}
+[2025-11-19T01:33:36.430Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516016430_11",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:33:36.430Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 47841280,
+    "heapTotal": 106561536,
+    "heapUsed": 100274024,
+    "external": 21980591,
+    "arrayBuffers": 18371216
+  }
+}
+[2025-11-19T01:33:36.441Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516016430_11",
+    "statusCode": 200,
+    "duration": "11ms"
+  },
+  "timestamp": "2025-11-19T01:33:36.441Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 48562176,
+    "heapTotal": 106561536,
+    "heapUsed": 100368784,
+    "external": 21980615,
+    "arrayBuffers": 18371240
+  }
+}
+[2025-11-19T01:33:36.446Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516016446_12",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:33:36.446Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 48709632,
+    "heapTotal": 106561536,
+    "heapUsed": 100504432,
+    "external": 21980615,
+    "arrayBuffers": 18371240
+  }
+}
+[2025-11-19T01:33:36.446Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516016446_12",
+    "statusCode": 200,
+    "duration": "0ms"
+  },
+  "timestamp": "2025-11-19T01:33:36.446Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 48857088,
+    "heapTotal": 106561536,
+    "heapUsed": 100578352,
+    "external": 21980639,
+    "arrayBuffers": 18371264
+  }
+}
+[2025-11-19T01:33:36.451Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516016451_13",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:33:36.451Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 49397760,
+    "heapTotal": 106823680,
+    "heapUsed": 100130832,
+    "external": 21980639,
+    "arrayBuffers": 18371168
+  }
+}
+[2025-11-19T01:33:36.452Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516016451_13",
+    "statusCode": 200,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T01:33:36.452Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 49512448,
+    "heapTotal": 106823680,
+    "heapUsed": 100256784,
+    "external": 21980567,
+    "arrayBuffers": 18371192
+  }
+}
+[2025-11-19T01:33:36.454Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516016454_14",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:33:36.454Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 49610752,
+    "heapTotal": 106823680,
+    "heapUsed": 100362448,
+    "external": 21988759,
+    "arrayBuffers": 18379384
+  }
+}
+[2025-11-19T01:33:36.455Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516016454_14",
+    "statusCode": 200,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T01:33:36.455Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 49659904,
+    "heapTotal": 106823680,
+    "heapUsed": 100449264,
+    "external": 21988783,
+    "arrayBuffers": 18379408
+  }
+}
+[2025-11-19T01:41:48.746Z] {
+  "level": "info",
+  "message": "Request started: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516508732_15",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:41:48.740Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 27508736,
+    "heapTotal": 107872256,
+    "heapUsed": 100847176,
+    "external": 21980717,
+    "arrayBuffers": 18371342
+  }
+}
+[2025-11-19T01:41:48.931Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516508732_15",
+    "statusCode": 200,
+    "duration": "197ms"
+  },
+  "timestamp": "2025-11-19T01:41:48.931Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 33587200,
+    "heapTotal": 107872256,
+    "heapUsed": 100914224,
+    "external": 21980741,
+    "arrayBuffers": 18371366
+  }
+}
+[2025-11-19T01:41:48.965Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516508965_16",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:41:48.965Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 36274176,
+    "heapTotal": 107872256,
+    "heapUsed": 101076920,
+    "external": 21988933,
+    "arrayBuffers": 18379558
+  }
+}
+[2025-11-19T01:41:48.978Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516508965_16",
+    "statusCode": 200,
+    "duration": "13ms"
+  },
+  "timestamp": "2025-11-19T01:41:48.978Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 37158912,
+    "heapTotal": 107872256,
+    "heapUsed": 101160536,
+    "external": 21988957,
+    "arrayBuffers": 18379582
+  }
+}
+[2025-11-19T01:41:48.983Z] {
+  "level": "info",
+  "message": "Request started: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516508983_17",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:41:48.983Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 37339136,
+    "heapTotal": 107872256,
+    "heapUsed": 101246560,
+    "external": 21988957,
+    "arrayBuffers": 18379582
+  }
+}
+[2025-11-19T01:41:48.996Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516508983_17",
+    "statusCode": 200,
+    "duration": "12ms"
+  },
+  "timestamp": "2025-11-19T01:41:48.995Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 37453824,
+    "heapTotal": 107872256,
+    "heapUsed": 101312016,
+    "external": 21988981,
+    "arrayBuffers": 18379606
+  }
+}
+[2025-11-19T01:41:49.084Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516509084_18",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:41:49.084Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 43171840,
+    "heapTotal": 107872256,
+    "heapUsed": 100612080,
+    "external": 21988981,
+    "arrayBuffers": 18371168
+  }
+}
+[2025-11-19T01:41:49.117Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516509084_18",
+    "statusCode": 200,
+    "duration": "33ms"
+  },
+  "timestamp": "2025-11-19T01:41:49.117Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 43237376,
+    "heapTotal": 107872256,
+    "heapUsed": 100695536,
+    "external": 21980567,
+    "arrayBuffers": 18371192
+  }
+}
+[2025-11-19T01:41:49.125Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516509125_19",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:41:49.125Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 43319296,
+    "heapTotal": 107872256,
+    "heapUsed": 100787288,
+    "external": 21980567,
+    "arrayBuffers": 18371192
+  }
+}
+[2025-11-19T01:41:49.128Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516509125_19",
+    "statusCode": 200,
+    "duration": "3ms"
+  },
+  "timestamp": "2025-11-19T01:41:49.128Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 43515904,
+    "heapTotal": 107872256,
+    "heapUsed": 100852944,
+    "external": 21980591,
+    "arrayBuffers": 18371216
+  }
+}
+[2025-11-19T01:41:49.131Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516509131_20",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:41:49.131Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 43597824,
+    "heapTotal": 107872256,
+    "heapUsed": 100943224,
+    "external": 21980591,
+    "arrayBuffers": 18371216
+  }
+}
+[2025-11-19T01:41:49.135Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516509131_20",
+    "statusCode": 200,
+    "duration": "4ms"
+  },
+  "timestamp": "2025-11-19T01:41:49.135Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 43696128,
+    "heapTotal": 107872256,
+    "heapUsed": 101008720,
+    "external": 21980615,
+    "arrayBuffers": 18371240
+  }
+}
+[2025-11-19T01:41:49.375Z] {
+  "level": "info",
+  "message": "Request started: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516509375_21",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:41:49.375Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 43925504,
+    "heapTotal": 107872256,
+    "heapUsed": 101167624,
+    "external": 21988807,
+    "arrayBuffers": 18379432
+  }
+}
+[2025-11-19T01:41:49.376Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516509375_21",
+    "statusCode": 200,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T01:41:49.376Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 43991040,
+    "heapTotal": 107872256,
+    "heapUsed": 101232264,
+    "external": 21988831,
+    "arrayBuffers": 18379456
+  }
+}
+[2025-11-19T01:41:49.377Z] {
+  "level": "info",
+  "message": "Request started: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516509377_22",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:41:49.377Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 44056576,
+    "heapTotal": 107872256,
+    "heapUsed": 101317416,
+    "external": 21988831,
+    "arrayBuffers": 18379456
+  }
+}
+[2025-11-19T01:41:49.379Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516509377_22",
+    "statusCode": 200,
+    "duration": "2ms"
+  },
+  "timestamp": "2025-11-19T01:41:49.379Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 44122112,
+    "heapTotal": 107872256,
+    "heapUsed": 101381992,
+    "external": 21988855,
+    "arrayBuffers": 18379480
+  }
+}
+[2025-11-19T01:41:49.572Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516509572_23",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:41:49.572Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 44466176,
+    "heapTotal": 107872256,
+    "heapUsed": 100917144,
+    "external": 21988855,
+    "arrayBuffers": 18371168
+  }
+}
+[2025-11-19T01:41:49.573Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516509572_23",
+    "statusCode": 200,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T01:41:49.573Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 44515328,
+    "heapTotal": 107872256,
+    "heapUsed": 101000448,
+    "external": 21980567,
+    "arrayBuffers": 18371192
+  }
+}
+[2025-11-19T01:41:49.575Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516509575_24",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:41:49.575Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 45006848,
+    "heapTotal": 107872256,
+    "heapUsed": 101091512,
+    "external": 21980567,
+    "arrayBuffers": 18371192
+  }
+}
+[2025-11-19T01:41:49.576Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516509575_24",
+    "statusCode": 200,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T01:41:49.576Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 45072384,
+    "heapTotal": 107872256,
+    "heapUsed": 101157360,
+    "external": 21980591,
+    "arrayBuffers": 18371216
+  }
+}
+[2025-11-19T01:41:55.318Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516515317_25",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:41:55.318Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 41402368,
+    "heapTotal": 108134400,
+    "heapUsed": 101013968,
+    "external": 21988870,
+    "arrayBuffers": 18371168
+  }
+}
+[2025-11-19T01:41:55.324Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516515317_25",
+    "statusCode": 200,
+    "duration": "7ms"
+  },
+  "timestamp": "2025-11-19T01:41:55.324Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 44171264,
+    "heapTotal": 108134400,
+    "heapUsed": 101097080,
+    "external": 21980567,
+    "arrayBuffers": 18371192
+  }
+}
+[2025-11-19T01:41:55.328Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516515328_26",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:41:55.328Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 44498944,
+    "heapTotal": 108134400,
+    "heapUsed": 101327456,
+    "external": 21980567,
+    "arrayBuffers": 18371192
+  }
+}
+[2025-11-19T01:41:55.340Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516515328_26",
+    "statusCode": 200,
+    "duration": "12ms"
+  },
+  "timestamp": "2025-11-19T01:41:55.340Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 44548096,
+    "heapTotal": 108134400,
+    "heapUsed": 101417224,
+    "external": 21980591,
+    "arrayBuffers": 18371216
+  }
+}
+[2025-11-19T01:41:55.344Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516515344_27",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:41:55.344Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 44711936,
+    "heapTotal": 108134400,
+    "heapUsed": 101539544,
+    "external": 21980591,
+    "arrayBuffers": 18371216
+  }
+}
+[2025-11-19T01:41:55.344Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516515344_27",
+    "statusCode": 200,
+    "duration": "0ms"
+  },
+  "timestamp": "2025-11-19T01:41:55.344Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 44990464,
+    "heapTotal": 108134400,
+    "heapUsed": 101605168,
+    "external": 21980615,
+    "arrayBuffers": 18371240
+  }
+}
+[2025-11-19T01:41:55.345Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516515345_28",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:41:55.345Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 45088768,
+    "heapTotal": 108134400,
+    "heapUsed": 101695104,
+    "external": 21988807,
+    "arrayBuffers": 18379432
+  }
+}
+[2025-11-19T01:41:55.346Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516515345_28",
+    "statusCode": 200,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T01:41:55.346Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 45219840,
+    "heapTotal": 108134400,
+    "heapUsed": 101779008,
+    "external": 21988831,
+    "arrayBuffers": 18379456
+  }
+}
+[2025-11-19T01:41:55.358Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516515358_29",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:41:55.358Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 45891584,
+    "heapTotal": 108134400,
+    "heapUsed": 101218688,
+    "external": 21988831,
+    "arrayBuffers": 18371168
+  }
+}
+[2025-11-19T01:41:55.360Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516515358_29",
+    "statusCode": 200,
+    "duration": "2ms"
+  },
+  "timestamp": "2025-11-19T01:41:55.360Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 46006272,
+    "heapTotal": 108134400,
+    "heapUsed": 101302224,
+    "external": 21980567,
+    "arrayBuffers": 18371192
+  }
+}
+[2025-11-19T01:41:55.361Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516515361_30",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:41:55.361Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 46022656,
+    "heapTotal": 108134400,
+    "heapUsed": 101392928,
+    "external": 21980567,
+    "arrayBuffers": 18371192
+  }
+}
+[2025-11-19T01:41:55.361Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516515361_30",
+    "statusCode": 200,
+    "duration": "0ms"
+  },
+  "timestamp": "2025-11-19T01:41:55.361Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 46022656,
+    "heapTotal": 108134400,
+    "heapUsed": 101458760,
+    "external": 21980591,
+    "arrayBuffers": 18371216
+  }
+}
+[2025-11-19T01:46:26.156Z] {
+  "level": "info",
+  "message": "Request started: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516786152_31",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:26.155Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 31473664,
+    "heapTotal": 108396544,
+    "heapUsed": 101926680,
+    "external": 21988996,
+    "arrayBuffers": 18379621
+  }
+}
+[2025-11-19T01:46:26.197Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516786152_31",
+    "statusCode": 200,
+    "duration": "44ms"
+  },
+  "timestamp": "2025-11-19T01:46:26.197Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 35651584,
+    "heapTotal": 108396544,
+    "heapUsed": 101991520,
+    "external": 21989020,
+    "arrayBuffers": 18379645
+  }
+}
+[2025-11-19T01:46:26.203Z] {
+  "level": "info",
+  "message": "Request started: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516786203_32",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:26.203Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 35962880,
+    "heapTotal": 108396544,
+    "heapUsed": 102108168,
+    "external": 21989020,
+    "arrayBuffers": 18379645
+  }
+}
+[2025-11-19T01:46:26.205Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516786203_32",
+    "statusCode": 200,
+    "duration": "2ms"
+  },
+  "timestamp": "2025-11-19T01:46:26.205Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 36061184,
+    "heapTotal": 108396544,
+    "heapUsed": 102172920,
+    "external": 21989044,
+    "arrayBuffers": 18379669
+  }
+}
+[2025-11-19T01:46:26.259Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516786258_33",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:26.258Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 42680320,
+    "heapTotal": 108396544,
+    "heapUsed": 101635904,
+    "external": 21989044,
+    "arrayBuffers": 18371168
+  }
+}
+[2025-11-19T01:46:26.264Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516786258_33",
+    "statusCode": 200,
+    "duration": "6ms"
+  },
+  "timestamp": "2025-11-19T01:46:26.264Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 43401216,
+    "heapTotal": 108396544,
+    "heapUsed": 101719200,
+    "external": 21980567,
+    "arrayBuffers": 18371192
+  }
+}
+[2025-11-19T01:46:26.271Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516786271_34",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:26.271Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 43761664,
+    "heapTotal": 108396544,
+    "heapUsed": 101854912,
+    "external": 21980567,
+    "arrayBuffers": 18371192
+  }
+}
+[2025-11-19T01:46:26.277Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516786271_34",
+    "statusCode": 200,
+    "duration": "6ms"
+  },
+  "timestamp": "2025-11-19T01:46:26.277Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 43991040,
+    "heapTotal": 108396544,
+    "heapUsed": 101939296,
+    "external": 21980591,
+    "arrayBuffers": 18371216
+  }
+}
+[2025-11-19T01:46:26.282Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516786282_35",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:26.282Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 44154880,
+    "heapTotal": 108396544,
+    "heapUsed": 102030504,
+    "external": 21980591,
+    "arrayBuffers": 18371216
+  }
+}
+[2025-11-19T01:46:26.292Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516786282_35",
+    "statusCode": 200,
+    "duration": "10ms"
+  },
+  "timestamp": "2025-11-19T01:46:26.292Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 44515328,
+    "heapTotal": 108396544,
+    "heapUsed": 102096208,
+    "external": 21980615,
+    "arrayBuffers": 18371240
+  }
+}
+[2025-11-19T01:46:26.315Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516786315_36",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:26.315Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 45252608,
+    "heapTotal": 108658688,
+    "heapUsed": 101675688,
+    "external": 21988807,
+    "arrayBuffers": 18379360
+  }
+}
+[2025-11-19T01:46:26.319Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516786315_36",
+    "statusCode": 200,
+    "duration": "4ms"
+  },
+  "timestamp": "2025-11-19T01:46:26.319Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 45301760,
+    "heapTotal": 108658688,
+    "heapUsed": 101742480,
+    "external": 21988759,
+    "arrayBuffers": 18379384
+  }
+}
+[2025-11-19T01:46:26.324Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516786324_37",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:26.324Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 45989888,
+    "heapTotal": 108658688,
+    "heapUsed": 101832520,
+    "external": 21988759,
+    "arrayBuffers": 18379384
+  }
+}
+[2025-11-19T01:46:26.325Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516786324_37",
+    "statusCode": 200,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T01:46:26.325Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 46645248,
+    "heapTotal": 108658688,
+    "heapUsed": 101918960,
+    "external": 21988783,
+    "arrayBuffers": 18379408
+  }
+}
+[2025-11-19T01:46:26.328Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516786328_38",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:26.328Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 46694400,
+    "heapTotal": 108658688,
+    "heapUsed": 102011088,
+    "external": 21988783,
+    "arrayBuffers": 18379408
+  }
+}
+[2025-11-19T01:46:26.338Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516786328_38",
+    "statusCode": 200,
+    "duration": "9ms"
+  },
+  "timestamp": "2025-11-19T01:46:26.337Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 46727168,
+    "heapTotal": 108658688,
+    "heapUsed": 102094152,
+    "external": 21988807,
+    "arrayBuffers": 18379432
+  }
+}
+[2025-11-19T01:46:26.344Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516786344_39",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:26.344Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 46678016,
+    "heapTotal": 108658688,
+    "heapUsed": 102185088,
+    "external": 21988807,
+    "arrayBuffers": 18379432
+  }
+}
+[2025-11-19T01:46:26.347Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516786344_39",
+    "statusCode": 200,
+    "duration": "3ms"
+  },
+  "timestamp": "2025-11-19T01:46:26.347Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 46694400,
+    "heapTotal": 108658688,
+    "heapUsed": 102252064,
+    "external": 21988831,
+    "arrayBuffers": 18379456
+  }
+}
+[2025-11-19T01:46:26.365Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516786364_40",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:26.365Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 47316992,
+    "heapTotal": 108658688,
+    "heapUsed": 101846528,
+    "external": 21988831,
+    "arrayBuffers": 18379360
+  }
+}
+[2025-11-19T01:46:26.369Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516786364_40",
+    "statusCode": 200,
+    "duration": "4ms"
+  },
+  "timestamp": "2025-11-19T01:46:26.369Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 47366144,
+    "heapTotal": 108658688,
+    "heapUsed": 101930240,
+    "external": 21988759,
+    "arrayBuffers": 18379384
+  }
+}
+[2025-11-19T01:46:28.194Z] {
+  "level": "info",
+  "message": "Request started: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516788194_41",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:28.194Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 31899648,
+    "heapTotal": 108658688,
+    "heapUsed": 102050464,
+    "external": 21996951,
+    "arrayBuffers": 18387576
+  }
+}
+[2025-11-19T01:46:28.202Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516788194_41",
+    "statusCode": 200,
+    "duration": "8ms"
+  },
+  "timestamp": "2025-11-19T01:46:28.202Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 35438592,
+    "heapTotal": 108658688,
+    "heapUsed": 102115496,
+    "external": 21996975,
+    "arrayBuffers": 18387600
+  }
+}
+[2025-11-19T01:46:28.215Z] {
+  "level": "info",
+  "message": "Request started: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516788214_42",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:28.215Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 36044800,
+    "heapTotal": 108658688,
+    "heapUsed": 102205024,
+    "external": 21996975,
+    "arrayBuffers": 18387600
+  }
+}
+[2025-11-19T01:46:28.226Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516788214_42",
+    "statusCode": 200,
+    "duration": "12ms"
+  },
+  "timestamp": "2025-11-19T01:46:28.226Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 36519936,
+    "heapTotal": 108658688,
+    "heapUsed": 102269976,
+    "external": 21996999,
+    "arrayBuffers": 18387624
+  }
+}
+[2025-11-19T01:46:28.229Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516788229_43",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:28.229Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 37142528,
+    "heapTotal": 108658688,
+    "heapUsed": 102361152,
+    "external": 21996999,
+    "arrayBuffers": 18387624
+  }
+}
+[2025-11-19T01:46:28.234Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516788229_43",
+    "statusCode": 200,
+    "duration": "5ms"
+  },
+  "timestamp": "2025-11-19T01:46:28.234Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 38043648,
+    "heapTotal": 108658688,
+    "heapUsed": 102444256,
+    "external": 21997023,
+    "arrayBuffers": 18387648
+  }
+}
+[2025-11-19T01:46:28.263Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516788263_44",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:28.263Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 44580864,
+    "heapTotal": 109969408,
+    "heapUsed": 102033136,
+    "external": 21997023,
+    "arrayBuffers": 18387552
+  }
+}
+[2025-11-19T01:46:28.264Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516788263_44",
+    "statusCode": 200,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T01:46:28.264Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 44793856,
+    "heapTotal": 109969408,
+    "heapUsed": 102116928,
+    "external": 21996951,
+    "arrayBuffers": 18387576
+  }
+}
+[2025-11-19T01:46:28.271Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516788271_45",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:28.271Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 46432256,
+    "heapTotal": 109969408,
+    "heapUsed": 102209768,
+    "external": 21996951,
+    "arrayBuffers": 18387576
+  }
+}
+[2025-11-19T01:46:28.282Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516788271_45",
+    "statusCode": 200,
+    "duration": "11ms"
+  },
+  "timestamp": "2025-11-19T01:46:28.282Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 47824896,
+    "heapTotal": 109969408,
+    "heapUsed": 102287784,
+    "external": 21996975,
+    "arrayBuffers": 18387600
+  }
+}
+[2025-11-19T01:46:28.283Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516788283_46",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:28.283Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 48070656,
+    "heapTotal": 109969408,
+    "heapUsed": 102374728,
+    "external": 22005167,
+    "arrayBuffers": 18395792
+  }
+}
+[2025-11-19T01:46:28.284Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516788283_46",
+    "statusCode": 200,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T01:46:28.284Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 48201728,
+    "heapTotal": 109969408,
+    "heapUsed": 102449904,
+    "external": 22005191,
+    "arrayBuffers": 18395816
+  }
+}
+[2025-11-19T01:46:48.760Z] {
+  "level": "info",
+  "message": "Request started: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516808759_47",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:48.760Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 28459008,
+    "heapTotal": 109969408,
+    "heapUsed": 102632288,
+    "external": 22005191,
+    "arrayBuffers": 18395816
+  }
+}
+[2025-11-19T01:46:48.768Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516808759_47",
+    "statusCode": 200,
+    "duration": "9ms"
+  },
+  "timestamp": "2025-11-19T01:46:48.768Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 33013760,
+    "heapTotal": 109969408,
+    "heapUsed": 102697176,
+    "external": 22005215,
+    "arrayBuffers": 18395840
+  }
+}
+[2025-11-19T01:46:48.792Z] {
+  "level": "info",
+  "message": "Request started: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516808792_48",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:48.792Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 42565632,
+    "heapTotal": 109182976,
+    "heapUsed": 102267168,
+    "external": 22005215,
+    "arrayBuffers": 18387552
+  }
+}
+[2025-11-19T01:46:48.793Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763516808792_48",
+    "statusCode": 200,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T01:46:48.793Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 42614784,
+    "heapTotal": 109182976,
+    "heapUsed": 102332720,
+    "external": 21996951,
+    "arrayBuffers": 18387576
+  }
+}
+[2025-11-19T01:46:48.800Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516808800_49",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:48.800Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 45629440,
+    "heapTotal": 109182976,
+    "heapUsed": 102484008,
+    "external": 21996951,
+    "arrayBuffers": 18387576
+  }
+}
+[2025-11-19T01:46:48.804Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516808800_49",
+    "statusCode": 200,
+    "duration": "4ms"
+  },
+  "timestamp": "2025-11-19T01:46:48.804Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 46268416,
+    "heapTotal": 109182976,
+    "heapUsed": 102567160,
+    "external": 21996975,
+    "arrayBuffers": 18387600
+  }
+}
+[2025-11-19T01:46:48.806Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516808806_50",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:48.806Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 46366720,
+    "heapTotal": 109182976,
+    "heapUsed": 102651432,
+    "external": 21996975,
+    "arrayBuffers": 18387600
+  }
+}
+[2025-11-19T01:46:48.809Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516808806_50",
+    "statusCode": 200,
+    "duration": "3ms"
+  },
+  "timestamp": "2025-11-19T01:46:48.809Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 46546944,
+    "heapTotal": 109182976,
+    "heapUsed": 102717024,
+    "external": 21996999,
+    "arrayBuffers": 18387624
+  }
+}
+[2025-11-19T01:46:48.813Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516808813_51",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:48.813Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 46628864,
+    "heapTotal": 109182976,
+    "heapUsed": 102801704,
+    "external": 22005191,
+    "arrayBuffers": 18395816
+  }
+}
+[2025-11-19T01:46:48.814Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516808813_51",
+    "statusCode": 200,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T01:46:48.814Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 46694400,
+    "heapTotal": 109182976,
+    "heapUsed": 102867944,
+    "external": 22005215,
+    "arrayBuffers": 18395840
+  }
+}
+[2025-11-19T01:46:48.815Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516808815_52",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:48.815Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 46792704,
+    "heapTotal": 109182976,
+    "heapUsed": 102951080,
+    "external": 22005215,
+    "arrayBuffers": 18395840
+  }
+}
+[2025-11-19T01:46:48.815Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516808815_52",
+    "statusCode": 200,
+    "duration": "0ms"
+  },
+  "timestamp": "2025-11-19T01:46:48.815Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 46874624,
+    "heapTotal": 109182976,
+    "heapUsed": 103034152,
+    "external": 22005239,
+    "arrayBuffers": 18395864
+  }
+}
+[2025-11-19T01:46:51.422Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516811422_53",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:51.422Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 31047680,
+    "heapTotal": 109445120,
+    "heapUsed": 102541416,
+    "external": 22005239,
+    "arrayBuffers": 18387552
+  }
+}
+[2025-11-19T01:46:51.424Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516811422_53",
+    "statusCode": 200,
+    "duration": "2ms"
+  },
+  "timestamp": "2025-11-19T01:46:51.424Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 35651584,
+    "heapTotal": 109445120,
+    "heapUsed": 102624616,
+    "external": 21996951,
+    "arrayBuffers": 18387576
+  }
+}
+[2025-11-19T01:46:51.427Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516811427_54",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:51.427Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 37797888,
+    "heapTotal": 109445120,
+    "heapUsed": 102709400,
+    "external": 21996951,
+    "arrayBuffers": 18387576
+  }
+}
+[2025-11-19T01:46:51.427Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516811427_54",
+    "statusCode": 200,
+    "duration": "0ms"
+  },
+  "timestamp": "2025-11-19T01:46:51.427Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 38010880,
+    "heapTotal": 109445120,
+    "heapUsed": 102775040,
+    "external": 21996975,
+    "arrayBuffers": 18387600
+  }
+}
+[2025-11-19T01:46:51.431Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516811431_55",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:51.431Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 38158336,
+    "heapTotal": 109445120,
+    "heapUsed": 102858024,
+    "external": 21996975,
+    "arrayBuffers": 18387600
+  }
+}
+[2025-11-19T01:46:51.433Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516811431_55",
+    "statusCode": 200,
+    "duration": "2ms"
+  },
+  "timestamp": "2025-11-19T01:46:51.433Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 38354944,
+    "heapTotal": 109445120,
+    "heapUsed": 102941032,
+    "external": 21996999,
+    "arrayBuffers": 18387624
+  }
+}
+[2025-11-19T01:46:51.435Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516811435_56",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:51.435Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 38584320,
+    "heapTotal": 109445120,
+    "heapUsed": 103026120,
+    "external": 22005191,
+    "arrayBuffers": 18395816
+  }
+}
+[2025-11-19T01:46:51.436Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516811435_56",
+    "statusCode": 200,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T01:46:51.436Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 38748160,
+    "heapTotal": 109445120,
+    "heapUsed": 103109248,
+    "external": 22005215,
+    "arrayBuffers": 18395840
+  }
+}
+[2025-11-19T01:46:51.438Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516811438_57",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:51.438Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 39075840,
+    "heapTotal": 109445120,
+    "heapUsed": 103205008,
+    "external": 22005215,
+    "arrayBuffers": 18395840
+  }
+}
+[2025-11-19T01:46:51.440Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763516811438_57",
+    "statusCode": 200,
+    "duration": "2ms"
+  },
+  "timestamp": "2025-11-19T01:46:51.440Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 39174144,
+    "heapTotal": 109445120,
+    "heapUsed": 103270608,
+    "external": 22005239,
+    "arrayBuffers": 18395864
+  }
+}
+[2025-11-19T01:46:51.457Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516811457_58",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:46:51.457Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 45056000,
+    "heapTotal": 110493696,
+    "heapUsed": 102778392,
+    "external": 22005239,
+    "arrayBuffers": 18395744
+  }
+}
+[2025-11-19T01:46:51.460Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763516811457_58",
+    "statusCode": 200,
+    "duration": "3ms"
+  },
+  "timestamp": "2025-11-19T01:46:51.460Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 45203456,
+    "heapTotal": 110493696,
+    "heapUsed": 102861720,
+    "external": 22005143,
+    "arrayBuffers": 18395768
+  }
+}
+[2025-11-19T01:53:54.470Z] {
+  "level": "info",
+  "message": "Request started: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763517234469_59",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:53:54.469Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 27361280,
+    "heapTotal": 109707264,
+    "heapUsed": 103173880,
+    "external": 22013485,
+    "arrayBuffers": 18404110
+  }
+}
+[2025-11-19T01:53:54.639Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763517234469_59",
+    "statusCode": 200,
+    "duration": "170ms"
+  },
+  "timestamp": "2025-11-19T01:53:54.639Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 31883264,
+    "heapTotal": 109707264,
+    "heapUsed": 103239376,
+    "external": 22013509,
+    "arrayBuffers": 18404134
+  }
+}
+[2025-11-19T01:53:54.657Z] {
+  "level": "info",
+  "message": "Request started: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763517234655_60",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:53:54.657Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 32161792,
+    "heapTotal": 109707264,
+    "heapUsed": 103345520,
+    "external": 22013509,
+    "arrayBuffers": 18404134
+  }
+}
+[2025-11-19T01:53:54.668Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763517234655_60",
+    "statusCode": 200,
+    "duration": "13ms"
+  },
+  "timestamp": "2025-11-19T01:53:54.668Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 32391168,
+    "heapTotal": 109707264,
+    "heapUsed": 103410392,
+    "external": 22013533,
+    "arrayBuffers": 18404158
+  }
+}
+[2025-11-19T01:53:54.864Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763517234862_61",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:53:54.864Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 33128448,
+    "heapTotal": 109707264,
+    "heapUsed": 103520352,
+    "external": 22013533,
+    "arrayBuffers": 18404158
+  }
+}
+[2025-11-19T01:53:54.901Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763517234862_61",
+    "statusCode": 200,
+    "duration": "39ms"
+  },
+  "timestamp": "2025-11-19T01:53:54.901Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 34144256,
+    "heapTotal": 109707264,
+    "heapUsed": 103604696,
+    "external": 22013557,
+    "arrayBuffers": 18404182
+  }
+}
+[2025-11-19T01:53:54.970Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763517234968_62",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:53:54.970Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 39976960,
+    "heapTotal": 109707264,
+    "heapUsed": 102988304,
+    "external": 22013557,
+    "arrayBuffers": 18395744
+  }
+}
+[2025-11-19T01:53:54.992Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763517234968_62",
+    "statusCode": 200,
+    "duration": "24ms"
+  },
+  "timestamp": "2025-11-19T01:53:54.992Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 40353792,
+    "heapTotal": 109707264,
+    "heapUsed": 103053920,
+    "external": 22005143,
+    "arrayBuffers": 18395768
+  }
+}
+[2025-11-19T01:56:50.572Z] {
+  "level": "info",
+  "message": "Request started: POST /api/auth/login",
+  "metadata": {
+    "requestId": "req_1763517410571_63",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T01:56:50.572Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 43073536,
+    "heapTotal": 110231552,
+    "heapUsed": 103835216,
+    "external": 22005264,
+    "arrayBuffers": 18395889
+  }
+}
+[2025-11-19T01:57:00.662Z] {
+  "level": "info",
+  "message": "Request completed: POST /api/auth/login",
+  "metadata": {
+    "requestId": "req_1763517410571_63",
+    "statusCode": 500,
+    "duration": "10091ms"
+  },
+  "timestamp": "2025-11-19T01:57:00.662Z",
+  "pid": 45524,
+  "memoryUsage": {
+    "rss": 30474240,
+    "heapTotal": 111280128,
+    "heapUsed": 103866320,
+    "external": 22013415,
+    "arrayBuffers": 18404040
+  }
+}
+[2025-11-19T02:15:39.821Z] {
+  "level": "info",
+  "message": "Request started: GET /?ide_webview_request_time=1763518539724",
+  "metadata": {
+    "requestId": "req_1763518539821_1",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T02:15:39.821Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 61587456,
+    "heapTotal": 139591680,
+    "heapUsed": 99670368,
+    "external": 21956926,
+    "arrayBuffers": 18347591
+  }
+}
+[2025-11-19T02:15:39.828Z] {
+  "level": "info",
+  "message": "Request completed: GET /?ide_webview_request_time=1763518539724",
+  "metadata": {
+    "requestId": "req_1763518539821_1",
+    "statusCode": 404,
+    "duration": "7ms"
+  },
+  "timestamp": "2025-11-19T02:15:39.828Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 65667072,
+    "heapTotal": 139591680,
+    "heapUsed": 99815000,
+    "external": 21957006,
+    "arrayBuffers": 18347631
+  }
+}
+[2025-11-19T02:15:40.262Z] {
+  "level": "info",
+  "message": "Request started: GET /@vite/client",
+  "metadata": {
+    "requestId": "req_1763518540262_2",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T02:15:40.262Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 69025792,
+    "heapTotal": 139591680,
+    "heapUsed": 100079864,
+    "external": 21957006,
+    "arrayBuffers": 18347631
+  }
+}
+[2025-11-19T02:15:40.264Z] {
+  "level": "info",
+  "message": "Request completed: GET /@vite/client",
+  "metadata": {
+    "requestId": "req_1763518540262_2",
+    "statusCode": 404,
+    "duration": "2ms"
+  },
+  "timestamp": "2025-11-19T02:15:40.264Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 69271552,
+    "heapTotal": 139853824,
+    "heapUsed": 100162192,
+    "external": 21957030,
+    "arrayBuffers": 18347655
+  }
+}
+[2025-11-19T02:20:46.575Z] {
+  "level": "info",
+  "message": "Request started: GET /api/health",
+  "metadata": {
+    "requestId": "req_1763518846573_3",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T02:20:46.574Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 22740992,
+    "heapTotal": 107347968,
+    "heapUsed": 98572608,
+    "external": 21972438,
+    "arrayBuffers": 18363063
+  }
+}
+[2025-11-19T02:20:46.636Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/health",
+  "metadata": {
+    "requestId": "req_1763518846573_3",
+    "statusCode": 503,
+    "duration": "63ms"
+  },
+  "timestamp": "2025-11-19T02:20:46.636Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 29949952,
+    "heapTotal": 107347968,
+    "heapUsed": 98670440,
+    "external": 21980654,
+    "arrayBuffers": 18371279
+  }
+}
+[2025-11-19T02:20:46.801Z] {
+  "level": "info",
+  "message": "Request started: POST /api/auth/dev/reset-password",
+  "metadata": {
+    "requestId": "req_1763518846801_4",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T02:20:46.801Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 41762816,
+    "heapTotal": 107347968,
+    "heapUsed": 99397472,
+    "external": 21980725,
+    "arrayBuffers": 18371350
+  }
+}
+[2025-11-19T02:20:56.907Z] {
+  "level": "info",
+  "message": "Request completed: POST /api/auth/dev/reset-password",
+  "metadata": {
+    "requestId": "req_1763518846801_4",
+    "statusCode": 500,
+    "duration": "10106ms"
+  },
+  "timestamp": "2025-11-19T02:20:56.907Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 26755072,
+    "heapTotal": 107610112,
+    "heapUsed": 99142360,
+    "external": 21972375,
+    "arrayBuffers": 18363000
+  }
+}
+[2025-11-19T02:20:56.920Z] {
+  "level": "info",
+  "message": "Request started: POST /api/auth/login",
+  "metadata": {
+    "requestId": "req_1763518856920_5",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T02:20:56.920Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 32342016,
+    "heapTotal": 107610112,
+    "heapUsed": 99333664,
+    "external": 21972443,
+    "arrayBuffers": 18363068
+  }
+}
+[2025-11-19T02:21:06.940Z] {
+  "level": "info",
+  "message": "Request completed: POST /api/auth/login",
+  "metadata": {
+    "requestId": "req_1763518856920_5",
+    "statusCode": 500,
+    "duration": "10020ms"
+  },
+  "timestamp": "2025-11-19T02:21:06.940Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 24625152,
+    "heapTotal": 107610112,
+    "heapUsed": 99170552,
+    "external": 21972566,
+    "arrayBuffers": 18362993
+  }
+}
+[2025-11-19T02:38:41.973Z] {
+  "level": "info",
+  "message": "Request started: POST /api/auth/dev/admin-login",
+  "metadata": {
+    "requestId": "req_1763519921973_6",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T02:38:41.973Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 26279936,
+    "heapTotal": 107610112,
+    "heapUsed": 99740256,
+    "external": 21989069,
+    "arrayBuffers": 18379694
+  }
+}
+[2025-11-19T02:38:42.058Z] {
+  "level": "info",
+  "message": "Request completed: POST /api/auth/dev/admin-login",
+  "metadata": {
+    "requestId": "req_1763519921973_6",
+    "statusCode": 404,
+    "duration": "85ms"
+  },
+  "timestamp": "2025-11-19T02:38:42.058Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 31670272,
+    "heapTotal": 107610112,
+    "heapUsed": 99809640,
+    "external": 21989093,
+    "arrayBuffers": 18379718
+  }
+}
+[2025-11-19T02:39:56.707Z] {
+  "level": "info",
+  "message": "Request started: POST /api/auth/dev/admin-login",
+  "metadata": {
+    "requestId": "req_1763519996707_7",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T02:39:56.707Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 27295744,
+    "heapTotal": 107610112,
+    "heapUsed": 99628400,
+    "external": 21988982,
+    "arrayBuffers": 18379607
+  }
+}
+[2025-11-19T02:39:56.740Z] {
+  "level": "info",
+  "message": "Request completed: POST /api/auth/dev/admin-login",
+  "metadata": {
+    "requestId": "req_1763519996707_7",
+    "statusCode": 404,
+    "duration": "33ms"
+  },
+  "timestamp": "2025-11-19T02:39:56.740Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 30490624,
+    "heapTotal": 107610112,
+    "heapUsed": 99683184,
+    "external": 21989006,
+    "arrayBuffers": 18379631
+  }
+}
+[2025-11-19T02:46:25.328Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520385327_8",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T02:46:25.327Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 25083904,
+    "heapTotal": 107610112,
+    "heapUsed": 99882144,
+    "external": 21980722,
+    "arrayBuffers": 18371347
+  }
+}
+[2025-11-19T02:46:25.557Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520385327_8",
+    "statusCode": 200,
+    "duration": "230ms"
+  },
+  "timestamp": "2025-11-19T02:46:25.557Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 36290560,
+    "heapTotal": 107610112,
+    "heapUsed": 100022608,
+    "external": 21980746,
+    "arrayBuffers": 18371371
+  }
+}
+[2025-11-19T02:46:25.576Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520385575_9",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T02:46:25.576Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 37797888,
+    "heapTotal": 107610112,
+    "heapUsed": 100195488,
+    "external": 21988938,
+    "arrayBuffers": 18379563
+  }
+}
+[2025-11-19T02:46:25.589Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520385575_9",
+    "statusCode": 200,
+    "duration": "13ms"
+  },
+  "timestamp": "2025-11-19T02:46:25.589Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 38174720,
+    "heapTotal": 107610112,
+    "heapUsed": 100317392,
+    "external": 21988962,
+    "arrayBuffers": 18379587
+  }
+}
+[2025-11-19T02:46:25.641Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520385639_10",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T02:46:25.641Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 42745856,
+    "heapTotal": 107872256,
+    "heapUsed": 99897240,
+    "external": 21988962,
+    "arrayBuffers": 18371173
+  }
+}
+[2025-11-19T02:46:25.646Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520385639_10",
+    "statusCode": 200,
+    "duration": "7ms"
+  },
+  "timestamp": "2025-11-19T02:46:25.646Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 42860544,
+    "heapTotal": 107872256,
+    "heapUsed": 99982384,
+    "external": 21980572,
+    "arrayBuffers": 18371197
+  }
+}
+[2025-11-19T02:46:25.655Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763520385655_11",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T02:46:25.655Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 43597824,
+    "heapTotal": 107872256,
+    "heapUsed": 100115720,
+    "external": 21980572,
+    "arrayBuffers": 18371197
+  }
+}
+[2025-11-19T02:46:25.692Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763520385655_11",
+    "statusCode": 200,
+    "duration": "37ms"
+  },
+  "timestamp": "2025-11-19T02:46:25.692Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 47611904,
+    "heapTotal": 107872256,
+    "heapUsed": 100195472,
+    "external": 21980596,
+    "arrayBuffers": 18371221
+  }
+}
+[2025-11-19T02:46:25.706Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520385706_12",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T02:46:25.706Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 47841280,
+    "heapTotal": 107872256,
+    "heapUsed": 100289744,
+    "external": 21980596,
+    "arrayBuffers": 18371221
+  }
+}
+[2025-11-19T02:46:25.714Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520385706_12",
+    "statusCode": 200,
+    "duration": "8ms"
+  },
+  "timestamp": "2025-11-19T02:46:25.714Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 48005120,
+    "heapTotal": 107872256,
+    "heapUsed": 100381016,
+    "external": 21980620,
+    "arrayBuffers": 18371245
+  }
+}
+[2025-11-19T02:46:25.732Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763520385732_13",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T02:46:25.732Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 48218112,
+    "heapTotal": 107872256,
+    "heapUsed": 100487728,
+    "external": 21980620,
+    "arrayBuffers": 18371245
+  }
+}
+[2025-11-19T02:46:25.753Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763520385732_13",
+    "statusCode": 200,
+    "duration": "21ms"
+  },
+  "timestamp": "2025-11-19T02:46:25.753Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 48480256,
+    "heapTotal": 107872256,
+    "heapUsed": 100564080,
+    "external": 21980644,
+    "arrayBuffers": 18371269
+  }
+}
+[2025-11-19T02:46:29.415Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520389415_14",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T02:46:29.415Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 28426240,
+    "heapTotal": 108134400,
+    "heapUsed": 100101008,
+    "external": 21988836,
+    "arrayBuffers": 18371173
+  }
+}
+[2025-11-19T02:46:29.418Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520389415_14",
+    "statusCode": 200,
+    "duration": "3ms"
+  },
+  "timestamp": "2025-11-19T02:46:29.418Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 34766848,
+    "heapTotal": 108134400,
+    "heapUsed": 100186072,
+    "external": 21980572,
+    "arrayBuffers": 18371197
+  }
+}
+[2025-11-19T02:46:29.420Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520389420_15",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T02:46:29.420Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 36847616,
+    "heapTotal": 108134400,
+    "heapUsed": 100281544,
+    "external": 21980572,
+    "arrayBuffers": 18371197
+  }
+}
+[2025-11-19T02:46:29.422Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520389420_15",
+    "statusCode": 200,
+    "duration": "2ms"
+  },
+  "timestamp": "2025-11-19T02:46:29.422Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 37126144,
+    "heapTotal": 108134400,
+    "heapUsed": 100365072,
+    "external": 21980596,
+    "arrayBuffers": 18371221
+  }
+}
+[2025-11-19T02:46:31.885Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520391885_16",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T02:46:31.885Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 38551552,
+    "heapTotal": 108134400,
+    "heapUsed": 100665800,
+    "external": 21980596,
+    "arrayBuffers": 18371221
+  }
+}
+[2025-11-19T02:46:31.891Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520391885_16",
+    "statusCode": 200,
+    "duration": "6ms"
+  },
+  "timestamp": "2025-11-19T02:46:31.891Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 38993920,
+    "heapTotal": 108134400,
+    "heapUsed": 100802168,
+    "external": 21980620,
+    "arrayBuffers": 18371245
+  }
+}
+[2025-11-19T02:46:31.893Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763520391893_17",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T02:46:31.893Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 39174144,
+    "heapTotal": 108134400,
+    "heapUsed": 100893448,
+    "external": 21980620,
+    "arrayBuffers": 18371245
+  }
+}
+[2025-11-19T02:46:31.906Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763520391893_17",
+    "statusCode": 200,
+    "duration": "13ms"
+  },
+  "timestamp": "2025-11-19T02:46:31.906Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 45039616,
+    "heapTotal": 108396544,
+    "heapUsed": 100335136,
+    "external": 21980644,
+    "arrayBuffers": 18371173
+  }
+}
+[2025-11-19T02:46:31.909Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520391909_18",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T02:46:31.909Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 45121536,
+    "heapTotal": 108396544,
+    "heapUsed": 100426616,
+    "external": 21980644,
+    "arrayBuffers": 18371173
+  }
+}
+[2025-11-19T02:46:31.910Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520391909_18",
+    "statusCode": 200,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T02:46:31.910Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 45219840,
+    "heapTotal": 108396544,
+    "heapUsed": 100510704,
+    "external": 21980572,
+    "arrayBuffers": 18371197
+  }
+}
+[2025-11-19T02:46:31.911Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520391911_19",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T02:46:31.911Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 45350912,
+    "heapTotal": 108396544,
+    "heapUsed": 100633032,
+    "external": 21988764,
+    "arrayBuffers": 18379389
+  }
+}
+[2025-11-19T02:46:31.912Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520391911_19",
+    "statusCode": 200,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T02:46:31.912Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 45432832,
+    "heapTotal": 108396544,
+    "heapUsed": 100716840,
+    "external": 21988788,
+    "arrayBuffers": 18379413
+  }
+}
+[2025-11-19T02:46:31.913Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763520391913_20",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T02:46:31.913Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 45547520,
+    "heapTotal": 108396544,
+    "heapUsed": 100808536,
+    "external": 21988788,
+    "arrayBuffers": 18379413
+  }
+}
+[2025-11-19T02:46:31.914Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763520391913_20",
+    "statusCode": 200,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T02:46:31.914Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 45629440,
+    "heapTotal": 108396544,
+    "heapUsed": 100875272,
+    "external": 21988812,
+    "arrayBuffers": 18379437
+  }
+}
+[2025-11-19T02:46:31.916Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520391916_21",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T02:46:31.916Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 45727744,
+    "heapTotal": 108396544,
+    "heapUsed": 100972480,
+    "external": 21988812,
+    "arrayBuffers": 18379437
+  }
+}
+[2025-11-19T02:46:31.917Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763520391916_21",
+    "statusCode": 200,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T02:46:31.917Z",
+  "pid": 64264,
+  "memoryUsage": {
+    "rss": 45809664,
+    "heapTotal": 108396544,
+    "heapUsed": 101055536,
+    "external": 21988836,
+    "arrayBuffers": 18379461
+  }
+}
+[2025-11-19T03:17:55.119Z] {
+  "level": "info",
+  "message": "Request started: GET /api/health",
+  "metadata": {
+    "requestId": "req_1763522275116_1",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T03:17:55.119Z",
+  "pid": 76300,
+  "memoryUsage": {
+    "rss": 33439744,
+    "heapTotal": 107560960,
+    "heapUsed": 100035240,
+    "external": 21991441,
+    "arrayBuffers": 18362976
+  }
+}
+[2025-11-19T03:17:55.166Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/health",
+  "metadata": {
+    "requestId": "req_1763522275116_1",
+    "statusCode": 503,
+    "duration": "50ms"
+  },
+  "timestamp": "2025-11-19T03:17:55.166Z",
+  "pid": 76300,
+  "memoryUsage": {
+    "rss": 39469056,
+    "heapTotal": 107560960,
+    "heapUsed": 100201616,
+    "external": 21982878,
+    "arrayBuffers": 18363000
+  }
+}
+[2025-11-19T03:17:55.298Z] {
+  "level": "info",
+  "message": "Request started: POST /api/auth/dev/reset-password",
+  "metadata": {
+    "requestId": "req_1763522275298_2",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T03:17:55.298Z",
+  "pid": 76300,
+  "memoryUsage": {
+    "rss": 50266112,
+    "heapTotal": 107823104,
+    "heapUsed": 100963528,
+    "external": 21982949,
+    "arrayBuffers": 18363071
+  }
+}
+[2025-11-19T03:18:05.370Z] {
+  "level": "info",
+  "message": "Request completed: POST /api/auth/dev/reset-password",
+  "metadata": {
+    "requestId": "req_1763522275298_2",
+    "statusCode": 500,
+    "duration": "10072ms"
+  },
+  "timestamp": "2025-11-19T03:18:05.370Z",
+  "pid": 76300,
+  "memoryUsage": {
+    "rss": 30998528,
+    "heapTotal": 108085248,
+    "heapUsed": 100914008,
+    "external": 21982990,
+    "arrayBuffers": 18362993
+  }
+}
+[2025-11-19T03:18:05.388Z] {
+  "level": "info",
+  "message": "Request started: POST /api/auth/login",
+  "metadata": {
+    "requestId": "req_1763522285387_3",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T03:18:05.387Z",
+  "pid": 76300,
+  "memoryUsage": {
+    "rss": 37371904,
+    "heapTotal": 108347392,
+    "heapUsed": 101098208,
+    "external": 21991131,
+    "arrayBuffers": 18371253
+  }
+}
+[2025-11-19T03:18:15.410Z] {
+  "level": "info",
+  "message": "Request completed: POST /api/auth/login",
+  "metadata": {
+    "requestId": "req_1763522285387_3",
+    "statusCode": 500,
+    "duration": "10023ms"
+  },
+  "timestamp": "2025-11-19T03:18:15.410Z",
+  "pid": 76300,
+  "memoryUsage": {
+    "rss": 30146560,
+    "heapTotal": 108347392,
+    "heapUsed": 101391816,
+    "external": 21991254,
+    "arrayBuffers": 18371376
+  }
+}
+[2025-11-19T03:20:57.647Z] {
+  "level": "info",
+  "message": "Request started: GET /api/health",
+  "metadata": {
+    "requestId": "req_1763522457647_1",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T03:20:57.647Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 66600960,
+    "heapTotal": 140066816,
+    "heapUsed": 109543376,
+    "external": 22122281,
+    "arrayBuffers": 18459903
+  }
+}
+[2025-11-19T03:20:58.017Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/health",
+  "metadata": {
+    "requestId": "req_1763522457647_1",
+    "statusCode": 503,
+    "duration": "370ms"
+  },
+  "timestamp": "2025-11-19T03:20:58.017Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 73154560,
+    "heapTotal": 140066816,
+    "heapUsed": 109872600,
+    "external": 22131958,
+    "arrayBuffers": 18469540
+  }
+}
+[2025-11-19T03:20:58.039Z] {
+  "level": "info",
+  "message": "Request started: POST /api/auth/dev/reset-password",
+  "metadata": {
+    "requestId": "req_1763522458039_2",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T03:20:58.039Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 81444864,
+    "heapTotal": 140591104,
+    "heapUsed": 110698312,
+    "external": 22132029,
+    "arrayBuffers": 18469611
+  }
+}
+[2025-11-19T03:20:58.115Z] {
+  "level": "info",
+  "message": "Request completed: POST /api/auth/dev/reset-password",
+  "metadata": {
+    "requestId": "req_1763522458039_2",
+    "statusCode": 404,
+    "duration": "76ms"
+  },
+  "timestamp": "2025-11-19T03:20:58.115Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 86966272,
+    "heapTotal": 140853248,
+    "heapUsed": 111145120,
+    "external": 22132582,
+    "arrayBuffers": 18470164
+  }
+}
+[2025-11-19T03:20:58.124Z] {
+  "level": "info",
+  "message": "Request started: POST /api/auth/login",
+  "metadata": {
+    "requestId": "req_1763522458124_3",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T03:20:58.124Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 87359488,
+    "heapTotal": 140853248,
+    "heapUsed": 111308672,
+    "external": 22132650,
+    "arrayBuffers": 18470232
+  }
+}
+[2025-11-19T03:20:58.307Z] {
+  "level": "info",
+  "message": "Request completed: POST /api/auth/login",
+  "metadata": {
+    "requestId": "req_1763522458124_3",
+    "statusCode": 400,
+    "duration": "183ms"
+  },
+  "timestamp": "2025-11-19T03:20:58.307Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 86999040,
+    "heapTotal": 140853248,
+    "heapUsed": 111528728,
+    "external": 22133203,
+    "arrayBuffers": 18470785
+  }
+}
+[2025-11-19T03:22:28.156Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522548153_4",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T03:22:28.156Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 63569920,
+    "heapTotal": 110182400,
+    "heapUsed": 102296560,
+    "external": 22086721,
+    "arrayBuffers": 18466843
+  }
+}
+[2025-11-19T03:22:28.578Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763522548578_5",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T03:22:28.578Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 76644352,
+    "heapTotal": 109395968,
+    "heapUsed": 102164120,
+    "external": 22087513,
+    "arrayBuffers": 18420565
+  }
+}
+[2025-11-19T03:22:28.656Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522548153_4",
+    "statusCode": 200,
+    "duration": "503ms"
+  },
+  "timestamp": "2025-11-19T03:22:28.656Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 77709312,
+    "heapTotal": 109395968,
+    "heapUsed": 102413584,
+    "external": 22041231,
+    "arrayBuffers": 18421353
+  }
+}
+[2025-11-19T03:22:28.660Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522548660_6",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T03:22:28.660Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 78757888,
+    "heapTotal": 109395968,
+    "heapUsed": 102527344,
+    "external": 22041231,
+    "arrayBuffers": 18421353
+  }
+}
+[2025-11-19T03:22:28.661Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522548660_6",
+    "statusCode": 200,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T03:22:28.661Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 78872576,
+    "heapTotal": 109395968,
+    "heapUsed": 102616696,
+    "external": 22041255,
+    "arrayBuffers": 18421377
+  }
+}
+[2025-11-19T03:22:28.662Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522548662_7",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T03:22:28.662Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 79036416,
+    "heapTotal": 109395968,
+    "heapUsed": 102728624,
+    "external": 22041255,
+    "arrayBuffers": 18421377
+  }
+}
+[2025-11-19T03:22:28.663Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522548662_7",
+    "statusCode": 304,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T03:22:28.663Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 79101952,
+    "heapTotal": 109395968,
+    "heapUsed": 102813520,
+    "external": 22041279,
+    "arrayBuffers": 18421401
+  }
+}
+[2025-11-19T03:22:28.668Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522548668_8",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T03:22:28.668Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 79511552,
+    "heapTotal": 109658112,
+    "heapUsed": 102275648,
+    "external": 22049471,
+    "arrayBuffers": 18428761
+  }
+}
+[2025-11-19T03:22:28.668Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522548668_8",
+    "statusCode": 304,
+    "duration": "0ms"
+  },
+  "timestamp": "2025-11-19T03:22:28.668Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 79544320,
+    "heapTotal": 109658112,
+    "heapUsed": 102365320,
+    "external": 22048663,
+    "arrayBuffers": 18428785
+  }
+}
+[2025-11-19T03:22:28.681Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763522548578_5",
+    "statusCode": 200,
+    "duration": "103ms"
+  },
+  "timestamp": "2025-11-19T03:22:28.681Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 79626240,
+    "heapTotal": 109658112,
+    "heapUsed": 102466656,
+    "external": 22048915,
+    "arrayBuffers": 18429037
+  }
+}
+[2025-11-19T03:22:28.682Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763522548682_9",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T03:22:28.682Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 79659008,
+    "heapTotal": 109658112,
+    "heapUsed": 102568520,
+    "external": 22048915,
+    "arrayBuffers": 18429037
+  }
+}
+[2025-11-19T03:22:28.753Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763522548682_9",
+    "statusCode": 200,
+    "duration": "71ms"
+  },
+  "timestamp": "2025-11-19T03:22:28.753Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 79822848,
+    "heapTotal": 109920256,
+    "heapUsed": 102757024,
+    "external": 22049451,
+    "arrayBuffers": 18429573
+  }
+}
+[2025-11-19T03:22:32.918Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522552918_10",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T03:22:32.918Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 53968896,
+    "heapTotal": 109920256,
+    "heapUsed": 103077392,
+    "external": 22049538,
+    "arrayBuffers": 18429660
+  }
+}
+[2025-11-19T03:22:32.939Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522552918_10",
+    "statusCode": 304,
+    "duration": "20ms"
+  },
+  "timestamp": "2025-11-19T03:22:32.938Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 59981824,
+    "heapTotal": 109920256,
+    "heapUsed": 103162712,
+    "external": 22049562,
+    "arrayBuffers": 18429684
+  }
+}
+[2025-11-19T03:22:32.941Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522552941_11",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T03:22:32.941Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 62013440,
+    "heapTotal": 109920256,
+    "heapUsed": 103266160,
+    "external": 22057754,
+    "arrayBuffers": 18437876
+  }
+}
+[2025-11-19T03:22:32.951Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522552941_11",
+    "statusCode": 304,
+    "duration": "10ms"
+  },
+  "timestamp": "2025-11-19T03:22:32.951Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 68927488,
+    "heapTotal": 110182400,
+    "heapUsed": 102667376,
+    "external": 22056855,
+    "arrayBuffers": 18436977
+  }
+}
+[2025-11-19T03:22:34.091Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522554090_12",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T03:22:34.090Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 71106560,
+    "heapTotal": 110182400,
+    "heapUsed": 102875184,
+    "external": 22060260,
+    "arrayBuffers": 18440382
+  }
+}
+[2025-11-19T03:22:34.094Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522554090_12",
+    "statusCode": 304,
+    "duration": "4ms"
+  },
+  "timestamp": "2025-11-19T03:22:34.094Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 71483392,
+    "heapTotal": 110182400,
+    "heapUsed": 103010744,
+    "external": 22060284,
+    "arrayBuffers": 18440406
+  }
+}
+[2025-11-19T03:22:34.096Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522554095_13",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T03:22:34.095Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 71909376,
+    "heapTotal": 110182400,
+    "heapUsed": 103248208,
+    "external": 22060284,
+    "arrayBuffers": 18440406
+  }
+}
+[2025-11-19T03:22:34.097Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522554095_13",
+    "statusCode": 304,
+    "duration": "2ms"
+  },
+  "timestamp": "2025-11-19T03:22:34.097Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 72056832,
+    "heapTotal": 110182400,
+    "heapUsed": 103349232,
+    "external": 22060308,
+    "arrayBuffers": 18440430
+  }
+}
+[2025-11-19T03:22:34.098Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522554098_14",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T03:22:34.098Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 72171520,
+    "heapTotal": 110182400,
+    "heapUsed": 103469384,
+    "external": 22068500,
+    "arrayBuffers": 18448622
+  }
+}
+[2025-11-19T03:22:34.100Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522554098_14",
+    "statusCode": 304,
+    "duration": "2ms"
+  },
+  "timestamp": "2025-11-19T03:22:34.100Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 72663040,
+    "heapTotal": 110182400,
+    "heapUsed": 102916704,
+    "external": 22068524,
+    "arrayBuffers": 18445145
+  }
+}
+[2025-11-19T03:22:34.102Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763522554102_15",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T03:22:34.102Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 72892416,
+    "heapTotal": 110182400,
+    "heapUsed": 103006664,
+    "external": 22068524,
+    "arrayBuffers": 18445145
+  }
+}
+[2025-11-19T03:22:34.106Z] {
+  "level": "info",
+  "message": "Request started: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522554106_16",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T03:22:34.106Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 75972608,
+    "heapTotal": 110182400,
+    "heapUsed": 103160136,
+    "external": 22065307,
+    "arrayBuffers": 18445429
+  }
+}
+[2025-11-19T03:22:34.106Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/videos",
+  "metadata": {
+    "requestId": "req_1763522554106_16",
+    "statusCode": 304,
+    "duration": "0ms"
+  },
+  "timestamp": "2025-11-19T03:22:34.106Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 76005376,
+    "heapTotal": 110182400,
+    "heapUsed": 103243584,
+    "external": 22065331,
+    "arrayBuffers": 18445453
+  }
+}
+[2025-11-19T03:22:34.199Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763522554102_15",
+    "statusCode": 200,
+    "duration": "97ms"
+  },
+  "timestamp": "2025-11-19T03:22:34.199Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 76169216,
+    "heapTotal": 110182400,
+    "heapUsed": 103332248,
+    "external": 22065583,
+    "arrayBuffers": 18445705
+  }
+}
+[2025-11-19T03:22:34.200Z] {
+  "level": "info",
+  "message": "Request started: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763522554200_17",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+  },
+  "timestamp": "2025-11-19T03:22:34.200Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 76169216,
+    "heapTotal": 110182400,
+    "heapUsed": 103423232,
+    "external": 22065583,
+    "arrayBuffers": 18445705
+  }
+}
+[2025-11-19T03:22:34.284Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/users/stats",
+  "metadata": {
+    "requestId": "req_1763522554200_17",
+    "statusCode": 200,
+    "duration": "84ms"
+  },
+  "timestamp": "2025-11-19T03:22:34.284Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 76218368,
+    "heapTotal": 110182400,
+    "heapUsed": 103577704,
+    "external": 22066119,
+    "arrayBuffers": 18446241
+  }
+}
+[2025-11-19T03:32:46.668Z] {
+  "level": "info",
+  "message": "Request started: POST /api/auth/login",
+  "metadata": {
+    "requestId": "req_1763523166667_18",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T03:32:46.668Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 38748160,
+    "heapTotal": 110968832,
+    "heapUsed": 104129112,
+    "external": 22144293,
+    "arrayBuffers": 18524415
+  }
+}
+[2025-11-19T03:32:47.626Z] {
+  "level": "info",
+  "message": "Request completed: POST /api/auth/login",
+  "metadata": {
+    "requestId": "req_1763523166667_18",
+    "statusCode": 200,
+    "duration": "959ms"
+  },
+  "timestamp": "2025-11-19T03:32:47.626Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 64241664,
+    "heapTotal": 111493120,
+    "heapUsed": 104325944,
+    "external": 22086214,
+    "arrayBuffers": 18466336
+  }
+}
+[2025-11-19T10:28:27.343Z] {
+  "level": "info",
+  "message": "Request started: POST /api/auth/forgot",
+  "metadata": {
+    "requestId": "req_1763548107342_19",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T10:28:27.343Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 27230208,
+    "heapTotal": 113328128,
+    "heapUsed": 106829128,
+    "external": 22389889,
+    "arrayBuffers": 18770011
+  }
+}
+[2025-11-19T10:28:27.374Z] {
+  "level": "info",
+  "message": "Request completed: POST /api/auth/forgot",
+  "metadata": {
+    "requestId": "req_1763548107342_19",
+    "statusCode": 404,
+    "duration": "32ms"
+  },
+  "timestamp": "2025-11-19T10:28:27.374Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 32014336,
+    "heapTotal": 113328128,
+    "heapUsed": 106902056,
+    "external": 22389913,
+    "arrayBuffers": 18770035
+  }
+}
+[2025-11-19T10:28:27.384Z] {
+  "level": "info",
+  "message": "Request started: POST /api/auth/reset",
+  "metadata": {
+    "requestId": "req_1763548107384_20",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T10:28:27.384Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 36405248,
+    "heapTotal": 113328128,
+    "heapUsed": 106993248,
+    "external": 22389963,
+    "arrayBuffers": 18770085
+  }
+}
+[2025-11-19T10:28:27.385Z] {
+  "level": "info",
+  "message": "Request completed: POST /api/auth/reset",
+  "metadata": {
+    "requestId": "req_1763548107384_20",
+    "statusCode": 404,
+    "duration": "0ms"
+  },
+  "timestamp": "2025-11-19T10:28:27.384Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 36503552,
+    "heapTotal": 113328128,
+    "heapUsed": 107051192,
+    "external": 22389987,
+    "arrayBuffers": 18770109
+  }
+}
+[2025-11-19T10:28:41.216Z] {
+  "level": "info",
+  "message": "Request started: POST /api/auth/login",
+  "metadata": {
+    "requestId": "req_1763548121215_21",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T10:28:41.215Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 46448640,
+    "heapTotal": 113328128,
+    "heapUsed": 106589936,
+    "external": 22371414,
+    "arrayBuffers": 18751536
+  }
+}
+[2025-11-19T10:28:42.420Z] {
+  "level": "info",
+  "message": "Request completed: POST /api/auth/login",
+  "metadata": {
+    "requestId": "req_1763548121215_21",
+    "statusCode": 400,
+    "duration": "1205ms"
+  },
+  "timestamp": "2025-11-19T10:28:42.420Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 57442304,
+    "heapTotal": 113328128,
+    "heapUsed": 107095928,
+    "external": 22380312,
+    "arrayBuffers": 18756180
+  }
+}
+[2025-11-19T10:28:42.428Z] {
+  "level": "info",
+  "message": "Request started: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763548122428_22",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T10:28:42.428Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 57835520,
+    "heapTotal": 113328128,
+    "heapUsed": 106467648,
+    "external": 22380312,
+    "arrayBuffers": 18736440
+  }
+}
+[2025-11-19T10:28:42.432Z] {
+  "level": "info",
+  "message": "Request completed: GET /api/auth/me",
+  "metadata": {
+    "requestId": "req_1763548122428_22",
+    "statusCode": 401,
+    "duration": "4ms"
+  },
+  "timestamp": "2025-11-19T10:28:42.432Z",
+  "pid": 83414,
+  "memoryUsage": {
+    "rss": 57851904,
+    "heapTotal": 113328128,
+    "heapUsed": 106521472,
+    "external": 22356342,
+    "arrayBuffers": 18736464
+  }
+}
+[2025-11-19T10:30:31.333Z] {
+  "level": "info",
+  "message": "Request started: POST /api/auth/forgot",
+  "metadata": {
+    "requestId": "req_1763548231331_1",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T10:30:31.331Z",
+  "pid": 80164,
+  "memoryUsage": {
+    "rss": 139051008,
+    "heapTotal": 108347392,
+    "heapUsed": 101145664,
+    "external": 22007746,
+    "arrayBuffers": 18387908
+  }
+}
+[2025-11-19T10:30:31.648Z] {
+  "level": "info",
+  "message": "Request completed: POST /api/auth/forgot",
+  "metadata": {
+    "requestId": "req_1763548231331_1",
+    "statusCode": 200,
+    "duration": "317ms"
+  },
+  "timestamp": "2025-11-19T10:30:31.648Z",
+  "pid": 80164,
+  "memoryUsage": {
+    "rss": 139837440,
+    "heapTotal": 108609536,
+    "heapUsed": 101658240,
+    "external": 22016546,
+    "arrayBuffers": 18396668
+  }
+}
+[2025-11-19T10:30:31.656Z] {
+  "level": "info",
+  "message": "Request started: POST /api/auth/reset",
+  "metadata": {
+    "requestId": "req_1763548231656_2",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1"
+  },
+  "timestamp": "2025-11-19T10:30:31.656Z",
+  "pid": 80164,
+  "memoryUsage": {
+    "rss": 139919360,
+    "heapTotal": 108609536,
+    "heapUsed": 101866872,
+    "external": 22016596,
+    "arrayBuffers": 18396718
+  }
+}
+[2025-11-19T10:30:31.657Z] {
+  "level": "info",
+  "message": "Request completed: POST /api/auth/reset",
+  "metadata": {
+    "requestId": "req_1763548231656_2",
+    "statusCode": 400,
+    "duration": "1ms"
+  },
+  "timestamp": "2025-11-19T10:30:31.657Z",
+  "pid": 80164,
+  "memoryUsage": {
+    "rss": 139968512,
+    "heapTotal": 108609536,
+    "heapUsed": 102005152,
+    "external": 22016620,
+    "arrayBuffers": 18396742
+  }
+}

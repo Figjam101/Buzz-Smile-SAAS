@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://buzzsmile.media/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Disallow debug and admin paths
+Disallow: /debug
+Disallow: /admin
+Disallow: /api/debug
+
+# Allow important pages
+Allow: /login
+Allow: /register
+Allow: /dashboard
+Allow: /share/*

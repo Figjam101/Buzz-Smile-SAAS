@@ -254,7 +254,7 @@ const BackupManager = () => {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="py-4">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
@@ -263,11 +263,11 @@ const BackupManager = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="px-0 py-4">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Backup Manager</h2>
-          <p className="text-gray-600">Manage database backups and restore points</p>
+          <h2 className="text-2xl font-bold text-white">Backup Manager</h2>
+          <p className="text-white/70">Manage database backups and restore points</p>
         </div>
         <button
           onClick={createBackup}
@@ -305,35 +305,32 @@ const BackupManager = () => {
         </button>
       </div>
 
-      {/* Status Cards */}
       {status && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-3">
             <div className="flex items-center space-x-2">
               <span className="text-2xl">📊</span>
               <div>
-                <p className="text-sm text-blue-600 font-medium">Total Backups</p>
-                <p className="text-2xl font-bold text-blue-900">{status.totalBackups || 0}</p>
+                <p className="text-xs text-white/80 font-medium">Total Backups</p>
+                <p className="text-xl font-bold text-blue-400">{status.totalBackups || 0}</p>
               </div>
             </div>
           </div>
-          
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-3">
             <div className="flex items-center space-x-2">
               <span className="text-2xl">💾</span>
               <div>
-                <p className="text-sm text-green-600 font-medium">Total Size</p>
-                <p className="text-2xl font-bold text-green-900">{formatFileSize(status.totalSize || 0)}</p>
+                <p className="text-xs text-white/80 font-medium">Total Size</p>
+                <p className="text-xl font-bold text-green-400">{formatFileSize(status.totalSize || 0)}</p>
               </div>
             </div>
           </div>
-          
-          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-3">
             <div className="flex items-center space-x-2">
               <span className="text-2xl">🕒</span>
               <div>
-                <p className="text-sm text-purple-600 font-medium">Last Backup</p>
-                <p className="text-lg font-bold text-purple-900">
+                <p className="text-xs text-white/80 font-medium">Last Backup</p>
+                <p className="text-sm font-bold text-purple-400">
                   {status.lastBackup ? formatDate(status.lastBackup) : 'Never'}
                 </p>
               </div>
@@ -342,36 +339,34 @@ const BackupManager = () => {
         </div>
       )}
 
-      {/* Alerts */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-4">
           <div className="flex items-center space-x-2">
-            <span className="text-red-500">❌</span>
-            <p className="text-red-700">{error}</p>
+            <span className="text-red-400">❌</span>
+            <p className="text-red-300">{error}</p>
           </div>
         </div>
       )}
 
       {success && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+        <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 mb-4">
           <div className="flex items-center space-x-2">
-            <span className="text-green-500">✅</span>
-            <p className="text-green-700">{success}</p>
+            <span className="text-green-400">✅</span>
+            <p className="text-green-300">{success}</p>
           </div>
         </div>
       )}
 
-      {/* Backups Table */}
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Available Backups</h3>
+      <div className="bg-white/5 border border-white/10 rounded-lg overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/10">
+          <h3 className="text-lg font-semibold text-white">Available Backups</h3>
         </div>
         
         {backups.length === 0 ? (
           <div className="p-8 text-center">
             <div className="text-6xl mb-4">📦</div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No backups found</h3>
-            <p className="text-gray-600 mb-4">Create your first backup to get started</p>
+            <h3 className="text-lg font-medium text-white mb-2">No backups found</h3>
+            <p className="text-white/70 mb-4">Create your first backup to get started</p>
             <button
               onClick={createBackup}
               disabled={creating}
@@ -382,47 +377,47 @@ const BackupManager = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-white/10">
+              <thead className="bg-white/10">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                     Backup Name
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                     Created
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                     Size
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                     Type
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-white/70 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-transparent divide-y divide-white/10">
                 {backups.map((backup, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
+                  <tr key={index} className="hover:bg-white/10">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <span className="text-2xl mr-3">💾</span>
                         <div>
-                          <div className="text-sm font-medium text-gray-900">{backup.name}</div>
-                          <div className="text-sm text-gray-500">{backup.path}</div>
+                          <div className="text-sm font-medium text-white">{backup.name}</div>
+                          <div className="text-sm text-white/70">{backup.path}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       {formatDate(backup.created)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       {formatFileSize(backup.size)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        backup.compressed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                        backup.compressed ? 'bg-green-500/20 text-green-300' : 'bg-white/10 text-white/70'
                       }`}>
                         {backup.compressed ? 'Compressed' : 'Standard'}
                       </span>
@@ -467,63 +462,61 @@ const BackupManager = () => {
         )}
       </div>
 
-      {/* Backup Schedule Info */}
       {status && (
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="text-lg font-semibold text-blue-900 mb-2">Backup Schedule</h4>
+        <div className="mt-6 bg-white/5 border border-white/10 rounded-lg p-4">
+          <h4 className="text-lg font-semibold text-white mb-2">Backup Schedule</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-blue-700"><strong>Interval:</strong> Every {status.interval || 24} hours</p>
-              <p className="text-blue-700"><strong>Max Backups:</strong> {status.maxBackups || 30}</p>
+              <p className="text-white/80"><strong>Interval:</strong> Every {status.interval || 24} hours</p>
+              <p className="text-white/80"><strong>Max Backups:</strong> {status.maxBackups || 30}</p>
             </div>
             <div>
-              <p className="text-blue-700"><strong>Compression:</strong> {status.compression ? 'Enabled' : 'Disabled'}</p>
-              <p className="text-blue-700"><strong>Next Backup:</strong> {status.nextBackup ? formatDate(status.nextBackup) : 'Not scheduled'}</p>
+              <p className="text-white/80"><strong>Compression:</strong> {status.compression ? 'Enabled' : 'Disabled'}</p>
+              <p className="text-white/80"><strong>Next Backup:</strong> {status.nextBackup ? formatDate(status.nextBackup) : 'Not scheduled'}</p>
             </div>
           </div>
         </div>
       )}
 
-      {/* Full Website Backups */}
-      <div className="mt-6 bg-white border border-gray-200 rounded-lg overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">Full Website Backups</h3>
-          <span className="text-sm text-gray-600">Includes database, server, client, config</span>
+      <div className="mt-6 bg-white/5 border border-white/10 rounded-lg overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-white">Full Website Backups</h3>
+          <span className="text-sm text-white/70">Includes database, server, client, config</span>
         </div>
 
         {fullBackups.length === 0 ? (
           <div className="p-8 text-center">
             <div className="text-6xl mb-4">🗂️</div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No full backups found</h3>
-            <p className="text-gray-600 mb-4">Create a full backup to download your complete site</p>
+            <h3 className="text-lg font-medium text-white mb-2">No full backups found</h3>
+            <p className="text-white/70 mb-4">Create a full backup to download your complete site</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-white/10">
+              <thead className="bg-white/10">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Backup Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">Backup Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">Created</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">Size</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">Type</th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-white/70 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-transparent divide-y divide-white/10">
                 {fullBackups.map((backup, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
+                  <tr key={index} className="hover:bg-white/10">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <span className="text-2xl mr-3">📦</span>
                         <div>
-                          <div className="text-sm font-medium text-gray-900">{backup.name}</div>
+                          <div className="text-sm font-medium text-white">{backup.name}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatDate(backup.created)}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatFileSize(backup.size)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">{formatDate(backup.created)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">{formatFileSize(backup.size)}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${backup.compressed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${backup.compressed ? 'bg-green-500/20 text-green-300' : 'bg-white/10 text-white/70'}`}> 
                         {backup.compressed ? 'Compressed' : 'Standard'}
                       </span>
                     </td>

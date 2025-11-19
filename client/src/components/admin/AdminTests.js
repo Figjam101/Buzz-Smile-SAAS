@@ -31,27 +31,27 @@ const AdminTests = () => {
   };
 
   const ResultCard = ({ title, result }) => (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+    <div className="bg-white/5 rounded-xl border border-white/10 p-4 shadow-sm">
       <div className="flex items-center justify-between mb-2">
-        <h4 className="text-sm font-semibold text-gray-900">{title}</h4>
+        <h4 className="text-sm font-semibold text-white">{title}</h4>
         {result ? (
-          <span className={`text-xs px-2 py-1 rounded ${result.ok ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{result.ok ? 'OK' : 'FAIL'}</span>
+          <span className={`text-xs px-2 py-1 rounded ${result.ok ? 'bg-green-500/10 text-green-300' : 'bg-red-500/10 text-red-300'}`}>{result.ok ? 'OK' : 'FAIL'}</span>
         ) : (
-          <span className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-700">Not run</span>
+          <span className="text-xs px-2 py-1 rounded bg-white/10 text-white/70">Not run</span>
         )}
       </div>
-      <pre className="text-xs text-gray-800 bg-gray-50 rounded p-2 overflow-auto max-h-48">{result ? JSON.stringify(result.data, null, 2) : '—'}</pre>
+      <pre className="text-xs text-white/80 bg-white/10 rounded p-2 overflow-auto max-h-48">{result ? JSON.stringify(result.data, null, 2) : '—'}</pre>
       {result && (
-        <div className="mt-2 text-xs text-gray-500">HTTP {result.status}</div>
+        <div className="mt-2 text-xs text-white/70">HTTP {result.status}</div>
       )}
     </div>
   );
 
   return (
-    <div className="p-6">
+    <div className="px-0 py-4">
       <div className="mb-6">
-        <h3 className="text-2xl font-bold text-gray-900">Admin Tests</h3>
-        <p className="text-gray-600">Run backend health diagnostics directly from the dashboard.</p>
+        <h3 className="text-2xl font-bold text-white">Admin Tests</h3>
+        <p className="text-white/70">Run backend health diagnostics directly from the dashboard.</p>
       </div>
       <div className="flex gap-3 mb-6">
         <button onClick={runAll} disabled={loading} className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60">{loading ? 'Running…' : 'Run All'}</button>

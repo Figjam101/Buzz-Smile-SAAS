@@ -166,58 +166,58 @@ const VideoManagement = () => {
   }
 
   return (
-    <div className="p-4">
+    <div className="max-w-6xl mx-auto px-6 py-4">
       <div className="flex justify-between items-center mb-4">
         <div>
-          <h2 className="text-xl font-bold text-gray-900">Video Management</h2>
-          <p className="text-gray-600">Manage videos and content</p>
+          <h2 className="text-xl font-semibold text-white">Video Management</h2>
+          <p className="text-white/70">Manage videos and content</p>
         </div>
       </div>
 
       {/* Error Alert */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-4">
           <div className="flex items-center space-x-2">
-            <span className="text-red-500">❌</span>
-            <p className="text-red-700 text-sm">{error}</p>
+            <span className="text-red-300">❌</span>
+            <p className="text-red-300 text-sm">{error}</p>
           </div>
         </div>
       )}
 
       {/* Video Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-        <div className="bg-white rounded-lg shadow-sm border p-4">
+        <div className="bg-white/5 rounded-lg shadow-sm border border-white/10 p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Videos</p>
-              <p className="text-xl font-bold text-gray-900">{videoStats.videos || 0}</p>
+              <p className="text-xs font-medium text-white/80">Total Videos</p>
+              <p className="text-xl font-bold text-white">{videoStats.videos || 0}</p>
             </div>
             <span className="text-2xl">🎥</span>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border p-4">
+        <div className="bg-white/5 rounded-lg shadow-sm border border-white/10 p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Public Videos</p>
-              <p className="text-xl font-bold text-green-600">{videos.filter(v => v.isPublic).length}</p>
+              <p className="text-xs font-medium text-white/80">Public Videos</p>
+              <p className="text-xl font-bold text-green-400">{videos.filter(v => v.isPublic).length}</p>
             </div>
             <span className="text-2xl">🌐</span>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border p-4">
+        <div className="bg-white/5 rounded-lg shadow-sm border border-white/10 p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Private Videos</p>
-              <p className="text-xl font-bold text-orange-600">{videos.filter(v => !v.isPublic).length}</p>
+              <p className="text-xs font-medium text-white/80">Private Videos</p>
+              <p className="text-xl font-bold text-orange-400">{videos.filter(v => !v.isPublic).length}</p>
             </div>
             <span className="text-2xl">🔒</span>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border p-4">
+        <div className="bg-white/5 rounded-lg shadow-sm border border-white/10 p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Storage</p>
-              <p className="text-xl font-bold text-blue-600">
+              <p className="text-xs font-medium text-white/80">Total Storage</p>
+              <p className="text-xl font-bold text-blue-400">
                 {formatFileSize(videos.reduce((acc, v) => acc + (v.fileSize || 0), 0))}
               </p>
             </div>
@@ -227,24 +227,24 @@ const VideoManagement = () => {
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-white rounded-lg shadow-sm border p-4 mb-4">
+      <div className="bg-white/5 rounded-lg shadow-sm border border-white/10 p-4 mb-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+            <label className="block text-xs font-medium text-white/80 mb-1">Search</label>
             <input
               type="text"
               placeholder="Search videos..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-2.5 py-1.5 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+            <label className="block text-xs font-medium text-white/80 mb-1">Status</label>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-2.5 py-1.5 border border-white/20 rounded-md bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Videos</option>
               <option value="public">Public</option>
@@ -278,12 +278,12 @@ const VideoManagement = () => {
       </div>
 
       {/* Videos Table */}
-      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+      <div className="bg-white/5 rounded-lg shadow-sm border border-white/10 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-white/10">
+            <thead className="bg-white/10">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                   <input
                     type="checkbox"
                     onChange={(e) => {
@@ -296,32 +296,32 @@ const VideoManagement = () => {
                     checked={selectedVideos.length === currentVideos.length && currentVideos.length > 0}
                   />
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                   Video
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                   Owner
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                   Duration
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                   Size
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                   Created
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-transparent divide-y divide-white/10">
               {currentVideos.map((video) => (
-                <tr key={video._id} className="hover:bg-gray-50">
+                <tr key={video._id} className="hover:bg-white/10">
                   <td className="px-4 py-4 whitespace-nowrap">
                     <input
                       type="checkbox"
@@ -345,55 +345,55 @@ const VideoManagement = () => {
                             className="h-12 w-16 object-cover rounded"
                           />
                         ) : (
-                          <div className="h-12 w-16 bg-gray-300 rounded flex items-center justify-center">
-                            <span className="text-xs text-gray-500">🎥</span>
+                          <div className="h-12 w-16 bg-white/10 rounded flex items-center justify-center">
+                            <span className="text-xs text-white/70">🎥</span>
                           </div>
                         )}
                       </div>
                       <div className="ml-3">
-                        <div className="text-sm font-medium text-gray-900 truncate max-w-xs">
+                        <div className="text-sm font-medium text-white truncate max-w-xs">
                           {video.title || 'Untitled'}
                         </div>
-                        <div className="text-sm text-gray-500 truncate max-w-xs">
+                        <div className="text-sm text-white/70 truncate max-w-xs">
                           {video.description || 'No description'}
                         </div>
                       </div>
                     </div>
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{video.user?.name || 'Unknown'}</div>
-                    <div className="text-sm text-gray-500">{video.user?.email || 'N/A'}</div>
+                    <div className="text-sm text-white">{video.user?.name || 'Unknown'}</div>
+                    <div className="text-sm text-white/70">{video.user?.email || 'N/A'}</div>
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
                       video.isPublic 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-orange-100 text-orange-800'
+                        ? 'bg-green-500/20 text-green-300' 
+                        : 'bg-orange-500/20 text-orange-300'
                     }`}>
                       {video.isPublic ? 'Public' : 'Private'}
                     </span>
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-4 py-4 whitespace-nowrap text-sm text-white">
                     {video.duration ? formatDuration(video.duration) : 'N/A'}
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-4 py-4 whitespace-nowrap text-sm text-white">
                     {video.fileSize ? formatFileSize(video.fileSize) : 'N/A'}
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-4 py-4 whitespace-nowrap text-sm text-white/70">
                     {video.createdAt ? new Date(video.createdAt).toLocaleDateString() : 'N/A'}
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
                       <button
                         onClick={() => window.open(video.url, '_blank')}
-                        className="text-blue-600 hover:text-blue-900"
+                        className="text-blue-400 hover:text-blue-300"
                         disabled={!video.url}
                       >
                         View
                       </button>
                       <button
                         onClick={() => deleteVideo(video._id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-red-400 hover:text-red-300"
                       >
                         Delete
                       </button>
@@ -407,26 +407,26 @@ const VideoManagement = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200">
+          <div className="bg-white/5 px-4 py-3 flex items-center justify-between border-t border-white/10 text-white">
             <div className="flex-1 flex justify-between sm:hidden">
               <button
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                className="relative inline-flex items-center px-4 py-2 border border-white/20 text-sm font-medium rounded-md text-white bg-white/5 hover:bg-white/10 disabled:opacity-50"
               >
                 Previous
               </button>
               <button
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
-                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                className="ml-3 relative inline-flex items-center px-4 py-2 border border-white/20 text-sm font-medium rounded-md text-white bg-white/5 hover:bg-white/10 disabled:opacity-50"
               >
                 Next
               </button>
             </div>
             <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-white/70">
                   Showing <span className="font-medium">{indexOfFirstVideo + 1}</span> to{' '}
                   <span className="font-medium">{Math.min(indexOfLastVideo, filteredVideos.length)}</span> of{' '}
                   <span className="font-medium">{filteredVideos.length}</span> results
@@ -440,8 +440,8 @@ const VideoManagement = () => {
                       onClick={() => setCurrentPage(page)}
                       className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                         page === currentPage
-                          ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                          : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                          ? 'z-10 bg-blue-500/20 border-blue-500 text-blue-300'
+                          : 'bg-white/5 border-white/20 text-white/70 hover:bg-white/10'
                       }`}
                     >
                       {page}
@@ -457,9 +457,9 @@ const VideoManagement = () => {
       {/* Empty State */}
       {currentVideos.length === 0 && !loading && (
         <div className="text-center py-12">
-          <div className="text-gray-400 text-6xl mb-4">🎥</div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No videos found</h3>
-          <p className="text-gray-500">
+          <div className="text-white/50 text-6xl mb-4">🎥</div>
+          <h3 className="text-lg font-semibold text-white mb-2">No videos found</h3>
+          <p className="text-white/70">
             {searchTerm || filterStatus !== 'all' 
               ? 'Try adjusting your search or filters' 
               : 'No videos have been uploaded yet'}

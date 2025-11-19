@@ -1,0 +1,345 @@
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763515919747',
+  statusCode: 404,
+  responseTime: '10ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 08:31:59',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '3ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 08:32:00',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/health?ide_webview_request_time=1763515929267',
+  statusCode: 503,
+  responseTime: '5ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 08:32:09',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 08:32:09',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 500,
+  responseTime: '10092ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 08:57:00',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763518539724',
+  statusCode: 404,
+  responseTime: '9ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 09:15:39',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '3ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 09:15:40',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/health',
+  statusCode: 503,
+  responseTime: '72ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 09:20:46',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/dev/reset-password',
+  statusCode: 500,
+  responseTime: '10107ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 09:20:56',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 500,
+  responseTime: '10021ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 09:21:06',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/dev/admin-login',
+  statusCode: 404,
+  responseTime: '91ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 09:38:42',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/dev/admin-login',
+  statusCode: 404,
+  responseTime: '50ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 09:39:56',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/health',
+  statusCode: 503,
+  responseTime: '69ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 10:17:55',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/dev/reset-password',
+  statusCode: 500,
+  responseTime: '10073ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 10:18:05',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 500,
+  responseTime: '10026ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 10:18:15',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/health',
+  statusCode: 503,
+  responseTime: '374ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 10:20:58',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/dev/reset-password',
+  statusCode: 404,
+  responseTime: '76ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 10:20:58',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 400,
+  responseTime: '183ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 10:20:58',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/forgot',
+  statusCode: 404,
+  responseTime: '36ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 17:28:27',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/reset',
+  statusCode: 404,
+  responseTime: '2ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 17:28:27',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 400,
+  responseTime: '1205ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 17:28:42',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/auth/me',
+  statusCode: 401,
+  responseTime: '25ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 17:28:42',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/reset',
+  statusCode: 400,
+  responseTime: '1ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-19 17:30:31',
+  level: 'error',
+  message: 'API Request Failed'
+}

@@ -6,9 +6,6 @@ import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import VideoEditingWizard from '../components/VideoEditingWizard';
-import VideoThumbnail from '../components/VideoThumbnail';
-import Navbar from '../components/Navbar';
-import AppleProfileImage from '../components/AppleProfileImage';
 import ProfilePictureUploader from '../components/ProfilePictureUploader';
 import OnboardingModal from '../components/OnboardingModal';
 import SocialMediaPopup from '../components/SocialMediaPopup';
@@ -25,17 +22,15 @@ import {
   Clock,
   X,
   Loader,
-  Home,
-  Settings,
   BarChart3,
   Crown,
   HardDrive,
-  Shield,
-  Share2
+  
 } from 'lucide-react';
 import '../styles/glass.css';
 import DashboardStructure from '../components/DashboardStructure';
 import UploadBubbles from '../components/UploadBubbles';
+// UploadNotificationIndicator moved back into header; below-header indicator removed
 
 const Dashboard = () => {
   const { user, refreshUser } = useAuth();
@@ -44,127 +39,95 @@ const Dashboard = () => {
   const videosSectionRef = useRef(null);
   const [flowStep, setFlowStep] = useState(0);
   const [flowActive, setFlowActive] = useState(true);
-  const renderPlanButton = () => {
-    const isGodPlan = user?.subscription?.plan === 'god' || user?.plan === 'god';
-    const isGod = user?.role === 'admin' || isGodPlan;
-    if (isGod) {
-      return (
-        <button className="w-full btn-primary text-sm font-medium flex items-center justify-center space-x-2 animate-pulse">
-          <Crown className="w-4 h-4" />
-          <span>🔥 GOD MODE 🔥</span>
-        </button>
-      );
+  // Aggregate upload notifications so multiple uploads project to one toast
+  const [, setUploadNotif] = useState(null);
+  const uploadNotifRef = useRef(null);
+  const updateUploadToast = useCallback((delta = { success: 0, error: 0, totalAdd: 0 }, finalMessage) => {
+    let agg = uploadNotifRef.current;
+    if (!agg || !agg.toastId) {
+      // Initialize aggregator
+      agg = {
+        total: delta.totalAdd || 0,
+        success: 0,
+        error: 0,
+        toastId: toast.loading(`Uploading 0/${delta.totalAdd || 0}...`, { duration: Infinity })
+      };
+      uploadNotifRef.current = agg;
+      setUploadNotif(agg);
+    } else if (delta.totalAdd) {
+      agg.total += delta.totalAdd;
     }
-    if (stats?.plan === 'Free') {
-      return (
-        <button className="w-full px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center space-x-2">
-          <Crown className="w-4 h-4" />
-          <span>Upgrade Plan</span>
-        </button>
-      );
-    }
-    return (
-      <button className="w-full px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center space-x-2">
-        <Crown className="w-4 h-4" />
-        <span>{stats?.plan} Plan</span>
-      </button>
-    );
-  };
-  const scrollToTop = useCallback(() => {
+
+    agg.success += delta.success || 0;
+    agg.error += delta.error || 0;
+
+    // Emit lightweight global notification events for header indicator
     try {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (_) {
-      window.scrollTo(0, 0);
+      if (typeof window !== 'undefined') {
+        if (delta.success && delta.success > 0) {
+          window.dispatchEvent(new CustomEvent('upload-notification', { detail: { kind: 'success' } }));
+        }
+        if (delta.error && delta.error > 0) {
+          window.dispatchEvent(new CustomEvent('upload-notification', { detail: { kind: 'error' } }));
+        }
+      }
+    } catch {}
+    const done = agg.success + agg.error;
+    const allDone = agg.total > 0 && done >= agg.total;
+    const text = finalMessage || (allDone
+      ? `Uploaded ${agg.success}/${agg.total}${agg.error ? ` • ${agg.error} failed` : ''}`
+      : `Uploading ${done}/${agg.total}...`);
+
+    if (allDone) {
+      if (agg.error) {
+        toast.error(text, { id: agg.toastId, duration: 6000 });
+      } else {
+        toast.success(text, { id: agg.toastId, duration: 6000 });
+      }
+    } else {
+      // Update the existing loading toast by re-calling loading with same id
+      toast.loading(text, { id: agg.toastId, duration: Infinity });
+    }
+
+    if (allDone) {
+      setUploadNotif(null);
+      uploadNotifRef.current = null;
+    } else {
+      setUploadNotif({ ...agg });
     }
   }, []);
+  
 
   // Robust scroll helper for My Files
   const scrollToVideosSection = useCallback(() => {
-    // Temporarily lock page scroll for a polished guided transition
-    const lockScroll = () => {
+    const getOffset = () => {
       try {
-        document.documentElement.style.overflow = 'hidden';
-        document.body.style.overflow = 'hidden';
-      } catch (_) {}
-    };
-    const unlockScroll = () => {
-      try {
-        document.documentElement.style.overflow = '';
-        document.body.style.overflow = '';
-      } catch (_) {}
-    };
-    lockScroll();
-    const getScrollParent = (node) => {
-      let p = node?.parentElement;
-      while (p) {
-        const style = window.getComputedStyle(p);
-        const overflowY = style.getPropertyValue('overflow-y');
-        const overflow = style.getPropertyValue('overflow');
-        if (overflowY === 'auto' || overflowY === 'scroll' || overflow === 'auto' || overflow === 'scroll') {
-          return p;
-        }
-        p = p.parentElement;
+        const header = document.getElementById('dashboard-header');
+        const h = header ? header.offsetHeight : 64;
+        return h + 8;
+      } catch (_) {
+        return 72;
       }
-      return window;
     };
 
     const attemptScroll = () => {
       const el = videosSectionRef.current || document.getElementById('videos-section');
       if (!el) return false;
 
-      const offset = 96; // tuned to align grid below header without exposing Step 1
-      const sp = getScrollParent(el);
+      const offset = getOffset();
+      const y = el.getBoundingClientRect().top + window.scrollY - offset;
       try {
-        if (sp === window) {
-          const y = el.getBoundingClientRect().top + window.scrollY - offset;
-          window.scrollTo({ top: Math.max(y, 0), behavior: 'smooth' });
-        } else {
-          const parentRect = sp.getBoundingClientRect();
-          const elRect = el.getBoundingClientRect();
-          const targetY = (elRect.top - parentRect.top) + sp.scrollTop - offset;
-          sp.scrollTo({ top: Math.max(targetY, 0), behavior: 'smooth' });
-        }
-        // Move keyboard focus to the videos section to avoid Step 1 focus styles
-        if (typeof el.focus === 'function') {
-          try { el.focus({ preventScroll: true }); } catch (_) { /* ignore */ }
-        }
-        // Auto-unlock scroll once the videos section is in view
-        try {
-          const observer = new IntersectionObserver((entries, obs) => {
-            const visible = entries.some((e) => e.isIntersecting);
-            if (visible) {
-              unlockScroll();
-              obs.disconnect();
-            }
-          }, { root: null, threshold: 0.2 });
-          observer.observe(el);
-        } catch (_) {
-          // Fallback: unlock after a short delay
-          setTimeout(unlockScroll, 1200);
-        }
-        return true;
-      } catch (e) {
-        // Final fallback
-        if (typeof el.scrollIntoView === 'function') {
-          try {
-            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            if (typeof el.focus === 'function') {
-              try { el.focus({ preventScroll: true }); } catch (_) {}
-            }
-            setTimeout(() => {
-              // Ensure we unlock even if IntersectionObserver fails
-              try {
-                unlockScroll();
-              } catch (_) {}
-            }, 1200);
-            return true;
-          } catch (_) {}
-        }
+        window.scrollTo({ top: Math.max(y, 0), behavior: 'smooth' });
+      } catch (_) {
+        window.scrollTo(0, Math.max(y, 0));
       }
-      return false;
+      if (typeof el.focus === 'function') {
+        try { el.focus({ preventScroll: true }); } catch (_) {}
+      }
+      return true;
     };
+
     if (attemptScroll()) return;
-    // Retry shortly in case element isn't mounted yet
     const retries = [100, 250, 500];
     for (const ms of retries) {
       setTimeout(() => attemptScroll(), ms);
@@ -201,15 +164,14 @@ const Dashboard = () => {
   const [uploadStepComplete, setUploadStepComplete] = useState(false);
   const [lastUploadedItem, setLastUploadedItem] = useState(null);
   const [activeSection, setActiveSection] = useState('dashboard');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  
   const [showUploader, setShowUploader] = useState(false);
   const handleVideoProcessingRef = useRef(null);
 
   // Processing modal & status polling
   const [processingModalOpen, setProcessingModalOpen] = useState(false);
-  const [processingVideo, setProcessingVideo] = useState(null); // { id, title }
-  const [processingStatus, setProcessingStatus] = useState(null); // { status, progress, errorMessage }
-  const [statusPollId, setStatusPollId] = useState(null);
+  const [processingVideo] = useState(null); // { id, title }
+  const [processingStatus] = useState(null); // { status, progress, errorMessage }
 
   const [socialMediaPopupOpen, setSocialMediaPopupOpen] = useState(false);
   const [socialMediaData, setSocialMediaData] = useState({
@@ -238,12 +200,16 @@ const Dashboard = () => {
   const [showBackupListModal, setShowBackupListModal] = useState(false);
 
   // Video editing state
-  const [editingVideoId, setEditingVideoId] = useState(null);
-  const [editingFilename, setEditingFilename] = useState('');
+  
 
-  // Resolve API base, falling back to same-origin relative path
-  const API_BASE = (process.env.REACT_APP_API_URL || '').replace(/\/$/, '');
-  const api = useCallback((p) => `${API_BASE}${p}`, [API_BASE]);
+  // Robust API base resolution
+  const rawBase = (process.env.REACT_APP_API_URL || axios.defaults.baseURL || '');
+  const trimmed = (rawBase || '').replace(/\/$/, '');
+  const baseNoApi = /\/api$/.test(trimmed) ? trimmed.replace(/\/api$/, '') : trimmed;
+  const origin = (typeof window !== 'undefined') ? window.location.origin : '';
+  const devOverride = origin.includes('localhost:3000') ? 'http://localhost:5000' : origin;
+  const API_BASE = baseNoApi || devOverride;
+  const api = useCallback((p) => `${API_BASE}${p}`,[API_BASE]);
 
   const loadVideoBlob = useCallback(async (video) => {
     setVideoLoading(true);
@@ -267,13 +233,7 @@ const Dashboard = () => {
     }
   }, [api]);
 
-  const handleVideoClick = useCallback((video) => {
-    setSelectedVideo(video);
-    setShowPreviewModal(true);
-    if (video.status === 'ready' || video.status === 'completed') {
-      loadVideoBlob(video);
-    }
-  }, [loadVideoBlob]);
+  
 
   const closePreviewModal = () => {
     setShowPreviewModal(false);
@@ -317,6 +277,8 @@ const Dashboard = () => {
     setUploadStepComplete(true);
 
     // Add to pending (for bubbles/visuals) and immediately start upload
+    // Initialize or extend the aggregated upload toast
+    updateUploadToast({ totalAdd: mediaFiles.length });
     for (const file of mediaFiles) {
       const pendingId = Date.now() + Math.random();
       // Add to pending immediately so bubbles render regardless of server response
@@ -328,9 +290,10 @@ const Dashboard = () => {
         .catch(() => {
           // Keep the bubble even if upload fails; thumbnail generation is client-side
           // Optional: could mark a failed state here in future without removing bubble
+          updateUploadToast({ error: 1 });
         });
     }
-  }, []);
+  }, [updateUploadToast]);
 
   const handleConnectGoogleDrive = async () => {
     try {
@@ -364,8 +327,14 @@ const Dashboard = () => {
     if (location.pathname === '/my-files' || location.hash === '#files') {
       scrollToVideosSection();
     }
-    if (location.hash === '#admin') {
-      setActiveSection('admin');
+    if (location.pathname === '/dashboard') {
+      if (location.hash === '#social') {
+        setActiveSection('social');
+      } else if (location.hash === '#settings') {
+        setActiveSection('settings');
+      } else {
+        setActiveSection('dashboard');
+      }
     }
   }, [location.pathname, location.hash, scrollToVideosSection]);
 
@@ -406,14 +375,47 @@ const Dashboard = () => {
     } catch (_) {}
   }, []);
 
-  const nextFlowStep = useCallback(() => {
-    // Play pop when leaving upload slide with visible bubbles
-    try {
-      if (flowStep === 0 && pendingVideoFiles && pendingVideoFiles.length > 0) {
-        playPopSound();
-      }
-    } catch (_) {}
+  const nextFlowStep = useCallback(async () => {
     setFlowActive(true);
+    // If on Step 2 (index 1), ask for confirmation and trigger server move
+    if (flowStep === 1) {
+      try {
+        const token = localStorage.getItem('token');
+        const listRes = await axios.get(api('/api/videos'), {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        let list = [];
+        if (Array.isArray(listRes.data)) {
+          list = listRes.data;
+        } else if (listRes.data && Array.isArray(listRes.data.videos)) {
+          list = listRes.data.videos;
+        } else if (listRes.data && listRes.data.data && Array.isArray(listRes.data.data)) {
+          list = listRes.data.data;
+        }
+        setVideos(list);
+        let target = null;
+        if (lastUploadedItem?.name) {
+          target = list.find(v => (v.title || v.filename) === lastUploadedItem.name && (v.status === 'ready' || v.status === 'completed')) || null;
+        }
+        if (!target) {
+          const ready = list.filter(v => v.status === 'ready');
+          ready.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          target = ready[0] || null;
+        }
+        if (!target) {
+          toast.error('No ready video found to process');
+          return;
+        }
+        await axios.post(api(`/api/videos/${target._id}/process`), { editingOptions: {} }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        toast.success('Video queued for editing');
+      } catch (error) {
+        const msg = error?.response?.data?.message || 'Failed to queue video for editing';
+        toast.error(msg);
+        return; // Do not advance if server action failed
+      }
+    }
     setFlowStep((s) => {
       if (s >= 3) {
         // Already at last slide: finish the flow and bounce to videos
@@ -422,7 +424,7 @@ const Dashboard = () => {
       }
       return Math.min(s + 1, 3);
     });
-  }, [finishFlow, flowStep, pendingVideoFiles, playPopSound]);
+  }, [finishFlow, flowStep, api]);
 
   const prevFlowStep = useCallback(() => {
     setFlowStep((s) => Math.max(s - 1, 0));
@@ -446,6 +448,28 @@ const Dashboard = () => {
       } catch (_) {}
     };
   }, [flowActive]);
+
+  // Ensure scrolling is enabled when switching away from the dashboard flow
+  useEffect(() => {
+    if (activeSection !== 'dashboard') {
+      setFlowActive(false);
+      try {
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+      } catch (_) {}
+    }
+  }, [activeSection]);
+
+  // Play a bubble pop sound when entering each step (0–3)
+  const lastStepRef = useRef(flowStep);
+  useEffect(() => {
+    try {
+      if (typeof flowStep === 'number' && flowStep !== lastStepRef.current) {
+        playPopSound();
+        lastStepRef.current = flowStep;
+      }
+    } catch (_) {}
+  }, [flowStep, playPopSound]);
 
   // Ensure we start at top with the horizontal flow visible
   useEffect(() => {
@@ -491,31 +515,7 @@ const Dashboard = () => {
     }
   }, [navigate]);
 
-  const deleteVideo = async (videoId) => {
-    if (!window.confirm('Are you sure you want to delete this video?')) {
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem('token');
-      console.log('Deleting video with ID:', videoId);
-      
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/videos/${videoId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      toast.success('Video deleted successfully');
-      
-      // Refresh the page after a short delay
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-      
-    } catch (error) {
-      console.error('Error deleting video:', error);
-      toast.error('Failed to delete video');
-    }
-  };
+  
 
   const handleVideoProcessing = useCallback(async (videoData) => {
     // Mark step complete immediately at upload start
@@ -601,9 +601,11 @@ const Dashboard = () => {
       });
 
       console.log('Upload response:', response.data);
-      toast.success('Video uploaded successfully! You can process it anytime.');
+      // Aggregate success into single notification
+      updateUploadToast({ success: 1 });
       
-      setPendingVideoFiles(prev => prev.filter(f => f.id !== videoData.id));
+      // Do not remove bubbles on success; keep them until at least Step 2
+      // Removal is handled by flowStep progression to Step 3 or later
 
       // Mark step completion and remember the uploaded item for the next container
       setUploadStepComplete(true);
@@ -617,66 +619,35 @@ const Dashboard = () => {
       fetchStats();
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error(error.response?.data?.message || 'Failed to upload video');
+      // Aggregate error into single notification and optionally show the last error message
+      const msg = error?.response?.data?.message;
+      updateUploadToast({ error: 1 }, msg ? `Upload error: ${msg}` : undefined);
     } finally {
       setUploading(false);
       setUploadProgress(0);
     }
-  }, [stats, fetchVideos, fetchStats]);
+  }, [stats, fetchVideos, fetchStats, api, formatFileSize, updateUploadToast]);
+
+  // Keep bubbles visible through Step 2; clear only after moving past it
+  useEffect(() => {
+    try {
+      if (flowStep >= 2 && pendingVideoFiles.length > 0) {
+        setPendingVideoFiles([]);
+      }
+    } catch (_) {}
+  }, [flowStep, pendingVideoFiles.length]);
+
+  // Bubbles remain static across Step 1 and Step 2; only slider moves
 
   useEffect(() => {
     handleVideoProcessingRef.current = handleVideoProcessing;
   }, [handleVideoProcessing]);
 
   // Explicitly start processing for a video when user clicks Process
-  const processVideo = async (video) => {
-    try {
-      const token = localStorage.getItem('token');
-      const { data } = await axios.post(api(`/api/videos/${video._id}/process`), {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      toast.success(data?.message || 'Processing started');
-      setProcessingVideo({ id: video._id, title: video.title || video.filename });
-      setProcessingModalOpen(true);
-      startStatusPolling(video._id);
-    } catch (error) {
-      const msg = error?.response?.data?.message || 'Failed to start processing';
-      toast.error(msg);
-    }
-  };
+  
 
   // Poll server for processing status every 2 seconds
-  const startStatusPolling = (videoId) => {
-    if (statusPollId) {
-      clearInterval(statusPollId);
-      setStatusPollId(null);
-    }
-    const poller = setInterval(async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const { data } = await axios.get(api(`/api/videos/${videoId}/status`), {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setProcessingStatus(data);
-        const st = (data?.status || '').toLowerCase();
-        if (st === 'ready' || st === 'completed' || st === 'failed') {
-          clearInterval(poller);
-          setStatusPollId(null);
-          setProcessingModalOpen(false);
-          fetchVideos();
-          fetchStats();
-          if (st === 'failed') {
-            toast.error(data?.errorMessage || 'Video processing failed');
-          } else {
-            toast.success('Video processing completed');
-          }
-        }
-      } catch (err) {
-        console.error('Status polling error:', err);
-      }
-    }, 2000);
-    setStatusPollId(poller);
-  };
+  
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -691,6 +662,12 @@ const Dashboard = () => {
         return <Clock className="w-4 h-4 text-gray-500" />;
     }
   };
+
+  useEffect(() => {
+    if (selectedVideo && (selectedVideo.status === 'ready' || selectedVideo.status === 'completed')) {
+      loadVideoBlob(selectedVideo);
+    }
+  }, [selectedVideo, loadVideoBlob]);
 
   const downloadVideo = async (video) => {
     try {
@@ -719,43 +696,9 @@ const Dashboard = () => {
     }
   };
 
-  const startEditingFilename = (video) => {
-    setEditingVideoId(video._id);
-    setEditingFilename(video.title || video.filename);
-  };
-
-  const saveFilename = async (videoId) => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.put(`${process.env.REACT_APP_API_URL}/api/videos/${videoId}`, 
-        { title: editingFilename },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
-      setVideos(videos.map(v => 
-        v._id === videoId ? { ...v, title: editingFilename } : v
-      ));
-      setEditingVideoId(null);
-      setEditingFilename('');
-      toast.success('Video title updated');
-    } catch (error) {
-      console.error('Error updating title:', error);
-      toast.error('Failed to update title');
-    }
-  };
-
-  const cancelEditing = () => {
-    setEditingVideoId(null);
-    setEditingFilename('');
-  };
+  
 
   // Admin backup functions
-  const handleViewSystemLogs = () => {
-    toast('System logs feature coming soon!', {
-      icon: '📋',
-      duration: 3000,
-    });
-  };
 
   const handleCreateBackup = async () => {
     if (backupLoading) return;
@@ -915,23 +858,6 @@ const Dashboard = () => {
     }
   };
 
-  const handleViewBackups = async () => {
-    try {
-      await fetchBackups();
-      if (backups.length === 0) {
-        toast('No backups found. Create your first backup!', {
-          icon: '📦',
-          duration: 4000,
-        });
-      } else {
-        // Show backup management modal
-        setShowBackupListModal(true);
-      }
-    } catch (error) {
-      console.error('Error fetching backups:', error);
-      toast.error('Failed to fetch backups');
-    }
-  };
 
   const fetchBackups = async () => {
     try {
@@ -965,8 +891,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+    <div className="min-h-screen bg-transparent">
       <ProfilePictureUploader isOpen={showUploader} onClose={() => setShowUploader(false)} />
       {/* Onboarding Modal: show if user hasn’t connected Facebook and hasn’t dismissed */}
       {(() => {
@@ -980,164 +905,25 @@ const Dashboard = () => {
         }
       })()}
 
-      {/* Dashboard Sidebar Navigation - now visible on all screen sizes */}
-      <div className="block fixed left-0 top-24 h-[calc(100vh-6rem)] w-56 sm:w-64 bg-white border-r border-gray-200 shadow-lg z-30 overflow-y-auto">
-        <div className="flex flex-col h-full">
-          <div className="p-6 mx-3 my-3 rounded-xl glass-card shiny-outline">
-              <div className="flex items-center space-x-3">
-                <div className="relative">
-                  <button
-                    onClick={() => setShowUploader(true)}
-                    aria-label="Update your profile picture"
-                    className="relative rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <AppleProfileImage size="lg" name={user?.name || 'User'} profilePicture={user?.profilePicture} />
-                    <span className="absolute -bottom-1 -right-1 bg-blue-600 text-white rounded-full p-1 shadow ring-2 ring-white">
-                      <Upload className="w-3 h-3" />
-                    </span>
-                  </button>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="font-medium text-gray-900 text-lg truncate">{user?.name || 'User'}</p>
-                  {user?.role === 'admin' ? (
-                  <div className="flex items-center space-x-2">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      <Shield className="w-3 h-3 mr-1" />
-                      Administrator
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex items-center space-x-2">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      <Crown className="w-3 h-3 mr-1" />
-                      {stats.plan} Plan
-                    </span>
-                  </div>
-                )}
-                  <button
-                    onClick={() => {
-                      if (typeof window !== 'undefined') localStorage.removeItem('onboardingDismissed');
-                    }}
-                    className="mt-1 text-xs text-gray-600 hover:text-gray-800"
-                  >
-                    Set up your account
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 mx-3 my-3 rounded-xl glass-card shiny-outline">
-            <nav className="space-y-2">
-              <button
-                onClick={() => {
-                  setActiveSection('dashboard');
-                  navigate('/dashboard');
-                  scrollToTop();
-                }}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                  activeSection === 'dashboard'
-                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <Home className="w-5 h-5 flex-shrink-0" />
-                <span className="font-medium">Dashboard</span>
-              </button>
-              
-              <button
-                onClick={() => {
-                  setActiveSection('dashboard');
-                  // keep URL informative
-                  navigate('/dashboard#files');
-                  scrollToVideosSection();
-                }}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-50`}
-              >
-                <HardDrive className="w-5 h-5 flex-shrink-0" />
-                <span className="font-medium">My Files</span>
-              </button>
-              
-              <button
-                onClick={() => setActiveSection('social')}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                  activeSection === 'social'
-                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <Share2 className="w-5 h-5 flex-shrink-0" />
-                <span className="font-medium">Social Media Calendar</span>
-              </button>
-              
-              {user?.role === 'admin' && (
-                <button
-                  onClick={() => setActiveSection('admin')}
-                  className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-50"
-                >
-                  <Shield className="w-5 h-5 flex-shrink-0" />
-                  <span className="font-medium">Admin Dashboard</span>
-                </button>
-              )}
-              
-              <button
-                onClick={() => setActiveSection('settings')}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                  activeSection === 'settings'
-                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <Settings className="w-5 h-5 flex-shrink-0" />
-                <span className="font-medium">Settings</span>
-              </button>
-            </nav>
-          </div>
-
-          <div className="p-4 mx-3 my-3 rounded-xl glass-card shiny-outline">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">Videos</span>
-                <span className="font-medium text-gray-900">
-                  {user?.role === 'admin' && (user?.subscription?.plan === 'god' || user?.plan === 'god') 
-                    ? `${stats.videoCount}/∞` 
-                    : `${stats.videoCount}/${stats.maxVideos}`
-                  }
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">Storage</span>
-                <span className="font-medium text-gray-900">
-                  {formatFileSize(stats.storageUsed)}
-                  {stats.storageLimit > 0 && ` / ${formatFileSize(stats.storageLimit)}`}
-                </span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                  style={{ 
-                    width: user?.role === 'admin' && (user?.subscription?.plan === 'god' || user?.plan === 'god')
-                      ? '100%' 
-                      : `${Math.min((stats.videoCount / stats.maxVideos) * 100, 100)}%`
-                  }}
-                ></div>
-              </div>
-              {renderPlanButton()}
-            </div>
-          </div>
-        </div>
-      </div>
-      <main className="ml-56 sm:ml-64 pt-0 bg-gray-50" role="main" aria-label="Dashboard content">
+      
+            <main id="dashboard-main" className="md:ml-64 bg-transparent min-h-[calc(100vh-4rem)] overflow-y-auto relative" role="main" aria-label="Dashboard content">
         {/* Dashboard Section */}
         {activeSection === 'dashboard' && (
           <div className="p-0 min-h-screen">
+            {/* Single global bubbles overlay (portal) so positions persist across steps */}
+            {pendingVideoFiles.length > 0 && (
+              <UploadBubbles
+                files={pendingVideoFiles}
+                className=""
+                onDelete={(id) => setPendingVideoFiles(prev => prev.filter(f => (f.id || f?.id) !== id))}
+              />
+            )}
             {/* Structure prototype wired with real step content */}
               <DashboardStructure
                 uploadCompleted={uploadStepComplete}
                 onUploadClick={open}
                 uploadContent={(
                   <>
-                    {/* Floating bubbles for pending uploads (visual only) */}
-                    <UploadBubbles files={pendingVideoFiles} />
                     <div
                       {...getRootProps({ tabIndex: -1 })}
                       className={`relative glass-dropzone rounded-xl p-8 text-center border-2 border-dashed transition-colors focus:outline-none outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 ${
@@ -1164,22 +950,15 @@ const Dashboard = () => {
                       <p className="text-blue-700 font-medium">Drop videos and images here...</p>
                     ) : (
                       <div>
-                        <p className="text-gray-800 mb-1">
+                        <p className="text-black mb-1">
                           Drag & Drop Videos and Images Here
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-white">
                           Supports MP4, AVI, MOV, WMV, FLV, WebM, MKV; plus JPG, JPEG, PNG, GIF, WEBP, HEIC, HEIF
                         </p>
                       </div>
                     )}
-                    {uploadStepComplete && (
-                      <span
-                        className="fixed right-4 top-1/2 -translate-y-1/2 z-40 pointer-events-none w-7 h-7 rounded-full bg-green-500 text-white text-sm leading-[28px] flex items-center justify-center ring-2 ring-white shadow-xl"
-                        aria-hidden="true"
-                      >
-                        ✓
-                      </span>
-                    )}
+                    {/* Removed floating green tick to keep UI clean */}
                   </div>
 
                   {/* Pending list replaced by floating bubbles UI */}
@@ -1188,20 +967,15 @@ const Dashboard = () => {
               )}
               processContent={(
                 <>
-                  {uploadStepComplete && (
-                    <div className="mb-3 p-4 bg-blue-50 border border-blue-200 rounded-xl text-blue-900">
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5" />
-                        <div>
-                          <p className="font-medium">Your video is getting ready to be edited.</p>
-                          <p className="text-sm">We’ll notify you when it’s ready to post.</p>
-                          {lastUploadedItem?.name && (
-                            <p className="text-sm mt-1 text-blue-800">File: {lastUploadedItem.name}</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  {/* Primary instruction to initiate processing */}
+                  <div className="mb-4">
+                    <p className="text-lg font-semibold text-gray-800">
+                      Click <span className="text-blue-600">Process Video</span> when you’re ready for your files to be edited and prepared to schedule.
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Please hover or tap a bubble to remove it from the video process, or click Back to add more files.
+                    </p>
+                  </div>
                 </>
               )}
               stepIndex={flowStep}
@@ -1216,44 +990,7 @@ const Dashboard = () => {
 
               {/* Step 3 removed: Social media connect no longer needed */}
 
-              {/* Videos Grid */}
-              <div id="videos-section" ref={videosSectionRef} tabIndex={-1} className="bg-white rounded-lg border border-gray-200 p-3 scroll-mt-32 focus:outline-none outline-none">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-gray-900">{(user?.name ? `${user.name.split(' ')[0]}'s Videos` : 'Your Videos')}</h2>
-                  <span className="text-sm text-gray-600">{videos.length} videos</span>
-                </div>
-
-                {videos.length === 0 ? (
-                  <div className="text-center py-12">
-                    <FileVideo className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No videos yet</h3>
-                    <p className="text-gray-600 mb-4">Upload your first video to get started</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {videos.map((video) => (
-                      <VideoThumbnail
-                        key={video._id}
-                        video={video}
-                        onPlay={() => handleVideoClick(video)}
-                        onDownload={() => downloadVideo(video)}
-                        onDelete={() => deleteVideo(video._id)}
-                        onEdit={() => startEditingFilename(video)}
-                        onSchedule={(video) => {
-                          setSchedulerVideo(video);
-                          setShowSocialScheduler(true);
-                        }}
-                        onProcess={processVideo}
-                        isEditing={editingVideoId === video._id}
-                        editingFilename={editingFilename}
-                        setEditingFilename={setEditingFilename}
-                        onSaveEdit={() => saveFilename(video._id)}
-                        onCancelEdit={cancelEditing}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
+              {/* Videos Grid moved to My Files page */}
             </div>
           </div>
         )}
@@ -1313,248 +1050,7 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* Admin Section */}
-        {activeSection === 'admin' && user?.role === 'admin' && (
-          <div className="p-3 lg:p-4 min-h-screen bg-gray-50 mt-32">
-            <div className="max-w-6xl mx-auto space-y-6">
-              {/* Header */}
-              <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center shadow-lg">
-                      <Shield className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-                      <p className="text-gray-600">System administration and management</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-sm font-medium text-green-600">System Online</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Quick Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Total Users</p>
-                      <p className="text-3xl font-bold text-gray-900 mt-1">1</p>
-                      <p className="text-xs text-green-600 mt-1">+0% from last month</p>
-                    </div>
-                    <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
-                      <Shield className="w-6 h-6 text-blue-600" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Total Videos</p>
-                      <p className="text-3xl font-bold text-gray-900 mt-1">{stats.videoCount || 0}</p>
-                      <p className="text-xs text-green-600 mt-1">All time uploads</p>
-                    </div>
-                    <div className="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center">
-                      <Video className="w-6 h-6 text-purple-600" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Storage Used</p>
-                      <p className="text-3xl font-bold text-gray-900 mt-1">{formatFileSize(stats.storageUsed || 0)}</p>
-                      <p className="text-xs text-gray-500 mt-1">Unlimited available</p>
-                    </div>
-                    <div className="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center">
-                      <HardDrive className="w-6 h-6 text-green-600" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">System Status</p>
-                      <p className="text-3xl font-bold text-green-600 mt-1">100%</p>
-                      <p className="text-xs text-green-600 mt-1">All systems operational</p>
-                    </div>
-                    <div className="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center">
-                      <CheckCircle className="w-6 h-6 text-green-600" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Admin Actions */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* System Management */}
-                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                  <div className="p-6 border-b border-gray-100">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                        <Settings className="w-5 h-5 text-blue-600" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">System Management</h3>
-                        <p className="text-sm text-gray-600">Core system administration tools</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-6 space-y-3">
-                    <button 
-                      onClick={handleViewSystemLogs}
-                      className="w-full flex items-center justify-between p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors group"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                          <Loader className="w-4 h-4 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900">View System Logs</p>
-                          <p className="text-sm text-gray-600">Monitor application activity</p>
-                        </div>
-                      </div>
-                      <div className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors">
-                        →
-                      </div>
-                    </button>
-
-                    <button 
-                      onClick={handleCreateBackup}
-                      disabled={backupLoading}
-                      className="w-full flex items-center justify-between p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors group disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                          {backupLoading ? (
-                            <Loader className="w-4 h-4 text-green-600 animate-spin" />
-                          ) : (
-                            <HardDrive className="w-4 h-4 text-green-600" />
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900">
-                            {backupLoading ? 'Creating Backup...' : 'Create System Backup'}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {backupLoading ? 'Please wait...' : 'Backup entire system to backup folder'}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors">
-                        →
-                      </div>
-                    </button>
-
-                    <button 
-                      onClick={handleViewBackups}
-                      className="w-full flex items-center justify-between p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors group"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                          <BarChart3 className="w-4 h-4 text-purple-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900">View Backups</p>
-                          <p className="text-sm text-gray-600">Manage system backups</p>
-                        </div>
-                      </div>
-                      <div className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors">
-                        →
-                      </div>
-                    </button>
-                  </div>
-                </div>
-
-                {/* User Management */}
-                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                  <div className="p-6 border-b border-gray-100">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
-                        <Shield className="w-5 h-5 text-orange-600" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">User Management</h3>
-                        <p className="text-sm text-gray-600">Manage users and permissions</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-6 space-y-3">
-                    <button className="w-full flex items-center justify-between p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors group" onClick={() => navigate('/admin?tab=users')}>
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                          <Shield className="w-4 h-4 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900">View All Users</p>
-                          <p className="text-sm text-gray-600">Manage user accounts</p>
-                        </div>
-                      </div>
-                      <div className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors">
-                        →
-                      </div>
-                    </button>
-
-                    <button className="w-full flex items-center justify-between p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors group">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                          <Crown className="w-4 h-4 text-green-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900">Admin Privileges</p>
-                          <p className="text-sm text-gray-600">Manage admin access</p>
-                        </div>
-                      </div>
-                      <div className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors">
-                        →
-                      </div>
-                    </button>
-
-                    <button className="w-full flex items-center justify-between p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors group">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 transition-colors">
-                          <AlertCircle className="w-4 h-4 text-red-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900">Security Settings</p>
-                          <p className="text-sm text-gray-600">Configure security policies</p>
-                        </div>
-                      </div>
-                      <div className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors">
-                        →
-                      </div>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* GOD MODE Banner */}
-              <div className="bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 rounded-2xl p-6 text-white shadow-lg">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                      <Crown className="w-8 h-8 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold">🔥 GOD MODE ACTIVATED 🔥</h3>
-                      <p className="text-white text-opacity-90">You have unlimited access to all system features</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-white text-opacity-75">Admin Level</p>
-                    <p className="text-3xl font-bold">∞</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Admin Section removed: use dedicated /admin route */}
 
         {/* Backup Progress Modal */}
         {showBackupModal && (
@@ -1772,7 +1268,7 @@ const Dashboard = () => {
 
         {/* Social Media Section */}
         {activeSection === 'social' && (
-          <div className="p-3 lg:p-4 min-h-screen">
+          <div className="p-3 lg:p-4 min-h-screen" style={{ marginTop: 'calc(var(--dashboard-header-bottom, 64px) + 12px)' }}>
             <div className="max-w-6xl mx-auto space-y-6">
               <SocialMediaCalendar />
             </div>
@@ -1847,7 +1343,7 @@ const Dashboard = () => {
         videoFiles={pendingVideoFiles}
         onClose={() => {
           setShowWizard(false);
-          setPendingVideoFiles([]);
+          // Keep pending files intact; bubbles remain visible until upload success removes them
         }}
         onProcessVideo={handleVideoProcessing}
       />

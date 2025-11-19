@@ -19,7 +19,7 @@ RUN set -eux; \
     fi
 
 # Copy the rest of the server source
-COPY . .
+COPY server/ .
 
 ENV NODE_ENV=production
 ENV PORT=5000

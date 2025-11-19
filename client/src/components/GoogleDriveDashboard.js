@@ -195,26 +195,26 @@ const Header = styled.div`
 `;
 
 const Title = styled.h1`
-  color: #1F2937;
+  color: #fff;
   font-size: 2rem;
   margin-bottom: 0.5rem;
 `;
 
 const Subtitle = styled.p`
-  color: #6B7280;
+  color: rgba(255,255,255,0.7);
   font-size: 1rem;
 `;
 
 const Section = styled.div`
-  background: #F9FAFB;
+  background: rgba(255,255,255,0.05);
   border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(255,255,255,0.1);
 `;
 
 const SectionTitle = styled.h2`
-  color: #374151;
+  color: #fff;
   font-size: 1.3rem;
   margin-bottom: 1rem;
   font-weight: 600;
@@ -227,20 +227,20 @@ const InfoGrid = styled.div`
 `;
 
 const InfoCard = styled.div`
-  background: white;
+  background: rgba(255,255,255,0.05);
   padding: 1rem;
   border-radius: 8px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(255,255,255,0.1);
 `;
 
 const InfoLabel = styled.div`
-  color: #6B7280;
+  color: rgba(255,255,255,0.7);
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
 `;
 
 const InfoValue = styled.div`
-  color: #1F2937;
+  color: #fff;
   font-weight: 600;
   font-size: 1.1rem;
   
@@ -260,11 +260,11 @@ const StatsGrid = styled.div`
 `;
 
 const StatCard = styled.div`
-  background: white;
+  background: rgba(255,255,255,0.05);
   padding: 1.5rem;
   border-radius: 12px;
   text-align: center;
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(255,255,255,0.1);
   transition: transform 0.2s ease;
   
   &:hover {
@@ -279,14 +279,14 @@ const StatIcon = styled.div`
 `;
 
 const StatNumber = styled.div`
-  color: #1F2937;
+  color: #fff;
   font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
 `;
 
 const StatLabel = styled.div`
-  color: #6B7280;
+  color: rgba(255,255,255,0.7);
   font-size: 0.9rem;
 `;
 
@@ -296,10 +296,10 @@ const ConnectionStatus = styled.div.withConfig({
   display: flex;
   align-items: center;
   gap: 1rem;
-  background: white;
+  background: rgba(255,255,255,0.05);
   padding: 1rem;
   border-radius: 8px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(255,255,255,0.1);
 `;
 
 const ConnectionIcon = styled.div`
@@ -307,16 +307,16 @@ const ConnectionIcon = styled.div`
 `;
 
 const ConnectionText = styled.div`
-  color: #1F2937;
+  color: #fff;
   font-weight: 600;
   font-size: 1.1rem;
 `;
 
 const FolderId = styled.div`
-  color: #6B7280;
+  color: rgba(255,255,255,0.8);
   font-size: 0.9rem;
   font-family: monospace;
-  background: #F3F4F6;
+  background: rgba(255,255,255,0.1);
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
 `;
@@ -328,10 +328,10 @@ const VideoList = styled.div`
 `;
 
 const VideoItem = styled.div`
-  background: white;
+  background: rgba(255,255,255,0.05);
   padding: 1rem;
   border-radius: 8px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(255,255,255,0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -342,13 +342,13 @@ const VideoInfo = styled.div`
 `;
 
 const VideoName = styled.div`
-  color: #1F2937;
+  color: #fff;
   font-weight: 500;
   margin-bottom: 0.25rem;
 `;
 
 const VideoDate = styled.div`
-  color: #6B7280;
+  color: rgba(255,255,255,0.7);
   font-size: 0.9rem;
 `;
 
@@ -368,13 +368,13 @@ const StatusBadge = styled.span`
   ${props => {
     switch (props.status) {
       case 'completed':
-        return 'background: #D1FAE5; color: #065F46;';
+        return 'background: rgba(16,185,129,0.15); color: #86efac;';
       case 'processing':
-        return 'background: #FEF3C7; color: #92400E;';
+        return 'background: rgba(245,158,11,0.15); color: #fde68a;';
       case 'failed':
-        return 'background: #FEE2E2; color: #991B1B;';
+        return 'background: rgba(239,68,68,0.15); color: #fca5a5;';
       default:
-        return 'background: #F3F4F6; color: #374151;';
+        return 'background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);';
     }
   }}
 `;
@@ -394,24 +394,24 @@ const LoadingSpinner = styled.div`
   justify-content: center;
   align-items: center;
   padding: 3rem;
-  color: #6B7280;
+  color: rgba(255,255,255,0.7);
   font-size: 1.1rem;
 `;
 
 const ErrorMessage = styled.div`
   text-align: center;
   padding: 2rem;
-  background: #FEE2E2;
+  background: rgba(239,68,68,0.1);
   border-radius: 12px;
-  border: 1px solid #FECACA;
+  border: 1px solid rgba(239,68,68,0.3);
   
   h3 {
-    color: #991B1B;
+    color: #fca5a5;
     margin-bottom: 0.5rem;
   }
   
   p {
-    color: #7F1D1D;
+    color: #f87171;
     margin-bottom: 1rem;
   }
 `;

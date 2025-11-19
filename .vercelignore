@@ -1,7 +1,7 @@
 # Exclude backups, large binaries, and unrelated projects to keep deploy size small
 OpenCut/
-deployment/
-deployment/**
+# Allow deployment/public_html to be deployed
+!deployment/public_html/**
 backup_*/
 project_backup_*.tar.gz
 system_backup_*.tar.gz

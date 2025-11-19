@@ -28,6 +28,7 @@ const ForgotPassword = () => {
         setError(data.message || 'Failed to request password reset');
       }
     } catch (err) {
+      console.error('Forgot password error:', err);
       setError('Network error requesting password reset');
     } finally {
       setLoading(false);

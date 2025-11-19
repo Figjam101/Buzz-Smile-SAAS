@@ -19,15 +19,17 @@
     @apply border-gray-200;
   }
   
-  body {
-    background: #F0F0F7;
-    min-height: 100vh;
-    color: #1a1a1a;
-    font-feature-settings: "rlig" 1, "calt" 1;
-    font-family: 'Inter', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #0b1220;
+  min-height: 100vh;
+  color: #1a1a1a;
+  font-feature-settings: "rlig" 1, "calt" 1;
+  font-family: 'Inter', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 }
 
 @layer components {
@@ -53,76 +55,76 @@
 
   .btn-primary {
     @apply text-white;
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-    border: 1px solid #2563eb;
+    background: linear-gradient(135deg, #1e3a8a 0%, #172554 100%);
+    border: 1px solid #1e3a8a;
     border-radius: 25px;
     box-shadow: 
-      0 8px 32px rgba(59, 130, 246, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      0 8px 32px rgba(30, 58, 138, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
       inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   }
 
   .btn-primary:hover {
-    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    background: linear-gradient(135deg, #1e40af 0%, #0b1736 100%);
     transform: translateY(-2px);
     box-shadow: 
-      0 12px 40px rgba(59, 130, 246, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 12px 40px rgba(30, 58, 138, 0.38),
+      inset 0 1px 0 rgba(255, 255, 255, 0.26),
       inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   }
 
   .btn-secondary {
     @apply text-white;
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-    border: 1px solid #2563eb;
+    background: linear-gradient(135deg, #1e3a8a 0%, #172554 100%);
+    border: 1px solid #1e3a8a;
     border-radius: 25px;
     box-shadow: 
-      0 8px 32px rgba(59, 130, 246, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      0 8px 32px rgba(30, 58, 138, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
       inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   }
 
   .btn-secondary:hover {
-    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    background: linear-gradient(135deg, #1e40af 0%, #0b1736 100%);
     transform: translateY(-2px);
     box-shadow: 
-      0 12px 40px rgba(59, 130, 246, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 12px 40px rgba(30, 58, 138, 0.38),
+      inset 0 1px 0 rgba(255, 255, 255, 0.26),
       inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   }
 
   .btn-outline {
     @apply text-white;
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-    border: 1px solid #2563eb;
+    background: linear-gradient(135deg, #1e3a8a 0%, #172554 100%);
+    border: 1px solid #1e3a8a;
     border-radius: 25px;
     box-shadow: 
-      0 8px 32px rgba(59, 130, 246, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      0 8px 32px rgba(30, 58, 138, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
       inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   }
 
   /* Elevated shadow variant for header buttons */
   .btn-elevated {
     box-shadow:
-      0 14px 44px rgba(59, 130, 246, 0.48),
-      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      0 14px 44px rgba(30, 58, 138, 0.44),
+      inset 0 1px 0 rgba(255, 255, 255, 0.26),
       inset 0 -1px 0 rgba(0, 0, 0, 0.12);
     transform: translateY(0);
   }
   .btn-elevated:hover {
     box-shadow:
-      0 18px 56px rgba(59, 130, 246, 0.55),
-      inset 0 1px 0 rgba(255, 255, 255, 0.32),
+      0 18px 56px rgba(30, 58, 138, 0.52),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
       inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   }
 
   .btn-outline:hover {
-    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    background: linear-gradient(135deg, #1e40af 0%, #0b1736 100%);
     transform: translateY(-2px);
     box-shadow: 
-      0 12px 40px rgba(59, 130, 246, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 12px 40px rgba(30, 58, 138, 0.38),
+      inset 0 1px 0 rgba(255, 255, 255, 0.26),
       inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   }
   
@@ -181,6 +183,38 @@
     @apply flex items-center p-6 pt-0;
   }
 }
+
+.scroll-indicator {
+  animation: scroll-bounce 1.6s ease-in-out infinite;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes scroll-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+/* header gradient outline removed to prevent viewport edge artifacts */
+
+/* frost-header removed per request */
+
+/* liquid glass styles removed per request */
+.liquidGlass-wrapper {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+}
+.liquidGlass-effect {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  backdrop-filter: blur(3px) saturate(115%);
+  -webkit-backdrop-filter: blur(3px) saturate(115%);
+  filter: url(#glass-distortion);
+  overflow: hidden;
+}
+
+/* Removed hero glow classes per design preference */
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
@@ -375,7 +409,8 @@ select:focus-visible {
 .upload-bubble {
   position: absolute;
   border-radius: 9999px;
-  overflow: hidden; /* clip thumbnail to circle */
+  /* allow badges to sit outside the bubble edge */
+  overflow: visible;
   background: rgba(255,255,255,0.5);
   transform: translateZ(0) scale(1);
   will-change: transform;
@@ -393,6 +428,10 @@ select:focus-visible {
   object-fit: cover;
   display: block;
   pointer-events: none; /* keep bubbles non-interactive */
+  position: relative;
+  z-index: 1;
+  /* keep thumbnail circular even when parent overflow is visible */
+  clip-path: circle(50% at 50% 50%);
 }
 
 .upload-bubble--loading {
@@ -418,6 +457,7 @@ select:focus-visible {
   pointer-events: none;
   box-shadow: 0 0 0 rgba(59,130,246,0);
   animation: glowPulse 1.8s ease-in-out infinite;
+  z-index: 0; /* keep glow below content and badges */
 }
 
 @keyframes glowPulse {
@@ -473,4 +513,53 @@ select:focus-visible {
   justify-content: center;
   box-shadow: 0 0 0 2px #ffffff, 0 8px 14px rgba(0,0,0,0.15);
   pointer-events: none;
+}
+
+/* Pause all float animations while hovering any bubble */
+.bubbles-paused .upload-bubble-anim-x,
+.bubbles-paused .upload-bubble {
+  animation-play-state: paused !important;
+}
+
+/* Delete icon shown while hovering */
+.upload-bubble-delete {
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: #ef4444; /* red-500 */
+  color: #ffffff;
+  font-weight: 700;
+  line-height: 22px;
+  text-align: center;
+  box-shadow: 0 0 0 2px #ffffff, 0 8px 14px rgba(0,0,0,0.15);
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  z-index: 2; /* above thumbnail and glow */
+}
+.upload-bubble-delete:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 2px #ffffff, 0 10px 18px rgba(0,0,0,0.18);
+}
+
+/* Slide transition for bubbles between Step 1 and Step 2 */
+.bubbles-slide-out-left {
+  animation: bubblesSlideOutLeft 700ms ease-out forwards;
+}
+
+.bubbles-slide-in-right {
+  animation: bubblesSlideInRight 700ms ease-out forwards;
+}
+
+@keyframes bubblesSlideOutLeft {
+  from { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(-100vw); opacity: 0; }
+}
+
+@keyframes bubblesSlideInRight {
+  from { transform: translateX(100vw); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
 }

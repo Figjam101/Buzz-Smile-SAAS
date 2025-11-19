@@ -126,32 +126,32 @@ const SocialMediaCalendar = () => {
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm">
-      <div className="p-6 border-b border-gray-200">
+    <div className="rounded-2xl backdrop-blur-md bg-gradient-to-br from-white/10 via-white/5 to-transparent border border-white/20 ring-2 ring-white/30 shadow-[0_10px_25px_rgba(255,255,255,0.10),0_2px_6px_rgba(255,255,255,0.06)] max-w-4xl mx-auto text-white">
+      <div className="p-4 border-b border-white/10">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-blue-600" />
+            <div className="w-10 h-10 bg-blue-600/20 rounded-xl flex items-center justify-center">
+              <Calendar className="w-5 h-5 text-blue-300" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">Social Media Calendar</h2>
-              <p className="text-sm text-gray-600">Manage your scheduled posts</p>
+              <h2 className="text-lg font-semibold text-white">Social Media Calendar</h2>
+              <p className="text-xs text-white/70">Manage your scheduled posts</p>
             </div>
           </div>
           
           <div className="flex items-center space-x-2">
             <button
               onClick={() => navigateMonth(-1)}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <h3 className="text-lg font-medium text-gray-900 min-w-[140px] text-center">
+            <h3 className="text-base font-medium text-white min-w-[120px] text-center">
               {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
             </h3>
             <button
               onClick={() => navigateMonth(1)}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -159,16 +159,16 @@ const SocialMediaCalendar = () => {
         </div>
       </div>
 
-      <div className="p-6">
+      <div className="p-4">
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-300"></div>
           </div>
         ) : (
           <div className="grid grid-cols-7 gap-1">
             {/* Day headers */}
             {dayNames.map(day => (
-              <div key={day} className="p-3 text-center text-sm font-medium text-gray-500">
+              <div key={day} className="p-2 text-center text-xs font-medium text-white/80">
                 {day}
               </div>
             ))}
@@ -182,19 +182,23 @@ const SocialMediaCalendar = () => {
               return (
                 <div
                   key={index}
-                  className={`min-h-[100px] p-2 border border-gray-100 ${
-                    day ? 'cursor-pointer hover:bg-gray-50' : ''
-                  } ${isToday ? 'bg-blue-50 border-blue-200' : ''} ${
-                    isSelected ? 'bg-blue-100 border-blue-300' : ''
+                  className={`min-h-[72px] p-2 border border-white/20 ${
+                    day ? 'cursor-pointer hover:bg-white/15' : ''
+                  } ${isToday ? 'bg-blue-600/10 border-blue-300/40' : ''} ${
+                    isSelected ? 'bg-white/15 border-white/40 shadow-[0_6px_16px_rgba(255,255,255,0.12)]' : ''
                   }`}
                   onClick={() => day && setSelectedDate(day)}
                 >
                   {day && (
                     <>
-                      <div className={`text-sm font-medium mb-1 ${
-                        isToday ? 'text-blue-600' : 'text-gray-900'
-                      }`}>
-                        {day.getDate()}
+                      <div className="flex items-center mb-1">
+                        <div
+                          className={`w-7 h-7 rounded-md border -ml-1 flex items-center justify-center text-base font-semibold ${
+                            isToday ? 'bg-blue-600/20 border-blue-300/50 text-blue-200' : 'bg-white/10 border-white/30 text-white'
+                          }`}
+                        >
+                          {day.getDate()}
+                        </div>
                       </div>
                       <div className="space-y-1">
                         {posts.slice(0, 3).map((post, postIndex) => {
@@ -204,7 +208,7 @@ const SocialMediaCalendar = () => {
                           return (
                             <div
                               key={postIndex}
-                              className="flex items-center space-x-1 text-xs bg-white rounded px-1 py-0.5 border"
+                              className="flex items-center space-x-1 text-[10px] bg-white/10 rounded px-1 py-0.5 border border-white/30 text-white/90"
                             >
                               {Icon && (
                                 <div className={`w-3 h-3 ${platformData.color} rounded-sm flex items-center justify-center`}>
@@ -217,7 +221,7 @@ const SocialMediaCalendar = () => {
                           );
                         })}
                         {posts.length > 3 && (
-                          <div className="text-xs text-gray-500 text-center">
+                          <div className="text-xs text-white/60 text-center">
                             +{posts.length - 3} more
                           </div>
                         )}
@@ -233,17 +237,17 @@ const SocialMediaCalendar = () => {
 
       {/* Selected Date Details */}
       {selectedDate && (
-        <div className="border-t border-gray-200 p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
+        <div className="border-t border-white/10 p-4">
+          <h3 className="text-base font-medium text-white mb-3">
             Posts for {selectedDate.toLocaleDateString()}
           </h3>
           
           {getPostsForDate(selectedDate).length === 0 ? (
-            <p className="text-gray-500 text-center py-8">No posts scheduled for this date</p>
+            <p className="text-white/60 text-center py-8">No posts scheduled for this date</p>
           ) : (
             <div className="space-y-3">
               {getPostsForDate(selectedDate).map((post) => (
-                <div key={post.id} className="bg-gray-50 rounded-lg p-4">
+                <div key={post.id} className="bg-white/7 border border-white/15 rounded-lg p-4 shadow-[0_6px_18px_rgba(255,255,255,0.10)]">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-2">
@@ -261,7 +265,7 @@ const SocialMediaCalendar = () => {
                             ) : null;
                           })}
                         </div>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className="text-sm font-medium text-white">
                           {new Date(post.scheduledAt).toLocaleTimeString([], { 
                             hour: '2-digit', 
                             minute: '2-digit' 
@@ -270,7 +274,7 @@ const SocialMediaCalendar = () => {
                         {getStatusIcon(post.status)}
                       </div>
                       
-                      <p className="text-sm text-gray-700 mb-2">{post.caption}</p>
+                      <p className="text-sm text-white/80 mb-2">{post.caption}</p>
                       
                       {post.video && (
                         <div className="flex items-center space-x-2 text-xs text-gray-500">
@@ -282,7 +286,7 @@ const SocialMediaCalendar = () => {
                     <div className="flex items-center space-x-2 ml-4">
                       <button
                         onClick={() => handleDeletePost(post.id)}
-                        className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
+                        className="p-1 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

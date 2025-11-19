@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useStats } from '../contexts/StatsContext';
@@ -14,7 +14,9 @@ import {
   LogOut,
   Shield,
   Settings,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Crown,
+  CheckCircle, AlertCircle
 } from 'lucide-react';
 
 const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
@@ -23,13 +25,26 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUploader, setShowUploader] = useState(false);
+  const [uploadIndicator, setUploadIndicator] = useState(null); // { kind: 'success'|'error' }
+  useEffect(() => {
+    const handler = (e) => {
+      const kind = e?.detail?.kind;
+      if (kind === 'success' || kind === 'error') {
+        setUploadIndicator({ kind });
+        // Auto-hide after 8 seconds
+        const t = setTimeout(() => setUploadIndicator(null), 8000);
+        return () => clearTimeout(t);
+      }
+    };
+    window.addEventListener('upload-notification', handler);
+    return () => window.removeEventListener('upload-notification', handler);
+  }, []);
+  
 
-  const isHome = location.pathname === '/';
+  
 
   const isActive = (path) => location.pathname === path;
-  const planLabel = user?.role === 'admin'
-    ? (String(stats?.plan || '').toLowerCase() === 'god' ? 'God' : 'Administrator')
-    : (stats?.plan || 'Free');
+  
 
   const handleLogout = () => {
     logout();
@@ -40,18 +55,35 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
     setIsMobileMenuOpen(false);
   };
 
+  const headerRef = useRef(null);
+
+  useEffect(() => {
+    const updateHeaderBottom = () => {
+      try {
+        const el = headerRef.current;
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          const bottom = Math.max(0, Math.round(rect.bottom));
+          document.documentElement.style.setProperty('--dashboard-header-bottom', `${bottom}px`);
+        }
+      } catch (_) {}
+    };
+    updateHeaderBottom();
+    window.addEventListener('resize', updateHeaderBottom);
+    return () => window.removeEventListener('resize', updateHeaderBottom);
+  }, []);
+
   return (
     <>
-      {/* Top Navigation Bar */}
-      <nav className={`${isHome ? 'glass-opaque' : 'glass-card'} shiny-outline edge-bottom-3d sticky top-0 z-50`}>
-        <div className="max-w-7xl mx-auto pl-0 pr-8 sm:pl-0 sm:pr-8 lg:pl-0 lg:pr-8">
-          <div className="flex justify-between h-16">
+      <nav ref={headerRef} id="dashboard-header" className={`backdrop-blur-md bg-white/5 border border-white/10 edge-bottom-3d fixed top-0 left-0 right-0 w-full z-[9999]`}>
+        <div className={`max-w-7xl mx-auto ${location.pathname === '/dashboard' ? 'pl-56 sm:pl-64' : (location.pathname === '/admin' ? 'lg:pl-52' : 'pl-0')} pr-6 sm:pr-6 lg:pr-6`}>
+          <div className="flex justify-between h-14">
             {/* Logo and brand */}
             <div className="flex items-center">
               <Link to="/" className="flex items-center">
                 <div className="flex items-baseline space-x-1">
-                  <span className="text-2xl font-extrabold text-gray-900 font-['Inter'] buzz-gentle tracking-tighter">Buzz</span>
-                  <span className="text-2xl font-extrabold text-blue-600 font-['Inter']">Smile</span>
+                  <span className="text-3xl sm:text-4xl font-extrabold text-white font-['Inter'] buzz-gentle tracking-tighter">Buzz</span>
+                  <span className="text-3xl sm:text-4xl font-extrabold text-blue-600 font-['Inter']">Smile</span>
                 </div>
               </Link>
             </div>
@@ -62,22 +94,22 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                 <nav className="flex items-center space-x-6">
                   <Link
                     to="/dashboard"
-                    className={`btn-primary btn-elevated flex items-center space-x-2 px-4 py-2 rounded-full text-xs font-semibold transition-all ${
+                    className={`btn-primary btn-elevated flex items-center space-x-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${
                       isActive('/dashboard') ? '' : ''
                     }`}
                    >
-                    <LayoutDashboard className="w-4 h-4" />
+                    <LayoutDashboard className="w-5 h-5" />
                     <span>Dashboard</span>
                   </Link>
 
                   {user?.role === 'admin' && (
                     <Link
                       to="/admin"
-                      className={`btn-primary btn-elevated flex items-center space-x-2 px-4 py-2 rounded-full text-xs font-semibold transition-all ${
+                      className={`btn-primary btn-elevated flex items-center space-x-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${
                         isActive('/admin') ? '' : ''
                       }`}
                       >
-                      <Shield className="w-4 h-4" />
+                      <Shield className="w-5 h-5" />
                       <span>Admin</span>
                     </Link>
                   )}
@@ -89,35 +121,46 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                   <button className="flex items-center space-x-2 p-1 transition-all duration-200 hover:scale-105">
                     <AppleProfileImage size="sm" name={user?.name || 'User'} profilePicture={user?.profilePicture} />
                   </button>
+                  {uploadIndicator && (
+                    <div
+                      className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-white shadow flex items-center justify-center"
+                      aria-label={uploadIndicator.kind === 'success' ? 'Upload succeeded' : 'Upload failed'}
+                    >
+                      {uploadIndicator.kind === 'success' ? (
+                        <CheckCircle className="w-3 h-3 text-green-500" />
+                      ) : (
+                        <AlertCircle className="w-3 h-3 text-red-500" />
+                      )}
+                    </div>
+                  )}
                   
-                  {/* Full-width slider bar: slides in from the left to cover navbar */}
-                  <div className="absolute left-0 top-0 h-16 w-screen opacity-0 invisible group-hover:opacity-100 group-hover:visible z-50 overflow-hidden">
-                    <div className={`h-full w-[120%] ${isHome ? 'glass-opaque' : 'glass-card'} transition-transform duration-500 ease-out -translate-x-full group-hover:translate-x-0 shadow-md`}></div>
-                    {/* Action buttons pinned to the right inside the slider */}
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center space-x-1">
-                      <div className={`flex items-center rounded-full ${isHome ? 'glass-opaque' : 'glass-card'} px-2 py-1 space-x-1 shadow-sm`}>
+                  {/* Avatar dropdown anchored under the profile image */}
+                  <div className="absolute right-0 top-full mt-2 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity z-50">
+                    <div className={`min-w-[180px] glass-card rounded-xl shadow-lg p-2`}>
                       <Link
                         to="/profile"
-                        className="flex items-center justify-center p-2 text-gray-700 hover:bg-gray-50 transition-colors rounded-full"
+                        className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 text-sm text-gray-800"
                         title="Profile"
                       >
-                        <User className="h-4 w-4" />
+                        <span className="flex items-center space-x-2"><User className="h-4 w-4" /><span>Profile</span></span>
+                        <span className="text-xs text-gray-500">View</span>
                       </Link>
                       <button
                         onClick={() => setShowUploader(true)}
-                        className="flex items-center justify-center p-2 text-gray-700 hover:bg-gray-50 transition-colors rounded-full"
+                        className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 text-sm text-gray-800"
                         title="Update Photo"
                       >
-                        <ImageIcon className="h-4 w-4" />
+                        <span className="flex items-center space-x-2"><ImageIcon className="h-4 w-4" /><span>Update Photo</span></span>
+                        <span className="text-xs text-gray-500">Change</span>
                       </button>
                       <button
                         onClick={handleLogout}
-                        className="flex items-center justify-center p-2 text-gray-700 hover:bg-gray-50 transition-colors rounded-full"
+                        className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 text-sm text-red-600"
                         title="Logout"
                       >
-                        <LogOut className="h-4 w-4" />
+                        <span className="flex items-center space-x-2"><LogOut className="h-4 w-4" /><span>Logout</span></span>
+                        <span className="text-xs">Exit</span>
                       </button>
-                      </div>
                     </div>
                   </div>
 
@@ -128,13 +171,13 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                 <div className="flex items-center space-x-4">
                    <Link
                      to="/login"
-                     className="btn-secondary px-4 py-2 text-xs font-medium rounded-full"
+                     className="btn-secondary px-5 py-2.5 text-sm font-medium rounded-full"
                    >
                      Login
                    </Link>
                    <Link
                      to="/register"
-                     className="btn-primary px-4 py-2 text-xs font-semibold rounded-full"
+                     className="btn-primary px-5 py-2.5 text-sm font-semibold rounded-full"
                    >
                      Get Started
                    </Link>
@@ -178,53 +221,60 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
 
         {/* Mobile menu - Hidden on dashboard page */}
         {isMobileMenuOpen && !isActive('/dashboard') && (
-          <div className={`md:hidden ${isHome ? 'glass-opaque' : 'glass-card'} shiny-outline`}>
+          <div className={`md:hidden glass-card shiny-outline`}>
             {isAuthenticated ? (
               <div className="flex flex-col">
-                {/* User Profile Section */}
-                <div className="p-6 border-b border-gray-100">
-                  <div className="flex items-center space-x-3">
+                {/* User Profile Section (centered) */}
+                <div className="pt-4 px-4 pb-3 border-b border-gray-100 text-center">
+                  <div className="flex justify-center">
                     <AppleProfileImage size="md" name={user?.name || 'User'} profilePicture={user?.profilePicture} />
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium text-gray-900 text-base truncate">{user?.name || 'User'}</p>
-                      <p className="text-sm text-gray-500">{planLabel}</p>
-                    </div>
                   </div>
+                  <p className="mt-2 font-medium text-gray-900 text-sm truncate">{user?.name || 'User'}</p>
+                  {user?.role === 'admin' && (
+                    <span className="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white/10 text-gray-900 border border-gray-200">
+                      <Shield className="w-3 h-3 mr-1" />
+                      Administrator
+                    </span>
+                  )}
+                  {String(stats?.plan || '').toLowerCase() === 'god' && (
+                    <button className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow">
+                      <Crown className="w-3 h-3 mr-1" />
+                      GOD MODE
+                    </button>
+                  )}
                   <button
                     onClick={() => setShowUploader(true)}
-                    className="mt-3 w-full text-sm font-medium text-blue-600 hover:text-blue-700"
+                    className="mt-2 w-full text-xs font-medium text-blue-600 hover:text-blue-700"
                   >
                     Update your profile picture
                   </button>
                 </div>
 
                 {/* Navigation */}
-                <div className="flex-1 p-4">
-                  <nav className="space-y-2">
+                <div className="flex-1 p-3">
+                  <nav className="space-y-1">
                     <Link
                       to="/dashboard"
                       onClick={closeMobileMenu}
-                      className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors text-base ${
+                      className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-left transition-colors text-sm ${
                         isActive('/dashboard')
                           ? 'bg-blue-50 text-blue-700'
                           : 'text-gray-700 hover:bg-gray-50'
                       }`}
                     >
-                      <LayoutDashboard className="w-5 h-5 flex-shrink-0" />
+                      <LayoutDashboard className="w-4 h-4 flex-shrink-0" />
                       <span>Dashboard</span>
                     </Link>
 
+                    {/* Admin link removed */}
+                    
                     {user?.role === 'admin' && (
                       <Link
                         to="/admin"
                         onClick={closeMobileMenu}
-                        className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors text-base ${
-                          isActive('/admin')
-                            ? 'bg-blue-50 text-blue-700'
-                            : 'text-gray-700 hover:bg-gray-50'
-                        }`}
+                        className="w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-left transition-colors text-sm text-gray-700 hover:bg-gray-50"
                       >
-                        <Shield className="w-5 h-5 flex-shrink-0" />
+                        <Shield className="w-4 h-4 flex-shrink-0" />
                         <span>Admin</span>
                       </Link>
                     )}
@@ -235,52 +285,52 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                         window.location.href = '/dashboard#settings';
                         closeMobileMenu();
                       }}
-                      className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors text-base text-gray-700 hover:bg-gray-50"
+                      className="w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-left transition-colors text-sm text-gray-700 hover:bg-gray-50"
                     >
-                      <Settings className="w-5 h-5 flex-shrink-0" />
+                      <Settings className="w-4 h-4 flex-shrink-0" />
                       <span>Settings</span>
                     </button>
                     
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors text-base text-gray-700 hover:bg-gray-50"
+                      className="w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-left transition-colors text-sm text-gray-700 hover:bg-gray-50"
                     >
-                      <LogOut className="w-5 h-5 flex-shrink-0" />
+                      <LogOut className="w-4 h-4 flex-shrink-0" />
                       <span>Logout</span>
                     </button>
                   </nav>
                 </div>
 
                 {/* Stats Summary */}
-                <div className="p-4 border-t border-gray-100">
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-sm">
+                <div className="p-3 border-t border-gray-100">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs">
                       <span className="text-gray-600">Videos</span>
                       <span className="font-medium text-gray-900">{stats.videoCount}/{stats.maxVideos}</span>
                     </div>
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center justify-between text-xs">
                       <span className="text-gray-600">Storage</span>
                       <span className="font-medium text-gray-900">{formatFileSize(stats.storageUsed)}</span>
                     </div>
-                    <button className="w-full mt-3 px-3 py-2 btn-primary text-sm font-medium flex items-center justify-center space-x-2">
+                    <button className="w-full mt-2 px-3 py-2 btn-primary text-xs font-medium flex items-center justify-center space-x-2">
                       <span>Upgrade Plan</span>
                     </button>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="p-4 space-y-2">
+              <div className="p-3 space-y-2">
                 <Link
                   to="/login"
                   onClick={closeMobileMenu}
-                  className="block px-6 py-2.5 rounded-full text-sm font-medium btn-secondary text-center"
+                  className="block px-5 py-2 rounded-full text-sm font-medium btn-secondary text-center"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
                   onClick={closeMobileMenu}
-                  className="block px-8 py-3 rounded-full text-base font-semibold btn-primary text-center"
+                  className="block px-6 py-2.5 rounded-full text-sm font-semibold btn-primary text-center"
                 >
                   Get Started
                 </Link>
@@ -294,53 +344,44 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
           <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
             <div className="flex flex-col">
               {/* User Profile Section */}
-              <div className="p-6 border-b border-gray-100">
-                <div className="flex items-center space-x-3">
+              <div className="pt-4 px-4 pb-3 border-b border-gray-100 text-center">
+                <div className="flex justify-center">
                   <AppleProfileImage size="md" name={user?.name || 'User'} profilePicture={user?.profilePicture} />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-gray-900 text-base truncate">{user?.name || 'User'}</p>
-                    <p className="text-sm text-gray-500">{planLabel}</p>
-                  </div>
                 </div>
+                <p className="mt-2 font-medium text-gray-900 text-sm truncate">{user?.name || 'User'}</p>
+                {user?.role === 'admin' && (
+                  <span className="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white/10 text-gray-900 border border-gray-200">
+                    <Shield className="w-3 h-3 mr-1" />
+                    Administrator
+                  </span>
+                )}
+                {String(stats?.plan || '').toLowerCase() === 'god' && (
+                  <button className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow">
+                    <Crown className="w-3 h-3 mr-1" />
+                    GOD MODE
+                  </button>
+                )}
                 <button
                   onClick={() => setShowUploader(true)}
-                  className="mt-3 w-full text-sm font-medium text-blue-600 hover:text-blue-700"
+                  className="mt-2 w-full text-xs font-medium text-blue-600 hover:text-blue-700"
                 >
                   Update your profile picture
                 </button>
               </div>
 
               {/* Navigation */}
-              <div className="flex-1 p-4">
-                <nav className="space-y-2">
+              <div className="flex-1 p-3">
+                <nav className="space-y-1">
                   <Link
-                    to="/dashboard"
+                    to="/my-files"
                     onClick={closeMobileMenu}
-                    className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors text-base bg-blue-50 text-blue-700"
+                    className="w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-left transition-colors text-sm text-gray-700 hover:bg-gray-50"
                   >
-                    <LayoutDashboard className="w-5 h-5 flex-shrink-0" />
-                    <span>Dashboard</span>
-                  </Link>
-
-                  <Link
-                    to="/dashboard#files"
-                    onClick={closeMobileMenu}
-                    className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors text-base text-gray-700 hover:bg-gray-50"
-                  >
-                    <ImageIcon className="w-5 h-5 flex-shrink-0" />
+                    <ImageIcon className="w-4 h-4 flex-shrink-0" />
                     <span>My Files</span>
                   </Link>
 
-                  {user?.role === 'admin' && (
-                    <Link
-                      to="/dashboard#admin"
-                      onClick={closeMobileMenu}
-                      className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors text-base text-gray-700 hover:bg-gray-50"
-                    >
-                      <Shield className="w-5 h-5 flex-shrink-0" />
-                      <span>Admin Dashboard</span>
-                    </Link>
-                  )}
+                  {/* Admin dashboard link removed */}
                   
                   <button
                     onClick={() => {
@@ -348,34 +389,34 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                       window.location.href = '/dashboard#settings';
                       closeMobileMenu();
                     }}
-                    className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors text-base text-gray-700 hover:bg-gray-50"
+                    className="w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-left transition-colors text-sm text-gray-700 hover:bg-gray-50"
                   >
-                    <Settings className="w-5 h-5 flex-shrink-0" />
+                    <Settings className="w-4 h-4 flex-shrink-0" />
                     <span>Settings</span>
                   </button>
                   
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors text-base text-gray-700 hover:bg-gray-50"
+                    className="w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-left transition-colors text-sm text-gray-700 hover:bg-gray-50"
                   >
-                    <LogOut className="w-5 h-5 flex-shrink-0" />
+                    <LogOut className="w-4 h-4 flex-shrink-0" />
                     <span>Logout</span>
                   </button>
                 </nav>
               </div>
 
               {/* Stats Summary */}
-              <div className="p-4 border-t border-gray-100">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
+              <div className="p-3 border-t border-gray-100">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs">
                     <span className="text-gray-600">Videos</span>
                     <span className="font-medium text-gray-900">{stats.videoCount}/{stats.maxVideos}</span>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center justify-between text-xs">
                     <span className="text-gray-600">Storage</span>
                     <span className="font-medium text-gray-900">{formatFileSize(stats.storageUsed)}</span>
                   </div>
-                  <button className="w-full mt-3 px-3 py-2 btn-primary text-sm font-medium flex items-center justify-center space-x-2">
+                  <button className="w-full mt-2 px-3 py-2 btn-primary text-xs font-medium flex items-center justify-center space-x-2">
                     <span>Upgrade Plan</span>
                   </button>
                 </div>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Frontend User</title>
+</head>
+<body>
+    <h1>Frontend User Debug</h1>
+    <div id="result"></div>
+    
+    <script>
+        const token = localStorage.getItem('token');
+        const resultDiv = document.getElementById('result');
+        
+        if (!token) {
+            resultDiv.innerHTML = '<p>No token found in localStorage</p>';
+        } else {
+            // Decode JWT token to see user info
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                resultDiv.innerHTML = `
+                    <h2>Token Info:</h2>
+                    <p><strong>User ID:</strong> ${payload.userId}</p>
+                    <p><strong>Email:</strong> ${payload.email}</p>
+                    <p><strong>Expires:</strong> ${new Date(payload.exp * 1000)}</p>
+                    <hr>
+                    <h2>Full Token Payload:</h2>
+                    <pre>${JSON.stringify(payload, null, 2)}</pre>
+                `;
+            } catch (e) {
+                resultDiv.innerHTML = `<p>Error decoding token: ${e.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

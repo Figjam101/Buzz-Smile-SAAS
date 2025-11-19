@@ -15,19 +15,19 @@ const SocialMediaBubbles = ({ socialMedia = {}, onUpdateSocialMedia, userLogo })
       
       switch (platform) {
         case 'instagram':
-          username = url.match(/instagram\.com\/([^\/\?]+)/)?.[1] || '';
+          username = url.match(/instagram\.com\/([^/?]+)/)?.[1] || '';
           return username ? `https://unavatar.io/instagram/${username}` : null;
         case 'twitter':
-          username = url.match(/(?:twitter\.com|x\.com)\/([^\/\?]+)/)?.[1] || '';
+          username = url.match(/(?:twitter\.com|x\.com)\/([^/?]+)/)?.[1] || '';
           return username ? `https://unavatar.io/twitter/${username}` : null;
         case 'youtube':
           // Extract channel name or ID from URL
-          const channelMatch = url.match(/youtube\.com\/(?:c\/|channel\/|@)([^\/\?]+)/);
+          const channelMatch = url.match(/youtube\.com\/(?:c\/|channel\/|@)([^/?]+)/);
           username = channelMatch?.[1] || '';
           return username ? `https://unavatar.io/youtube/${username}` : null;
         case 'facebook':
           // Extract Facebook page/profile name from URL
-          const fbMatch = url.match(/facebook\.com\/([^\/\?]+)/);
+          const fbMatch = url.match(/facebook\.com\/([^/?]+)/);
           username = fbMatch?.[1] || '';
           // For Facebook, try multiple approaches
           if (username && username !== 'people') {
@@ -36,7 +36,7 @@ const SocialMediaBubbles = ({ socialMedia = {}, onUpdateSocialMedia, userLogo })
           }
           return null;
         case 'tiktok':
-          username = url.match(/tiktok\.com\/@([^\/\?]+)/)?.[1] || '';
+          username = url.match(/tiktok\.com\/@([^/?]+)/)?.[1] || '';
           return username ? `https://unavatar.io/tiktok/${username}` : null;
         default:
           return null;

@@ -1,0 +1,352 @@
+[2025-11-19T03:20:58.044Z] {
+  "query": "users.find({\"email\":\"npkalyx@gmail.com\"})",
+  "duration": "0ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T03:20:58.044Z"
+}
+[2025-11-19T03:20:58.114Z] {
+  "query": "users.findOne({\"email\":\"npkalyx@gmail.com\"})",
+  "duration": "70ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T03:20:58.114Z"
+}
+[2025-11-19T03:20:58.125Z] {
+  "query": "users.find({\"email\":\"npkalyx@gmail.com\"})",
+  "duration": "0ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T03:20:58.125Z"
+}
+[2025-11-19T03:20:58.306Z] {
+  "query": "users.findOne({\"email\":\"npkalyx@gmail.com\"})",
+  "duration": "181ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T03:20:58.306Z"
+}
+[2025-11-19T03:22:28.517Z] {
+  "query": "videos.find({\"owner\":\"68ee9bbecf2cb6c650fcc1e5\"})",
+  "duration": "21ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T03:22:28.517Z"
+}
+[2025-11-19T03:22:28.587Z] {
+  "query": "videos.find({\"owner\":\"68ee9bbecf2cb6c650fcc1e5\"})",
+  "duration": "0ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T03:22:28.587Z"
+}
+[2025-11-19T03:22:28.684Z] {
+  "query": "videos.find({\"owner\":\"68ee9bbecf2cb6c650fcc1e5\"})",
+  "duration": "1ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T03:22:28.684Z"
+}
+[2025-11-19T03:22:34.104Z] {
+  "query": "videos.find({\"owner\":\"68ee9bbecf2cb6c650fcc1e5\"})",
+  "duration": "0ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T03:22:34.104Z"
+}
+[2025-11-19T03:22:34.201Z] {
+  "query": "videos.find({\"owner\":\"68ee9bbecf2cb6c650fcc1e5\"})",
+  "duration": "0ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T03:22:34.201Z"
+}
+[2025-11-19T03:32:46.741Z] {
+  "query": "users.find({\"email\":\"npkalyx@gmail.com\"})",
+  "duration": "2ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T03:32:46.741Z"
+}
+[2025-11-19T03:32:46.971Z] {
+  "query": "users.findOne({\"email\":\"npkalyx@gmail.com\"})",
+  "duration": "232ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T03:32:46.971Z"
+}
+[2025-11-19T03:32:47.612Z] {
+  "query": "users.updateOne({\"_id\":\"691d38ddc8242e1da470fa10\"})",
+  "duration": "206ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T03:32:47.612Z"
+}
+[2025-11-19T10:28:41.239Z] {
+  "query": "users.find({\"email\":\"test@example.com\"})",
+  "duration": "0ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:41.239Z"
+}
+[2025-11-19T10:28:41.239Z] {
+  "query": "users.find({\"email\":\"test@example.com\"})",
+  "duration": "1ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:41.239Z"
+}
+[2025-11-19T10:28:41.239Z] {
+  "query": "users.find({\"email\":\"test@example.com\"})",
+  "duration": "1ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:41.239Z"
+}
+[2025-11-19T10:28:41.239Z] {
+  "query": "users.find({\"email\":\"test@example.com\"})",
+  "duration": "1ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:41.239Z"
+}
+[2025-11-19T10:28:41.240Z] {
+  "query": "users.find({\"email\":\"test@example.com\"})",
+  "duration": "2ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:41.240Z"
+}
+[2025-11-19T10:28:41.240Z] {
+  "query": "users.find({\"email\":\"test@example.com\"})",
+  "duration": "2ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:41.240Z"
+}
+[2025-11-19T10:28:41.240Z] {
+  "query": "users.find({\"email\":\"test@example.com\"})",
+  "duration": "2ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:41.240Z"
+}
+[2025-11-19T10:28:41.240Z] {
+  "query": "users.find({\"email\":\"test@example.com\"})",
+  "duration": "2ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:41.240Z"
+}
+[2025-11-19T10:28:41.240Z] {
+  "query": "users.find({\"email\":\"test@example.com\"})",
+  "duration": "2ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:41.240Z"
+}
+[2025-11-19T10:28:41.240Z] {
+  "query": "users.find({\"email\":\"test@example.com\"})",
+  "duration": "2ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:41.240Z"
+}
+[2025-11-19T10:28:41.240Z] {
+  "query": "users.find({\"email\":\"test@example.com\"})",
+  "duration": "2ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:41.240Z"
+}
+[2025-11-19T10:28:41.240Z] {
+  "query": "users.find({\"email\":\"test@example.com\"})",
+  "duration": "2ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:41.240Z"
+}
+[2025-11-19T10:28:41.240Z] {
+  "query": "users.find({\"email\":\"test@example.com\"})",
+  "duration": "2ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:41.240Z"
+}
+[2025-11-19T10:28:41.240Z] {
+  "query": "users.find({\"email\":\"test@example.com\"})",
+  "duration": "2ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:41.240Z"
+}
+[2025-11-19T10:28:41.240Z] {
+  "query": "users.find({\"email\":\"test@example.com\"})",
+  "duration": "2ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:41.240Z"
+}
+[2025-11-19T10:28:42.418Z] {
+  "query": "users.findOne({\"email\":\"test@example.com\"})",
+  "duration": "1180ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:42.418Z"
+}
+[2025-11-19T10:28:42.418Z] {
+  "query": "users.findOne({\"email\":\"test@example.com\"})",
+  "duration": "1180ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:42.418Z"
+}
+[2025-11-19T10:28:42.418Z] {
+  "query": "users.findOne({\"email\":\"test@example.com\"})",
+  "duration": "1180ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:42.418Z"
+}
+[2025-11-19T10:28:42.418Z] {
+  "query": "users.findOne({\"email\":\"test@example.com\"})",
+  "duration": "1180ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:42.418Z"
+}
+[2025-11-19T10:28:42.418Z] {
+  "query": "users.findOne({\"email\":\"test@example.com\"})",
+  "duration": "1180ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:42.418Z"
+}
+[2025-11-19T10:28:42.419Z] {
+  "query": "users.findOne({\"email\":\"test@example.com\"})",
+  "duration": "1181ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:42.419Z"
+}
+[2025-11-19T10:28:42.419Z] {
+  "query": "users.findOne({\"email\":\"test@example.com\"})",
+  "duration": "1181ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:42.419Z"
+}
+[2025-11-19T10:28:42.419Z] {
+  "query": "users.findOne({\"email\":\"test@example.com\"})",
+  "duration": "1181ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:42.419Z"
+}
+[2025-11-19T10:28:42.419Z] {
+  "query": "users.findOne({\"email\":\"test@example.com\"})",
+  "duration": "1181ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:42.419Z"
+}
+[2025-11-19T10:28:42.419Z] {
+  "query": "users.findOne({\"email\":\"test@example.com\"})",
+  "duration": "1181ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:42.419Z"
+}
+[2025-11-19T10:28:42.419Z] {
+  "query": "users.findOne({\"email\":\"test@example.com\"})",
+  "duration": "1181ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:42.419Z"
+}
+[2025-11-19T10:28:42.419Z] {
+  "query": "users.findOne({\"email\":\"test@example.com\"})",
+  "duration": "1181ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:42.419Z"
+}
+[2025-11-19T10:28:42.419Z] {
+  "query": "users.findOne({\"email\":\"test@example.com\"})",
+  "duration": "1181ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:42.419Z"
+}
+[2025-11-19T10:28:42.419Z] {
+  "query": "users.findOne({\"email\":\"test@example.com\"})",
+  "duration": "1181ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:42.419Z"
+}
+[2025-11-19T10:28:42.419Z] {
+  "query": "users.findOne({\"email\":\"test@example.com\"})",
+  "duration": "1181ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:28:42.419Z"
+}
+[2025-11-19T10:30:31.337Z] {
+  "query": "users.find({\"email\":\"test@example.com\"})",
+  "duration": "0ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:30:31.337Z"
+}
+[2025-11-19T10:30:31.646Z] {
+  "query": "users.findOne({\"email\":\"test@example.com\"})",
+  "duration": "309ms",
+  "success": true,
+  "error": null,
+  "resultCount": 0,
+  "timestamp": "2025-11-19T10:30:31.646Z"
+}

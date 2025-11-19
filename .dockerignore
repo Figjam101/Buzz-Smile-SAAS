@@ -1,28 +1,5 @@
-# Reduce Docker build context size
-.git/
-.cache/
-node_modules/
-OpenCut/
-backup_*/
-deployment/
-client/
-server/
-project_backup_*.tar.gz
-system_backup_*.tar.gz
-*.mp4
-*.mov
-*.mkv
-*.avi
-*.webm
-*.zip
-*.tar
-*.tar.gz
-*.tgz
-*.log
-uploads/
-downloads/
-backups/
-logs/
-
-# Allow server directory explicitly via Dockerfile COPY commands
-# (No negation needed here since COPY selects the needed paths)
+node_modules
+client
+.git
+.gitignore
+README.md
