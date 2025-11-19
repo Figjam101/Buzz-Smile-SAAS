@@ -8,7 +8,7 @@ RUN apt-get update \
 WORKDIR /app
 
 # Copy only package files first for better caching
-COPY package*.json ./
+COPY server/package*.json ./
 
 # Install dependencies (prefer npm ci when lockfile exists)
 RUN set -eux; \
