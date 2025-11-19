@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 # Ensure only one run per branch/workflow and cancel superseded runs
@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: '18.x'
+  NODE_VERSION: \'18.x\'
 
 jobs:
   # Test and Build Client
@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: \'npm\'
           cache-dependency-path: client/package-lock.json
 
       - name: Install client dependencies
@@ -82,7 +82,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: \'npm\'
           cache-dependency-path: server/package-lock.json
 
       - name: Install FFmpeg
@@ -141,16 +141,17 @@ jobs:
       - name: Run security audit (Server)
         run: |
           cd server
-          npm audit --audit-level=high || echo "Security audit completed with findings"
+          npm audit --audit-level=high || echo "Security audit completed"
 
       - name: Run security audit (Client)
         run: |
           cd client
-          npm audit --audit-level=high || echo "Security audit completed with findings"
+          npm audit --audit-level=high || echo "Security audit completed"
 
       - name: Check for secrets
         run: |
-          if grep -r "password\|secret\|key" --include="*.js" --include="*.json" --exclude-dir=node_modules .; then
+          if grep -r "password\\|secret\\|key" --include="*.js" \
+          --include="*.json" --exclude-dir=node_modules .; then
             echo "⚠️ Potential secrets found in code. Please review."
           else
             echo "✅ No obvious secrets found in code."
@@ -160,7 +161,7 @@ jobs:
   deploy-staging:
     needs: [test-client, test-server, security-scan]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == \'refs/heads/develop\'
     permissions:
       contents: write
     env:
@@ -174,8 +175,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: \'18\'
+          cache: \'npm\'
           cache-dependency-path: buzz-smile-saas/client/package-lock.json
       - name: Install Vercel CLI
         run: npm i -g vercel@latest
@@ -184,16 +185,12 @@ jobs:
         run: npm install
       - name: Preflight – check Vercel secrets
         shell: bash
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
           missing=0
           for n in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
             val="${!n}"
             if [ -z "$val" ]; then
-              echo "::error::${n} is missing. Add it in Settings → Secrets → Actions."
+              echo "::error::${n} is missing. Add it in Settings → Secrets."
               missing=1
             else
               echo "::notice::${n} is present."
@@ -207,7 +204,7 @@ jobs:
     name: Deploy Server to Railway (Production)
     needs: [test-server, security-scan]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == \'refs/heads/main\'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -222,7 +219,7 @@ jobs:
     name: Deploy Client to Vercel (Production)
     needs: [test-client, security-scan]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == \'refs/heads/main\'
     permissions:
       contents: write
     env:
@@ -235,8 +232,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: \'18\'
+          cache: \'npm\'
           cache-dependency-path: client/package-lock.json
       - name: Install Vercel CLI
         run: npm i -g vercel@latest
@@ -250,7 +247,7 @@ jobs:
           for n in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
             val="${!n}"
             if [ -z "$val" ]; then
-              echo "::error::${n} is missing. Add it in Settings → Secrets → Actions."
+              echo "::error::${n} is missing. Add it in Settings → Secrets."
               missing=1
             else
               echo "::notice::${n} is present."
@@ -261,10 +258,17 @@ jobs:
           fi
       - name: Prepare Vercel project (pull env: production)
         working-directory: client
-        run: vercel pull --yes --environment=production --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN"
+        run: >-
+          vercel pull --yes --environment=production
+          --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID"
+          --token "$VERCEL_TOKEN"
       - name: Build locally with Vercel (prebuilt, prod)
         working-directory: client
-        run: vercel build --prod --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN" --debug
+        run: >-
+          vercel build --prod --scope "$VERCEL_ORG_ID"
+          --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN" --debug
       - name: Deploy to Vercel (Production, prebuilt)
         working-directory: client
-        run: vercel deploy --prebuilt --yes --prod --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN" --debug
+        run: >-
+          vercel deploy --prebuilt --yes --prod --scope "$VERCEL_ORG_ID"
+          --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN" --debug
