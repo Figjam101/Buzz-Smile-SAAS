@@ -12893,3 +12893,75 @@
   message: 'Alert: High memory usage: 97.73%',
   timestamp: '2025-11-20 06:13:02'
 }
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  type: 'high_memory',
+  severity: 'warning',
+  level: 'warn',
+  message: 'Alert: High memory usage: 97.49%',
+  timestamp: '2025-11-20 06:13:32'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  type: 'high_memory',
+  severity: 'warning',
+  level: 'warn',
+  message: 'Alert: High memory usage: 97.73%',
+  timestamp: '2025-11-20 06:14:02'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  type: 'high_memory',
+  severity: 'warning',
+  level: 'warn',
+  message: 'Alert: High memory usage: 97.06%',
+  timestamp: '2025-11-20 06:14:32'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  type: 'high_memory',
+  severity: 'warning',
+  level: 'warn',
+  message: 'Alert: High memory usage: 97.84%',
+  timestamp: '2025-11-20 06:15:02'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  type: 'high_memory',
+  severity: 'warning',
+  level: 'warn',
+  message: 'Alert: High memory usage: 97.71%',
+  timestamp: '2025-11-20 06:15:32'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  type: 'high_memory',
+  severity: 'warning',
+  level: 'warn',
+  message: 'Alert: High memory usage: 98.19%',
+  timestamp: '2025-11-20 06:16:02'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  type: 'high_memory',
+  severity: 'warning',
+  level: 'warn',
+  message: 'Alert: High memory usage: 97.71%',
+  timestamp: '2025-11-20 06:16:32'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  type: 'high_memory',
+  severity: 'warning',
+  level: 'warn',
+  message: 'Alert: High memory usage: 98.28%',
+  timestamp: '2025-11-20 06:17:02'
+}

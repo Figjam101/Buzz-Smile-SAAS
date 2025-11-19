@@ -37642,3 +37642,223 @@
   level: 'info',
   message: 'System Health Check'
 }
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  type: 'high_memory',
+  severity: 'warning',
+  level: 'warn',
+  message: 'Alert: High memory usage: 97.49%',
+  timestamp: '2025-11-20 06:13:32'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'system_health',
+  metrics: {
+    cpuUsage: 0.08910891089108912,
+    memoryUsage: 97.48878479003906,
+    diskUsage: 36,
+    uptime: 1440.187
+  },
+  timestamp: '2025-11-20 06:13:32',
+  level: 'info',
+  message: 'System Health Check'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  type: 'high_memory',
+  severity: 'warning',
+  level: 'warn',
+  message: 'Alert: High memory usage: 97.73%',
+  timestamp: '2025-11-20 06:14:02'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'system_health',
+  metrics: {
+    cpuUsage: 0.15643564356435644,
+    memoryUsage: 97.72586822509766,
+    diskUsage: 36,
+    uptime: 1470.183
+  },
+  timestamp: '2025-11-20 06:14:02',
+  level: 'info',
+  message: 'System Health Check'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  timestamp: '2025-11-20 06:14:32',
+  summary: {
+    status: 'warning',
+    uptime: 1470.183,
+    totalRequests: 0,
+    errorRate: 0
+  },
+  metrics: {
+    requests: {
+      total: 0,
+      successful: 0,
+      failed: 0,
+      averageResponseTime: 0,
+      errorRate: 0
+    },
+    system: {
+      cpuUsage: 0.15643564356435644,
+      memoryUsage: 97.72586822509766,
+      diskUsage: 36,
+      uptime: 1470.183
+    },
+    database: { connections: 0, queries: 0, errors: 0, averageQueryTime: 0 },
+    videos: {
+      processed: 0,
+      failed: 0,
+      totalProcessingTime: 0,
+      averageProcessingTime: 0
+    }
+  },
+  activeAlerts: 49,
+  level: 'info',
+  message: 'Health Report Generated'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  type: 'high_memory',
+  severity: 'warning',
+  level: 'warn',
+  message: 'Alert: High memory usage: 97.06%',
+  timestamp: '2025-11-20 06:14:32'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'system_health',
+  metrics: {
+    cpuUsage: 0.08910891089108912,
+    memoryUsage: 97.06439971923828,
+    diskUsage: 36,
+    uptime: 1500.185
+  },
+  timestamp: '2025-11-20 06:14:32',
+  level: 'info',
+  message: 'System Health Check'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  type: 'high_memory',
+  severity: 'warning',
+  level: 'warn',
+  message: 'Alert: High memory usage: 97.84%',
+  timestamp: '2025-11-20 06:15:02'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'system_health',
+  metrics: {
+    cpuUsage: 0.13366336633663367,
+    memoryUsage: 97.8424072265625,
+    diskUsage: 36,
+    uptime: 1530.194
+  },
+  timestamp: '2025-11-20 06:15:02',
+  level: 'info',
+  message: 'System Health Check'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  type: 'high_memory',
+  severity: 'warning',
+  level: 'warn',
+  message: 'Alert: High memory usage: 97.71%',
+  timestamp: '2025-11-20 06:15:32'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'system_health',
+  metrics: {
+    cpuUsage: 0.156,
+    memoryUsage: 97.71385192871094,
+    diskUsage: 36,
+    uptime: 1560.193
+  },
+  timestamp: '2025-11-20 06:15:32',
+  level: 'info',
+  message: 'System Health Check'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  type: 'high_memory',
+  severity: 'warning',
+  level: 'warn',
+  message: 'Alert: High memory usage: 98.19%',
+  timestamp: '2025-11-20 06:16:02'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'system_health',
+  metrics: {
+    cpuUsage: 0.211,
+    memoryUsage: 98.18668365478516,
+    diskUsage: 36,
+    uptime: 1590.196
+  },
+  timestamp: '2025-11-20 06:16:02',
+  level: 'info',
+  message: 'System Health Check'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  type: 'high_memory',
+  severity: 'warning',
+  level: 'warn',
+  message: 'Alert: High memory usage: 97.71%',
+  timestamp: '2025-11-20 06:16:32'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'system_health',
+  metrics: {
+    cpuUsage: 0.08811881188118813,
+    memoryUsage: 97.7121353149414,
+    diskUsage: 36,
+    uptime: 1620.192
+  },
+  timestamp: '2025-11-20 06:16:32',
+  level: 'info',
+  message: 'System Health Check'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  type: 'high_memory',
+  severity: 'warning',
+  level: 'warn',
+  message: 'Alert: High memory usage: 98.28%',
+  timestamp: '2025-11-20 06:17:02'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'system_health',
+  metrics: {
+    cpuUsage: 0.22376237623762374,
+    memoryUsage: 98.2757568359375,
+    diskUsage: 36,
+    uptime: 1650.201
+  },
+  timestamp: '2025-11-20 06:17:02',
+  level: 'info',
+  message: 'System Health Check'
+}
