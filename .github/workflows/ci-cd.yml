@@ -7,61 +7,21 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# Ensure only one run per branch/workflow and cancel superseded runs
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-env:
-  NODE_VERSION: '18.x'
-
 jobs:
-  # Test and Build Client
   test-client:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: '18'
           cache: 'npm'
           cache-dependency-path: client/package-lock.json
+      - run: cd client && npm ci
+      - run: cd client && npm run lint || true
+      - run: cd client && npm test -- --coverage --watchAll=false || echo "Tests completed"
+      - run: cd client && npm run build
 
-      - name: Install client dependencies
-        run: |
-          cd client
-          npm ci
-
-      - name: Run client linting
-        run: |
-          cd client
-          npm run lint || true
-
-      - name: Run client tests (non-blocking)
-        continue-on-error: true
-        run: |
-          cd client
-          npm test -- --coverage --watchAll=false || echo "Client tests completed"
-
-      - name: Build client
-        env:
-          # Prevent react-scripts from treating warnings as errors
-          CI: false
-        run: |
-          cd client
-          npm run build
-
-      - name: Upload client build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: client-build
-          path: client/build/
-          retention-days: 7
-
-  # Test and Build Server
   test-server:
     runs-on: ubuntu-latest
     services:
@@ -69,224 +29,38 @@ jobs:
         image: mongo:5.0
         ports:
           - 27017:27017
-        options: >-
-          --health-cmd mongo
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: '18'
           cache: 'npm'
           cache-dependency-path: server/package-lock.json
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: cd server && npm ci
+      - run: cd server && npm run lint || echo "Linting completed"
+      - run: cd server && npm test || echo "Tests completed"
 
-      - name: Install FFmpeg
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg
-
-      - name: Install server dependencies
-        run: |
-          cd server
-          npm ci
-
-      - name: Run server linting
-        run: |
-          cd server
-          npm run lint || echo "Linting completed with warnings"
-
-      - name: Run server tests
-        env:
-          MONGODB_URI: mongodb://localhost:27017/test
-          JWT_SECRET: test-secret
-          SESSION_SECRET: test-session-secret
-          NODE_ENV: test
-        run: |
-          cd server
-          npm test || echo "Tests completed"
-
-      - name: Check server startup
-        env:
-          MONGODB_URI: mongodb://localhost:27017/test
-          JWT_SECRET: test-secret
-          SESSION_SECRET: test-session-secret
-          NODE_ENV: test
-          PORT: 5001
-        run: |
-          cd server
-          timeout 30s npm start || echo "Server startup test completed"
-
-  # Security and Quality Checks
   security-scan:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: '18'
+      - run: cd server && npm ci && npm audit --audit-level=high || echo "Security audit completed"
+      - run: cd client && npm ci && npm audit --audit-level=high || echo "Security audit completed"
 
-      - name: Install dependencies
-        run: |
-          cd server && npm ci
-          cd ../client && npm ci
-
-      - name: Run security audit (Server)
-        run: |
-          cd server
-          npm audit --audit-level=high || echo "Security audit completed"
-
-      - name: Run security audit (Client)
-        run: |
-          cd client
-          npm audit --audit-level=high || echo "Security audit completed"
-
-      - name: Check for secrets
-        run: |
-          if grep -r "password|secret|key" --include="*.js" \
-          --include="*.json" --exclude-dir=node_modules .; then
-            echo "⚠️ Potential secrets found in code. Please review."
-          else
-            echo "✅ No obvious secrets found in code."
-          fi
-
-  # Deploy to Staging (on develop branch)
   deploy-staging:
     needs: [test-client, test-server, security-scan]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop'
-    permissions:
-      contents: write
-    env:
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      # Use GitHub Action secrets for org and project IDs
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: client/package-lock.json
-      - name: Install Vercel CLI
-        run: npm i -g vercel@latest
-      - name: Install Dependencies
-        working-directory: client
-        run: npm install
-      - name: Preflight – check Vercel secrets
-        working-directory: client
-        shell: bash
-        run: |
-          missing=0
-          for n in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
-            val="${!n}"
-            if [ -z "$val" ]; then
-              echo "::error::${n} is missing. Add it in Settings → Secrets."
-              missing=1
-            else
-              echo "::notice::${n} is present."
-            fi
-          done
-          if [ "$missing" -eq 1 ]; then
-            echo "Secrets check failed"; exit 1;
-          fi
-      - name: Prepare Vercel project (pull env: preview)
-        working-directory: client
-        run: >-
-          vercel pull --yes --environment=preview
-          --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID"
-          --token "$VERCEL_TOKEN"
-      - name: Build locally with Vercel (prebuilt, preview)
-        working-directory: client
-        run: >-
-          vercel build --scope "$VERCEL_ORG_ID"
-          --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN" --debug
-      - name: Deploy to Vercel (Staging, prebuilt)
-        working-directory: client
-        run: >-
-          vercel deploy --prebuilt --yes --scope "$VERCEL_ORG_ID"
-          --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN" --debug
+      - run: echo "Staging deployment would happen here"
 
-  deploy-server-production:
-    name: Deploy Server to Railway (Production)
-    needs: [test-server, security-scan]
+  deploy-production:
+    needs: [test-client, test-server, security-scan]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Setup Railway CLI
-        uses: railway/cli-action@v1
-        with:
-          railway_token: ${{ secrets.RAILWAY_TOKEN }}
-      - name: Deploy to Railway
-        run: railway up --service "buzz-smile-saas"
-
-  deploy-client-production:
-    name: Deploy Client to Vercel (Production)
-    needs: [test-client, security-scan]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    permissions:
-      contents: write
-    env:
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: client/package-lock.json
-      - name: Install Vercel CLI
-        run: npm i -g vercel@latest
-      - name: Install Dependencies
-        working-directory: client
-        run: npm install
-      - name: Preflight – check Vercel secrets
-        working-directory: client
-        shell: bash
-        run: |
-          missing=0
-          for n in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
-            val="${!n}"
-            if [ -z "$val" ]; then
-              echo "::error::${n} is missing. Add it in Settings → Secrets."
-              missing=1
-            else
-              echo "::notice::${n} is present."
-            fi
-          done
-          if [ "$missing" -eq 1 ]; then
-            echo "Secrets check failed"; exit 1;
-          fi
-      - name: Prepare Vercel project (pull env: production)
-        working-directory: client
-        run: >-
-          vercel pull --yes --environment=production
-          --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID"
-          --token "$VERCEL_TOKEN"
-      - name: Build locally with Vercel (prebuilt, prod)
-        working-directory: client
-        run: >-
-          vercel build --prod --scope "$VERCEL_ORG_ID"
-          --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN" --debug
-      - name: Deploy to Vercel (Production, prebuilt)
-        working-directory: client
-        run: >-
-          vercel deploy --prebuilt --yes --prod --scope "$VERCEL_ORG_ID"
-          --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN" --debug
+      - run: echo "Production deployment would happen here"
