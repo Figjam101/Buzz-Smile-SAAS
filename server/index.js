@@ -175,6 +175,8 @@ app.use(cors({
     try {
       const { hostname } = new URL(origin);
       if (
+        hostname === 'www.buzz-smile.com' ||
+        hostname === 'buzz-smile.com' ||
         hostname === 'buzz-smile-saas.vercel.app' ||
         (hostname.endsWith('.vercel.app') && hostname.startsWith('buzz-smile-saas')) ||
         // Also allow the frontend app and its preview deployments
