@@ -199,6 +199,22 @@ jobs:
           if [ "$missing" -eq 1 ]; then
             echo "Secrets check failed"; exit 1;
           fi
+      - name: Prepare Vercel project (pull env: preview)
+        working-directory: client
+        run: >-
+          vercel pull --yes --environment=preview
+          --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID"
+          --token "$VERCEL_TOKEN"
+      - name: Build locally with Vercel (prebuilt, preview)
+        working-directory: client
+        run: >-
+          vercel build --scope "$VERCEL_ORG_ID"
+          --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN" --debug
+      - name: Deploy to Vercel (Staging, prebuilt)
+        working-directory: client
+        run: >-
+          vercel deploy --prebuilt --yes --scope "$VERCEL_ORG_ID"
+          --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN" --debug
 
   deploy-server-production:
     name: Deploy Server to Railway (Production)
