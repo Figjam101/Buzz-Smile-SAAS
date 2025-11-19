@@ -199,6 +199,20 @@ jobs:
           if [ "$missing" -eq 1 ]; then
             echo "Secrets check failed"; exit 1;
           fi
+
+  deploy-production:
+    needs: [test-client, test-server, security-scan]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Railway CLI
+        uses: railway/cli-action@v1
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+      - name: Deploy to Railway
+        run: railway up --service "YOUR_SERVICE_NAME"
       - name: Prepare Vercel project (pull env: preview)
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
