@@ -240,6 +240,9 @@ jobs:
           cache-dependency-path: client/package-lock.json
       - name: Install Vercel CLI
         run: npm i -g vercel@latest
+      - name: Install Dependencies
+        working-directory: client
+        run: npm install
       - name: Preflight – check Vercel secrets
         shell: bash
         env:
