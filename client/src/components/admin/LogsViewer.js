@@ -172,11 +172,11 @@ const LogsViewer = () => {
 
   const getLevelColor = (level) => {
     switch (level) {
-      case 'error': return 'text-red-600 bg-red-50';
-      case 'warn': return 'text-yellow-600 bg-yellow-50';
-      case 'info': return 'text-blue-600 bg-blue-50';
-      case 'debug': return 'text-gray-600 bg-gray-50';
-      default: return 'text-gray-600 bg-gray-50';
+      case 'error': return 'text-red-300 bg-red-500/10';
+      case 'warn': return 'text-yellow-300 bg-yellow-500/10';
+      case 'info': return 'text-blue-300 bg-blue-500/10';
+      case 'debug': return 'text-white/70 bg-white/10';
+      default: return 'text-white/70 bg-white/10';
     }
   };
 
@@ -196,7 +196,7 @@ const LogsViewer = () => {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="py-4">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
@@ -205,11 +205,11 @@ const LogsViewer = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="px-0 py-4">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Logs Viewer</h2>
-          <p className="text-gray-600">Monitor system logs and activities</p>
+          <h2 className="text-2xl font-bold text-white">Logs Viewer</h2>
+          <p className="text-white/70">Monitor system logs and activities</p>
         </div>
         <div className="flex items-center space-x-2">
           <button
@@ -217,7 +217,7 @@ const LogsViewer = () => {
             className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
               autoRefresh 
                 ? 'bg-green-600 text-white' 
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                : 'bg-white/10 text-white hover:bg-white/20'
             }`}
           >
             <span>{autoRefresh ? '⏸️' : '▶️'}</span>
@@ -240,71 +240,66 @@ const LogsViewer = () => {
         </div>
       </div>
 
-      {/* Stats Cards */}
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-3">
             <div className="flex items-center space-x-2">
               <span className="text-2xl">❌</span>
               <div>
-                <p className="text-sm text-red-600 font-medium">Errors</p>
-                <p className="text-2xl font-bold text-red-900">{stats.errors || 0}</p>
+                <p className="text-xs text-white/80 font-medium">Errors</p>
+                <p className="text-xl font-bold text-red-400">{stats.errors || 0}</p>
               </div>
             </div>
           </div>
-          
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-3">
             <div className="flex items-center space-x-2">
               <span className="text-2xl">⚠️</span>
               <div>
-                <p className="text-sm text-yellow-600 font-medium">Warnings</p>
-                <p className="text-2xl font-bold text-yellow-900">{stats.warnings || 0}</p>
+                <p className="text-xs text-white/80 font-medium">Warnings</p>
+                <p className="text-xl font-bold text-yellow-300">{stats.warnings || 0}</p>
               </div>
             </div>
           </div>
-          
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-3">
             <div className="flex items-center space-x-2">
               <span className="text-2xl">ℹ️</span>
               <div>
-                <p className="text-sm text-blue-600 font-medium">Info</p>
-                <p className="text-2xl font-bold text-blue-900">{stats.info || 0}</p>
+                <p className="text-xs text-white/80 font-medium">Info</p>
+                <p className="text-xl font-bold text-blue-400">{stats.info || 0}</p>
               </div>
             </div>
           </div>
-          
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-3">
             <div className="flex items-center space-x-2">
               <span className="text-2xl">📝</span>
               <div>
-                <p className="text-sm text-gray-600 font-medium">Total</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total || 0}</p>
+                <p className="text-xs text-white/80 font-medium">Total</p>
+                <p className="text-xl font-bold text-white">{stats.total || 0}</p>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Filters */}
-      <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+      <div className="bg-white/5 border border-white/10 rounded-lg p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+            <label className="block text-xs font-medium text-white/80 mb-1">Search</label>
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search logs..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Level</label>
+            <label className="block text-xs font-medium text-white/80 mb-1">Level</label>
             <select
               value={selectedLevel}
               onChange={(e) => setSelectedLevel(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               {logLevels.map(level => (
                 <option key={level} value={level}>
@@ -315,11 +310,11 @@ const LogsViewer = () => {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+            <label className="block text-xs font-medium text-white/80 mb-1">Category</label>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               {logCategories.map(category => (
                 <option key={category} value={category}>
@@ -330,11 +325,11 @@ const LogsViewer = () => {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+            <label className="block text-xs font-medium text-white/80 mb-1">Date Range</label>
             <select
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               {dateRanges.map(range => (
                 <option key={range.value} value={range.value}>
@@ -347,7 +342,7 @@ const LogsViewer = () => {
           <div className="flex items-end">
             <button
               onClick={scrollToBottom}
-              className="w-full bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 flex items-center justify-center space-x-2"
+              className="w-full bg-white/10 text-white px-4 py-2 rounded-lg hover:bg-white/20 flex items-center justify-center space-x-2"
             >
               <span>⬇️</span>
               <span>Bottom</span>
@@ -356,24 +351,22 @@ const LogsViewer = () => {
         </div>
       </div>
 
-      {/* Error Alert */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-4">
           <div className="flex items-center space-x-2">
-            <span className="text-red-500">❌</span>
-            <p className="text-red-700">{error}</p>
+            <span className="text-red-400">❌</span>
+            <p className="text-red-300">{error}</p>
           </div>
         </div>
       )}
 
-      {/* Logs Display */}
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-gray-900">
+      <div className="bg-white/5 border border-white/10 rounded-lg overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center">
+          <h3 className="text-lg font-semibold text-white">
             Logs ({filteredLogs.length})
           </h3>
           {autoRefresh && (
-            <div className="flex items-center space-x-2 text-green-600">
+            <div className="flex items-center space-x-2 text-green-400">
               <div className="animate-pulse w-2 h-2 bg-green-500 rounded-full"></div>
               <span className="text-sm">Live</span>
             </div>
@@ -384,13 +377,13 @@ const LogsViewer = () => {
           {filteredLogs.length === 0 ? (
             <div className="p-8 text-center">
               <div className="text-6xl mb-4">📝</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No logs found</h3>
-              <p className="text-gray-600">Try adjusting your filters or check back later</p>
+              <h3 className="text-lg font-medium text-white mb-2">No logs found</h3>
+              <p className="text-white/70">Try adjusting your filters or check back later</p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-white/10">
               {filteredLogs.map((log, index) => (
-                <div key={index} className="p-4 hover:bg-gray-50">
+                <div key={index} className="p-4 hover:bg-white/10">
                   <div className="flex items-start space-x-3">
                     <span className="text-xl flex-shrink-0 mt-1">
                       {getLevelIcon(log.level)}
@@ -401,21 +394,21 @@ const LogsViewer = () => {
                           {log.level.toUpperCase()}
                         </span>
                         {log.category && (
-                          <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                          <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-white/10 text-white/70">
                             {log.category}
                           </span>
                         )}
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-white/70">
                           {formatTimestamp(log.timestamp)}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-900 mb-2">{log.message}</p>
+                      <p className="text-sm text-white mb-2">{log.message}</p>
                       {log.meta && Object.keys(log.meta).length > 0 && (
                         <details className="text-xs">
-                          <summary className="cursor-pointer text-blue-600 hover:text-blue-800">
+                          <summary className="cursor-pointer text-blue-300 hover:text-blue-200">
                             Show details
                           </summary>
-                          <pre className="mt-2 p-2 bg-gray-100 rounded text-gray-700 overflow-x-auto">
+                          <pre className="mt-2 p-2 bg-white/10 rounded text-white/80 overflow-x-auto">
                             {JSON.stringify(log.meta, null, 2)}
                           </pre>
                         </details>

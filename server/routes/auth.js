@@ -1,6 +1,8 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const { body, validationResult } = require('express-validator');
+const crypto = require('crypto');
 const User = require('../models/User');
 const { auth } = require('../middleware/auth');
 
@@ -15,6 +17,107 @@ const generateToken = (userId) => {
   }
   return jwt.sign({ userId }, secret, { expiresIn: '7d' });
 };
+
+const buildClientBase = () => {
+  const raw = process.env.CLIENT_URLS || process.env.CLIENT_URL || '';
+  const list = raw.split(',').map(s => s.trim()).filter(Boolean);
+  return list[0] || 'http://localhost:3000';
+};
+
+// Request password reset (production-safe)
+router.post('/forgot', [
+  body('email').isEmail().normalizeEmail()
+], async (req, res) => {
+  try {
+    console.log('📧 /api/auth/forgot request received');
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    // Always respond success to avoid email enumeration
+    const genericMessage = 'If the email exists, a reset link was sent';
+
+    if (!user) {
+      return res.json({ message: genericMessage });
+    }
+
+    const crypto = require('crypto');
+    const token = crypto.randomBytes(32).toString('hex');
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+    await user.save();
+
+    // Optional exposure for development/testing
+    const exposeToken = (process.env.EXPOSE_RESET_TOKEN === 'true');
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const resetUrl = `${baseUrl}/reset-password?token=${token}`;
+
+    // If email service is configured, you can send the reset email here.
+    // For now, we return a generic success and optionally the token in dev/testing.
+
+    const payload = { message: genericMessage };
+    if (exposeToken) {
+      payload.resetUrl = resetUrl;
+      payload.token = token;
+    }
+    return res.json(payload);
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    return res.status(500).json({ message: 'Server error requesting password reset' });
+  }
+});
+
+// Perform password reset with token
+router.post('/reset', [
+  body('token').isLength({ min: 10 }),
+  body('password').isLength({ min: 6 })
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
+    const { token, password } = req.body;
+    const now = new Date();
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: now }
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired reset token' });
+    }
+
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    // Optionally issue a new auth token after reset if configured
+    const issueToken = process.env.ISSUE_TOKEN_ON_RESET === 'true';
+    if (issueToken) {
+      const jwt = require('jsonwebtoken');
+      const secret = process.env.JWT_SECRET || 'dev-secret';
+      const authToken = jwt.sign({ userId: user._id }, secret, { expiresIn: '7d' });
+      return res.json({ message: 'Password has been reset successfully', token: authToken });
+    }
+    return res.json({ message: 'Password has been reset successfully' });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    return res.status(500).json({ message: 'Server error during password reset' });
+  }
+});
 
 // Register
 router.post('/register', [
@@ -95,8 +198,9 @@ router.post('/login', [
     const mongoose = require('mongoose');
     const dbUnavailable = mongoose.connection.readyState !== 1 && process.env.ALLOW_SERVER_WITHOUT_DB === 'true';
     if (dbUnavailable) {
+      let devUser = null;
       if (email === 'test@example.com' && password === 'testpassword123') {
-        const devUser = {
+        devUser = {
           _id: 'dev-test-user',
           email: 'test@example.com',
           name: 'Test User',
@@ -109,11 +213,35 @@ router.post('/login', [
           socialMedia: {},
           linkedSocialAccounts: []
         };
-        const token = jwt.sign(
-          { userId: devUser._id, devUser: true, user: devUser },
-          process.env.JWT_SECRET || 'dev-secret',
-          { expiresIn: '7d' }
-        );
+      } else if (email === 'admin@example.com' && password === 'adminpassword123') {
+        devUser = {
+          _id: 'dev-admin-user',
+          email: 'admin@example.com',
+          name: 'Dev Admin',
+          businessName: 'Admin Biz',
+          plan: 'pro',
+          videoCount: 0,
+          maxVideos: 100,
+          role: 'admin',
+          profilePicture: null,
+          socialMedia: {},
+          linkedSocialAccounts: []
+        };
+      }
+
+      if (devUser) {
+        const payload = {
+          userId: devUser._id,
+          email: devUser.email,
+          name: devUser.name,
+          businessName: devUser.businessName,
+          plan: devUser.plan,
+          videoCount: devUser.videoCount,
+          maxVideos: devUser.maxVideos,
+          role: devUser.role,
+          devUser: true
+        };
+        const token = jwt.sign(payload, process.env.JWT_SECRET || 'dev-secret', { expiresIn: '7d' });
         return res.json({
           message: 'Login successful (dev mode)',
           token,
@@ -132,6 +260,56 @@ router.post('/login', [
           }
         });
       }
+
+      // Allow owner admin login in dev when DB is unavailable
+      if (email === 'npkalyx@gmail.com' && password === 'BuzzSmile!2025') {
+        const devUserOwner = {
+          _id: 'dev-owner-admin',
+          email: 'npkalyx@gmail.com',
+          name: 'Owner Admin',
+          businessName: 'Buzz Smile Media',
+          plan: 'pro',
+          videoCount: 0,
+          maxVideos: 100,
+          role: 'admin',
+          profilePicture: null,
+          socialMedia: {},
+          linkedSocialAccounts: []
+        };
+        const payload = {
+          userId: devUserOwner._id,
+          email: devUserOwner.email,
+          name: devUserOwner.name,
+          businessName: devUserOwner.businessName,
+          plan: devUserOwner.plan,
+          videoCount: devUserOwner.videoCount,
+          maxVideos: devUserOwner.maxVideos,
+          role: devUserOwner.role,
+          devUser: true
+        };
+        const token = jwt.sign(payload, process.env.JWT_SECRET || 'dev-secret', { expiresIn: '7d' });
+        return res.json({
+          message: 'Login successful (dev mode)',
+          token,
+          user: {
+            id: devUserOwner._id,
+            email: devUserOwner.email,
+            name: devUserOwner.name,
+            businessName: devUserOwner.businessName,
+            plan: devUserOwner.plan,
+            videoCount: devUserOwner.videoCount,
+            maxVideos: devUserOwner.maxVideos,
+            role: devUserOwner.role,
+            profilePicture: devUserOwner.profilePicture,
+            socialMedia: devUserOwner.socialMedia,
+            linkedSocialAccounts: devUserOwner.linkedSocialAccounts
+          }
+        });
+      }
+
+      return res.status(503).json({ 
+        message: 'Database unavailable in development. Use dev credentials (test@example.com/testpassword123 or admin@example.com/adminpassword123).' 
+      });
     }
 
     // Find user
@@ -174,6 +352,65 @@ router.post('/login', [
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ message: 'Server error during login' });
+  }
+});
+
+router.post('/forgot', [
+  body('email').isEmail().normalizeEmail()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: 'Validation failed', errors: errors.array() });
+    }
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    const clientBase = buildClientBase();
+    if (!user) {
+      return res.json({ message: 'If the email exists, a reset link was sent' });
+    }
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const hashed = crypto.createHash('sha256').update(rawToken).digest('hex');
+    user.resetPasswordToken = hashed;
+    user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000);
+    await user.save();
+    const resetUrl = `${clientBase.replace(/\/$/, '')}/reset-password?token=${rawToken}`;
+    return res.json({ message: 'Reset link sent', resetUrl, token: rawToken });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    return res.status(500).json({ message: 'Server error during password reset request' });
+  }
+});
+
+router.post('/reset', [
+  body('token').isString().isLength({ min: 10 }),
+  body('password').isLength({ min: 6 })
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: 'Validation failed', errors: errors.array() });
+    }
+    const { token, password } = req.body;
+    const hashed = crypto.createHash('sha256').update(token).digest('hex');
+    const user = await User.findOne({
+      resetPasswordToken: hashed,
+      resetPasswordExpires: { $gt: new Date() }
+    });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired reset token' });
+    }
+    user.password = password;
+    user.provider = 'local';
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    user.lastLogin = new Date();
+    await user.save();
+    const tokenJwt = generateToken(user._id);
+    return res.json({ message: 'Password reset successful', token: tokenJwt });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    return res.status(500).json({ message: 'Server error during password reset' });
   }
 });
 
@@ -269,6 +506,66 @@ if ((process.env.NODE_ENV || 'development') !== 'production') {
     } catch (error) {
       console.error('Dev reset password error:', error);
       return res.status(500).json({ message: 'Server error during dev reset' });
+    }
+  });
+}
+
+// Development-only admin login when database is unavailable
+if ((process.env.NODE_ENV || 'development') !== 'production') {
+  router.post('/dev/admin-login', [
+    body('email').isEmail().normalizeEmail(),
+    body('password').isLength({ min: 6 })
+  ], async (req, res) => {
+    try {
+      const mongoose = require('mongoose');
+      const dbUnavailable = mongoose.connection.readyState !== 1 && process.env.ALLOW_SERVER_WITHOUT_DB === 'true';
+      const { email, password } = req.body;
+
+      if (!dbUnavailable) {
+        return res.status(400).json({ message: 'Use normal /login when database is connected' });
+      }
+
+      if (email === 'npkalyx@gmail.com' && password === 'NpkTemp!2025#Sm1le') {
+        const devUser = {
+          _id: 'dev-admin-user',
+          email: 'npkalyx@gmail.com',
+          name: 'Admin User',
+          businessName: 'Buzz Smile Media',
+          plan: 'free',
+          videoCount: 0,
+          maxVideos: 10,
+          role: 'admin',
+          profilePicture: null,
+          socialMedia: {},
+          linkedSocialAccounts: []
+        };
+        const token = jwt.sign(
+          { userId: devUser._id, devUser: true, user: devUser },
+          process.env.JWT_SECRET || 'dev-secret',
+          { expiresIn: '7d' }
+        );
+        return res.json({
+          message: 'Login successful (dev admin)',
+          token,
+          user: {
+            id: devUser._id,
+            email: devUser.email,
+            name: devUser.name,
+            businessName: devUser.businessName,
+            plan: devUser.plan,
+            videoCount: devUser.videoCount,
+            maxVideos: devUser.maxVideos,
+            role: devUser.role,
+            profilePicture: devUser.profilePicture,
+            socialMedia: devUser.socialMedia,
+            linkedSocialAccounts: devUser.linkedSocialAccounts
+          }
+        });
+      }
+
+      return res.status(400).json({ message: 'Invalid dev admin credentials' });
+    } catch (error) {
+      return res.status(500).json({ message: 'Server error during dev admin login' });
     }
   });
 }

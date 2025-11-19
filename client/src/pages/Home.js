@@ -1,9 +1,9 @@
 import React from 'react';
+import '../styles/stars.css';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import BouncingBall from '../components/BouncingBall';
+
 import GSAPTextAnimation from '../components/GSAPTextAnimation';
-import Navbar from '../components/Navbar';
 import { 
   Play, 
   Upload, 
@@ -13,7 +13,8 @@ import {
   Shield, 
   Users, 
   ArrowRight,
-  CheckCircle
+  CheckCircle,
+  ChevronDown
 } from 'lucide-react';
 
 const Home = () => {
@@ -104,28 +105,31 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen">
-      <Navbar />
-      
+    <div id="home-root" className="min-h-screen relative">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-50 to-blue-100 py-12 sm:py-20 relative min-h-screen flex items-center">
-        <BouncingBall />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+      <section className="pt-0 sm:pt-0 pb-12 sm:pb-20 relative min-h-screen flex items-center">
+          <div id="stars"></div>
+          <div id="stars2"></div>
+          <div id="stars3"></div>
+          <div id="star-glass"></div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full mt-32 sm:mt-40 lg:mt-48 xl:mt-52 2xl:mt-56">
           <div className="text-center space-y-6 sm:space-y-8">
             <GSAPTextAnimation 
               animationType="fadeInUp" 
               delay={0.2} 
               duration={1.2}
-              className="text-3xl sm:text-4xl md:text-6xl font-bold text-gray-900 tracking-tight leading-tight"
+              className="text-4xl sm:text-5xl md:text-7xl font-bold text-white tracking-tight leading-tight"
+              style={{ textShadow: '0 2px 12px rgba(0,0,0,0.85)' }}
             >
               Create Amazing Videos
-              <span className="text-primary-600 block mt-2">In Minutes, Not Hours</span>
+              <span className="text-lime-400 block mt-2">In Minutes, Not Hours</span>
             </GSAPTextAnimation>
             <GSAPTextAnimation 
               animationType="fadeInUp" 
               delay={0.6} 
               duration={1}
-              className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
+              className="text-xl sm:text-2xl text-white max-w-4xl mx-auto leading-relaxed"
+              style={{ textShadow: '0 1px 8px rgba(0,0,0,0.75)' }}
             >
               Professional video editing made simple. Upload, edit, and share stunning videos 
               with our powerful cloud-based platform. No software installation required.
@@ -139,7 +143,7 @@ const Home = () => {
               {isAuthenticated ? (
                 <Link
                   to="/dashboard"
-                  className="btn-primary text-base sm:text-lg px-6 sm:px-8 py-2.5 sm:py-3 inline-flex items-center justify-center space-x-2 w-full sm:w-auto max-w-xs sm:max-w-none"
+                  className="btn-primary text-lg sm:text-xl px-8 sm:px-10 py-3 sm:py-3.5 inline-flex items-center justify-center space-x-2 w-full sm:w-auto max-w-xs sm:max-w-none"
                 >
                   <span>Go to Dashboard</span>
                   <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -163,12 +167,17 @@ const Home = () => {
                 </>
               )}
             </GSAPTextAnimation>
+            <div className="mt-12 flex justify-center">
+              <a href="#features" className="scroll-indicator w-10 h-10 rounded-full border border-white/30 flex items-center justify-center text-white/80">
+                <ChevronDown className="w-5 h-5" />
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-white">
+      <section id="features" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">

@@ -14,6 +14,7 @@ const { checkCredits, deductCredits } = require('../middleware/credits');
 const videoEditingService = require('../services/videoEditingService');
 const thumbnailService = require('../services/thumbnailService');
 const backupService = require('../services/backupService');
+const { notifyVideoQueued } = require('../services/discordWebhookService');
 
 const router = express.Router();
 
@@ -105,47 +106,6 @@ router.post('/upload', auth, createUploadMiddleware, async (req, res) => {
     const isMultipleFiles = files.length > 1;
     const incomingTotalSize = files.reduce((sum, f) => sum + (f.size || 0), 0);
     const dbConnected = isDbConnected();
-    
-    // Enforce user storage cap before accepting upload
-    const storageLimit = getStorageLimitForUser(user);
-    // If DB is disconnected and offline mode is enabled, skip storage usage query
-    let currentUsed = 0;
-    if (dbConnected) {
-      const userVideos = await Video.find({ owner: user._id }).select('fileSize');
-      currentUsed = userVideos.reduce((sum, v) => sum + (v.fileSize || 0), 0);
-    }
-    if (Number.isFinite(storageLimit) && currentUsed + incomingTotalSize > storageLimit) {
-      // Delete uploaded files immediately
-      files.forEach(file => {
-        if (fs.existsSync(file.path)) {
-          fs.unlinkSync(file.path);
-        }
-      });
-      const remaining = Math.max(0, storageLimit - currentUsed);
-      return res.status(403).json({
-        message: `Storage limit exceeded. You have ${Math.round(remaining / (1024*1024))} MB remaining.`,
-        storageUsed: currentUsed,
-        storageLimit,
-        attemptedSize: incomingTotalSize
-      });
-    }
-    
-    // Check if user has reached video limit (count all files) - Skip for admin users with god plan
-    const isGodModeAdmin = user.role === 'admin' && (user.subscription?.plan === 'god' || user.plan === 'god');
-    if (!isGodModeAdmin && user.videoCount + files.length > user.maxVideos) {
-      // Delete uploaded files
-      files.forEach(file => {
-        if (fs.existsSync(file.path)) {
-          fs.unlinkSync(file.path);
-        }
-      });
-      return res.status(403).json({ 
-        message: `Video limit would be exceeded. You can upload ${user.maxVideos - user.videoCount} more videos.`,
-        currentCount: user.videoCount,
-        maxVideos: user.maxVideos,
-        attemptedUpload: files.length
-      });
-    }
 
     const { title, description, editingData, fileCount, fileNames, multipleFiles } = req.body;
     
@@ -182,7 +142,7 @@ router.post('/upload', auth, createUploadMiddleware, async (req, res) => {
           fileSize: totalSize,
           format: 'mp4',
           owner: user._id,
-          status: 'ready',
+          status: 'uploading',
           editingPreferences: parsedEditingData,
           sourceFiles: files.map(file => ({
             filename: file.filename,
@@ -203,7 +163,7 @@ router.post('/upload', auth, createUploadMiddleware, async (req, res) => {
           fileSize: totalSize,
           format: 'mp4',
           owner: user._id,
-          status: 'ready',
+          status: 'uploading',
           editingPreferences: parsedEditingData,
           sourceFiles: files.map(file => ({
             filename: file.filename,
@@ -304,10 +264,7 @@ router.post('/upload', auth, createUploadMiddleware, async (req, res) => {
     // Save any provided editingPreferences with the video and leave status as 'ready'.
 
     // Update user video count (count as 1 video regardless of source files)
-    if (dbConnected) {
-      user.videoCount += 1;
-      await user.save();
-    }
+    // Do not increment user video count on upload; counting happens when processing is completed.
 
     // Clear video list cache for this user to ensure fresh data on next fetch
     const userId = user._id.toString();
@@ -718,6 +675,16 @@ router.delete('/:id', auth, async (req, res) => {
 // Processing should require credits; enforce check and deduction here
 router.post('/:id/process', auth, checkCredits, async (req, res) => {
   try {
+    const OFFLINE_MODE = process.env.ALLOW_SERVER_WITHOUT_DB === 'true' && process.env.NODE_ENV !== 'production';
+    if (OFFLINE_MODE) {
+      const jobId = `offline-${Date.now()}`;
+      try {
+        await notifyVideoQueued({ user: req.user, video: { _id: req.params.id, title: 'Offline Video' }, jobId });
+      } catch (notifyErr) {
+        console.error('Discord webhook notify failed (offline):', notifyErr?.message || notifyErr);
+      }
+      return res.json({ message: 'Video processing job added (offline mode)', jobId, status: 'queued' });
+    }
     const video = await Video.findOne({ 
       _id: req.params.id, 
       owner: req.user._id 
@@ -744,6 +711,13 @@ router.post('/:id/process', auth, checkCredits, async (req, res) => {
       queuedAt: new Date(),
       jobId: job.id
     });
+
+    // Notify Discord webhook (if configured)
+    try {
+      await notifyVideoQueued({ user: req.user, video, jobId: job.id });
+    } catch (notifyErr) {
+      console.error('Discord webhook notify failed:', notifyErr?.message || notifyErr);
+    }
 
     // Deduct credits after queueing processing job
     try {

@@ -73,8 +73,8 @@ const AppleProfileImage = ({
     let apiBase = envBase || axios.defaults.baseURL || '';
     if (!apiBase && typeof window !== 'undefined') {
       const origin = window.location.origin;
-      // Default to backend on port 5001 in local dev; else same-origin
-      apiBase = origin.includes('localhost:3000') ? 'http://localhost:5001' : origin;
+      // Avoid hard-coded dev ports; prefer current origin for same-host setups
+      apiBase = origin;
     }
     const imageSrc = isAbsolute
       ? profilePicture

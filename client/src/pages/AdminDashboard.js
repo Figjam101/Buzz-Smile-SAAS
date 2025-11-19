@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { 
   BarChart3, 
   Monitor, 
@@ -9,14 +9,11 @@ import {
   Users, 
   Server, 
   Settings as SettingsIcon,
-  Home,
   Power,
   RotateCcw,
-  Video
+  Video,
+  Cloud
 } from 'lucide-react';
-import Navbar from '../components/Navbar';
-import AppleProfileImage from '../components/AppleProfileImage';
-import ProfilePictureUploader from '../components/ProfilePictureUploader';
 import SystemMonitoring from '../components/admin/SystemMonitoring';
 import BackupManager from '../components/admin/BackupManager';
 import LogsViewer from '../components/admin/LogsViewer';
@@ -24,13 +21,15 @@ import UserManagement from '../components/admin/UserManagement';
 import VideoManagement from '../components/admin/VideoManagement';
 import Settings from '../components/admin/Settings';
 import AdminTests from '../components/admin/AdminTests';
+import VideosReadyToEdit from '../components/admin/VideosReadyToEdit';
+import GoogleDriveDashboard from '../components/GoogleDriveDashboard';
+import '../styles/glass.css';
 
 const AdminDashboard = () => {
   const { user, loading } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [systemHealth, setSystemHealth] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [showUploader, setShowUploader] = useState(false);
   const [serverResetEnabled, setServerResetEnabled] = useState(false);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
 
@@ -44,7 +43,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const requestedTab = params.get('tab') || (location.state && location.state.tab);
-    const validTabs = ['overview','monitoring','backups','logs','users','videos','server-settings','settings','tests'];
+    const validTabs = ['overview','monitoring','backups','logs','users','videos','ready-to-edit','drive','server-settings','settings','tests'];
     if (requestedTab && validTabs.includes(requestedTab)) {
       setActiveTab(requestedTab);
     }
@@ -53,9 +52,13 @@ const AdminDashboard = () => {
   const fetchSystemHealth = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/monitoring/health`, {
+      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      const envBase = (process.env.REACT_APP_API_URL || '').replace(/\/$/, '');
+      const apiBase = envBase || (origin.includes('localhost:3000') ? origin.replace(':3000', ':5002') : origin);
+      const response = await fetch(`${apiBase}/api/monitoring/health`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'x-bypass-cache': '1'
         }
       });
       if (response.ok) {
@@ -89,6 +92,8 @@ const AdminDashboard = () => {
     { id: 'logs', name: 'Logs Viewer', icon: FileText },
     { id: 'users', name: 'User Management', icon: Users },
     { id: 'videos', name: 'Video Management', icon: Video },
+    { id: 'ready-to-edit', name: 'Videos Ready to Edit', icon: Video },
+    { id: 'drive', name: 'Google Drive', icon: Cloud },
     { id: 'server-settings', name: 'Server Settings', icon: Server },
     { id: 'settings', name: 'General Settings', icon: SettingsIcon },
     { id: 'tests', name: 'Tests', icon: RotateCcw }
@@ -157,6 +162,10 @@ const AdminDashboard = () => {
         return <UserManagement />;
       case 'videos':
         return <VideoManagement />;
+      case 'ready-to-edit':
+        return <VideosReadyToEdit />;
+      case 'drive':
+        return <GoogleDriveDashboard />;
       case 'server-settings':
         return <Settings />;
       case 'settings':
@@ -169,167 +178,161 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Navbar */}
-      <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar - Visible on large screens, hidden on mobile/tablet */}
-        <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:relative lg:translate-x-0`}>
-          <div className="flex flex-col h-full">
-            {/* Sidebar Header */}
-            <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Admin Panel</h2>
-              <button
-                onClick={() => setSidebarOpen(false)}
-                className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
-              >
-                <Home className="w-5 h-5" />
-              </button>
-            </div>
-
-          {/* Admin User Profile */}
-          <div className="px-4 py-4 border-b border-gray-200">
-            <div className="flex items-center space-x-3">
-              <AppleProfileImage size="lg" name={user?.name || 'User'} profilePicture={user?.profilePicture} />
-              <div className="min-w-0">
-                <p className="font-medium text-gray-900 truncate">{user?.name || 'User'}</p>
-                <p className="text-sm text-gray-500">Administrator</p>
-              </div>
-            </div>
-            <button
-              onClick={() => setShowUploader(true)}
-              className="mt-3 w-full text-sm font-medium text-blue-600 hover:text-blue-700"
-            >
-              Update your profile picture
-            </button>
-          </div>
-          
-          {/* Navigation */}
-          <nav className="flex-1 px-4 py-4 space-y-2">
-            {tabs.map((tab) => {
-              const IconComponent = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
-                    activeTab === tab.id
-                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                      : 'text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  <IconComponent className="w-5 h-5 flex-shrink-0" />
-                  <span className="font-medium">{tab.name}</span>
-                </button>
-              );
-            })}
-          </nav>
-          
-          {/* Quick Actions */}
-          <div className="p-4 border-t border-gray-200">
-            <div className="space-y-3">
-              {/* Maintenance Mode Toggle */}
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Maintenance Mode</span>
-                <button
-                  onClick={() => handleMaintenanceToggle(!maintenanceMode)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${maintenanceMode ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}
-                >
-                  {maintenanceMode ? 'Disable' : 'Enable'}
-                </button>
-              </div>
-
-              {/* Server Reset */}
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Server Reset</span>
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => setServerResetEnabled(!serverResetEnabled)}
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${serverResetEnabled ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'}`}
-                  >
-                    {serverResetEnabled ? 'Enabled' : 'Disabled'}
-                  </button>
-                  <button
-                    onClick={handleServerReset}
-                    className="px-3 py-1 rounded-full text-xs font-medium bg-red-600 text-white hover:bg-red-700"
-                  >
-                    <Power className="w-4 h-4 inline mr-1" /> Restart
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div className="min-h-screen bg-slate-900">
+      <div
+        className="relative pl-8 pr-8 pb-5"
+        style={{ paddingTop: 'var(--dashboard-header-bottom, 0px)' }}
+      >
+        <div className="relative z-10">{renderTabContent()}</div>
       </div>
-
-      {/* Main Content */}
-      <main className="flex-1 p-4 sm:p-6 overflow-auto">
-        {renderTabContent()}
-      </main>
-        </div>
-
-      {/* Profile Picture Uploader Modal */}
-      {showUploader && (
-        <ProfilePictureUploader onClose={() => setShowUploader(false)} />
-      )}
     </div>
   );
 };
 
 const OverviewTab = ({ systemHealth }) => {
+  const navigate = useNavigate();
+  
+  const quickActions = [
+    {
+      id: 'users',
+      title: 'User Management',
+      description: 'Manage users, roles, and credits',
+      icon: '👥',
+      color: 'text-blue-300',
+      buttonColor: 'bg-blue-600 hover:bg-blue-700'
+    },
+    {
+      id: 'videos',
+      title: 'Video Management',
+      description: 'View and manage all videos',
+      icon: '🎥',
+      color: 'text-green-300',
+      buttonColor: 'bg-green-600 hover:bg-green-700'
+    },
+    {
+      id: 'ready-to-edit',
+      title: 'Videos Ready to Edit',
+      description: 'Videos awaiting processing',
+      icon: '✂️',
+      color: 'text-purple-300',
+      buttonColor: 'bg-purple-600 hover:bg-purple-700'
+    },
+    {
+      id: 'monitoring',
+      title: 'System Monitoring',
+      description: 'Real-time system metrics',
+      icon: '📊',
+      color: 'text-orange-300',
+      buttonColor: 'bg-orange-600 hover:bg-orange-700'
+    },
+    {
+      id: 'backups',
+      title: 'Backup Manager',
+      description: 'Create and manage backups',
+      icon: '💾',
+      color: 'text-red-300',
+      buttonColor: 'bg-red-600 hover:bg-red-700'
+    },
+    {
+      id: 'drive',
+      title: 'Google Drive',
+      description: 'Drive storage and backups',
+      icon: '☁️',
+      color: 'text-yellow-300',
+      buttonColor: 'bg-yellow-600 hover:bg-yellow-700'
+    }
+  ];
+
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="px-0">
+      {/* Welcome Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg p-4 mb-3 text-white">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold mb-2">Welcome to Admin Dashboard</h2>
+            <p className="text-blue-100">Manage your entire video platform from one place</p>
+          </div>
+          <div className="text-4xl">🛠️</div>
+        </div>
+      </div>
+
       {/* System Health Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">System Health</p>
-              <p className="text-2xl font-bold text-gray-900">{systemHealth?.status || 'Unknown'}</p>
-            </div>
-            <span className="text-3xl">🩺</span>
-          </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
+        <div className="bg-white/5 rounded-xl shadow-sm border border-white/10 p-3 text-center hover:shadow-md transition-shadow">
+          <div className="text-3xl mb-2">🩺</div>
+          <p className="text-xs font-medium text-white/80 mb-1">System Health</p>
+          <p className="text-2xl font-bold text-white">{systemHealth?.status || 'Unknown'}</p>
+          <p className="text-xs text-green-300 mt-1">All systems operational</p>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Users</p>
-              <p className="text-2xl font-bold text-green-600">{systemHealth?.users || 0}</p>
-            </div>
-            <span className="text-3xl">👥</span>
-          </div>
+        <div className="bg-white/5 rounded-xl shadow-sm border border-white/10 p-3 text-center hover:shadow-md transition-shadow">
+          <div className="text-3xl mb-2">👥</div>
+          <p className="text-xs font-medium text-white/80 mb-1">Total Users</p>
+          <p className="text-2xl font-bold text-green-300">{systemHealth?.users || 0}</p>
+          <p className="text-xs text-green-300 mt-1">Active accounts</p>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Videos</p>
-              <p className="text-2xl font-bold text-blue-600">{systemHealth?.videos || 0}</p>
+        <div className="bg-white/5 rounded-xl shadow-sm border border-white/10 p-3 text-center hover:shadow-md transition-shadow">
+          <div className="text-3xl mb-2">🎥</div>
+          <p className="text-xs font-medium text-white/80 mb-1">Total Videos</p>
+          <p className="text-2xl font-bold text-blue-400">{systemHealth?.videos || 0}</p>
+          <p className="text-xs text-blue-400 mt-1">Videos processed</p>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="bg-white/5 rounded-xl shadow-sm border border-white/10 p-3 mb-3">
+        <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {quickActions.map((action) => (
+            <div key={action.id} className={`border border-white/10 rounded-lg p-3 bg-white/5 ${action.color}`}>
+              <div className="flex items-start justify-between mb-3">
+                <div className="text-2xl">{action.icon}</div>
+                <button
+                  onClick={() => navigate(`/admin?tab=${action.id}`)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium text-white ${action.buttonColor} transition-colors`}
+                >
+                  Open
+                </button>
+              </div>
+              <h4 className="font-semibold text-white mb-1">{action.title}</h4>
+              <p className="text-sm text-white/80">{action.description}</p>
             </div>
-            <span className="text-3xl">🎥</span>
-          </div>
+          ))}
         </div>
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white rounded-lg shadow-sm border p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+      <div className="bg-white/5 rounded-xl shadow-sm border border-white/10 p-3">
+        <h3 className="text-lg font-semibold text-white mb-4">Recent Activity</h3>
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-700">User registrations</p>
-              <p className="text-xs text-gray-500">Last 24 hours</p>
+          <div className="flex items-center justify-between p-3 bg-white/10 rounded-lg">
+            <div className="flex items-center space-x-3">
+              <span className="text-xl">📥</span>
+              <div>
+                <p className="text-sm font-medium text-white">User Registrations</p>
+                <p className="text-xs text-white/70">Last 24 hours</p>
+              </div>
             </div>
-            <span className="text-xl">📥</span>
+            <span className="text-sm font-semibold text-white">{systemHealth?.recentUsers || 0}</span>
           </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-700">Video uploads</p>
-              <p className="text-xs text-gray-500">Last 24 hours</p>
+          <div className="flex items-center justify-between p-3 bg-white/10 rounded-lg">
+            <div className="flex items-center space-x-3">
+              <span className="text-xl">⬆️</span>
+              <div>
+                <p className="text-sm font-medium text-white">Video Uploads</p>
+                <p className="text-xs text-white/70">Last 24 hours</p>
+              </div>
             </div>
-            <span className="text-xl">⬆️</span>
+            <span className="text-sm font-semibold text-white">{systemHealth?.recentVideos || 0}</span>
+          </div>
+          <div className="flex items-center justify-between p-3 bg-white/10 rounded-lg">
+            <div className="flex items-center space-x-3">
+              <span className="text-xl">⚡</span>
+              <div>
+                <p className="text-sm font-medium text-white">System Performance</p>
+                <p className="text-xs text-white/70">Current status</p>
+              </div>
+            </div>
+            <span className="text-sm font-semibold text-green-300">Excellent</span>
           </div>
         </div>
       </div>

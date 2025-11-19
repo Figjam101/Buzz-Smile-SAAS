@@ -5,19 +5,10 @@
       "src": "client/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "build",
-        "installCommand": "npm ci",
-        "buildCommand": "CI=false npm run build"
+        "distDir": "client/build",
+        "installCommand": "cd client && npm ci",
+        "buildCommand": "cd client && CI=false npm run build"
       }
-    }
-  ],
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- client/ vercel.json",
-  "headers": [
-    {
-      "source": "/static/(.*)",
-      "headers": [
-        { "key": "cache-control", "value": "public, max-age=31536000, immutable" }
-      ]
     }
   ],
   "rewrites": [

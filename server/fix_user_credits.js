@@ -8,10 +8,10 @@ async function fixUserCredits() {
     await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fresh-video-saas');
     console.log('Connected to MongoDB');
 
-    // Find the test user
-    const user = await User.findOne({ email: 'test@example.com' });
+    const targetEmail = process.env.TARGET_EMAIL || process.argv[2] || 'test@example.com';
+    const user = await User.findOne({ email: targetEmail });
     if (!user) {
-      console.log('Test user not found!');
+      console.log('User not found!');
       return;
     }
 
@@ -27,7 +27,7 @@ async function fixUserCredits() {
     });
 
     console.log('✅ User credits fixed successfully!');
-    console.log('📧 Email: test@example.com');
+    console.log('📧 Email:', targetEmail);
     console.log('💰 Credits: 100');
     console.log('🚀 Pre-launch status: true (unlimited uploads)');
     console.log('👑 Plan: god (unlimited uploads)');

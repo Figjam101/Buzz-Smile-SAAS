@@ -1,0 +1,1 @@
+require('./buzz-smile-saas/server/index.js');

@@ -6,7 +6,6 @@ OpenCut/
 backup_*/
 deployment/
 client/
-server/
 project_backup_*.tar.gz
 system_backup_*.tar.gz
 *.mp4

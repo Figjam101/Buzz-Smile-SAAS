@@ -52,7 +52,8 @@ const ProfilePictureUploader = ({ isOpen, onClose }) => {
       let apiBase = normalized;
       if (!apiBase && typeof window !== 'undefined') {
         const origin = window.location.origin;
-        apiBase = origin.includes('localhost:3000') ? 'http://localhost:5001' : origin;
+        // Avoid hard-coded dev ports; prefer current origin
+        apiBase = origin;
       }
 
       const response = await fetch(`${apiBase}/api/users/profile`, {

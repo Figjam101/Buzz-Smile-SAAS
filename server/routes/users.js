@@ -266,5 +266,104 @@ router.put('/social-media', auth, async (req, res) => {
     res.status(500).json({ message: 'Server error updating social media' });
   }
 });
+// Move/copy all user uploads to the "uploads/user_uploads_to_edit/<userId>" folder
+// This is triggered when the user confirms processing in the dashboard.
+router.post('/uploads-to-edit', auth, async (req, res) => {
+  try {
+    const user = req.user;
+    const userId = user._id.toString();
+
+    // Find all videos owned by the user. We include both single-file and multi-file sources.
+    const videos = await Video.find({ owner: user._id }).lean();
+
+    if (!videos || videos.length === 0) {
+      return res.status(404).json({ message: 'No uploaded videos found for this user' });
+    }
+
+    // Ensure destination directory
+    const baseDestDir = path.join(__dirname, '../uploads/user_uploads_to_edit', userId);
+    if (!fs.existsSync(baseDestDir)) {
+      fs.mkdirSync(baseDestDir, { recursive: true });
+    }
+
+    let copiedCount = 0;
+    const copiedFiles = [];
+
+    const copySafely = (srcPath, destPath) => {
+      try {
+        // Skip if source is missing
+        if (!srcPath || !fs.existsSync(srcPath)) return false;
+
+        // Ensure dest parent exists
+        const destDir = path.dirname(destPath);
+        if (!fs.existsSync(destDir)) {
+          fs.mkdirSync(destDir, { recursive: true });
+        }
+        fs.copyFileSync(srcPath, destPath);
+        return true;
+      } catch (e) {
+        console.warn('Copy failed', { srcPath, destPath, error: e.message });
+        return false;
+      }
+    };
+
+    for (const v of videos) {
+      // Copy the primary uploaded file
+      if (v.filePath) {
+        const destMain = path.join(baseDestDir, path.basename(v.filePath));
+        const ok = copySafely(v.filePath, destMain);
+        if (ok) {
+          copiedCount += 1;
+          copiedFiles.push({ type: 'primary', filename: path.basename(v.filePath) });
+        }
+      }
+
+      // Copy any multi-file source entries
+      if (Array.isArray(v.sourceFiles)) {
+        for (const src of v.sourceFiles) {
+          if (!src?.filePath) continue;
+          const destSrc = path.join(baseDestDir, path.basename(src.filePath));
+          const ok = copySafely(src.filePath, destSrc);
+          if (ok) {
+            copiedCount += 1;
+            copiedFiles.push({ type: 'source', filename: path.basename(src.filePath) });
+          }
+        }
+      }
+    }
+
+    // Optionally upload to Google Drive using the user's integration folder (if configured)
+    // Note: central admin folder upload support can be added later if needed.
+    const uploadedToDrive = [];
+    try {
+      const hasDrive = user?.integrations?.googleDrive?.accessToken && user?.integrations?.googleDrive?.folderId;
+      if (hasDrive) {
+        const { uploadFile } = require('../services/googleDriveService');
+        for (const f of copiedFiles) {
+          const localPath = path.join(baseDestDir, f.filename);
+          if (fs.existsSync(localPath)) {
+            const mimeType = 'video/*';
+            const resDrive = await uploadFile(user, localPath, f.filename, mimeType);
+            uploadedToDrive.push({ id: resDrive?.id, name: resDrive?.name });
+          }
+        }
+      }
+    } catch (driveErr) {
+      console.warn('Google Drive upload skipped or failed:', driveErr.message);
+    }
+
+    return res.json({
+      message: 'User uploads copied to edit folder',
+      userId,
+      destination: `/uploads/user_uploads_to_edit/${userId}/`,
+      copiedCount,
+      copiedFiles,
+      uploadedToDrive
+    });
+  } catch (error) {
+    console.error('uploads-to-edit error:', error);
+    return res.status(500).json({ message: 'Server error moving uploads to edit folder' });
+  }
+});
 
 module.exports = router;

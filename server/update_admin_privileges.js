@@ -4,7 +4,7 @@ const User = require('./models/User');
 // MongoDB connection
 const connectDB = async () => {
   try {
-    await mongoose.connect('mongodb://localhost:27017/buzz-smile-saas', {
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/buzz-smile-saas', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

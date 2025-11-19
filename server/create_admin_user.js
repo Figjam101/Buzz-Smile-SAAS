@@ -4,7 +4,7 @@ const User = require('./models/User');
 // MongoDB connection
 const connectDB = async () => {
   try {
-    await mongoose.connect('mongodb://localhost:27017/buzz-smile-saas', {
+    await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
@@ -21,8 +21,8 @@ const createAdminUser = async () => {
     
     // Admin user details
     const adminData = {
-      email: 'admin@buzzsmile.com',
-      password: 'admin123456', // This will be hashed by the pre-save middleware
+      email: 'npkalyx@gmail.com',
+      password: 'NpkTemp!2025#Sm1le',
       name: 'Admin User',
       role: 'admin',
       
@@ -90,7 +90,7 @@ const createAdminUser = async () => {
       
       console.log('\n🎉 New admin user created with GOD MODE privileges!');
       console.log(`✅ Email: ${newAdmin.email}`);
-      console.log(`✅ Password: admin123456 (change this after first login)`);
+      console.log(`✅ Password: NpkTemp!2025#Sm1le`);
       console.log(`✅ Role: ${newAdmin.role}`);
       console.log(`✅ Plan: ${newAdmin.subscription.plan}`);
       console.log(`✅ Video Limit: UNLIMITED`);

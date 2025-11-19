@@ -1,0 +1,1590 @@
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 500,
+  responseTime: '10025ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:33:36',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763006628380',
+  statusCode: 404,
+  responseTime: '5ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:33:48',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '2ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:33:48',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/health',
+  statusCode: 503,
+  responseTime: '41ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:38:02',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763006628380',
+  statusCode: 404,
+  responseTime: '18ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:44:06',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '2ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:44:06',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007300045',
+  statusCode: 404,
+  responseTime: '14ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:45:00',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:45:00',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007300045',
+  statusCode: 404,
+  responseTime: '3ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:45:11',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '2ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:45:11',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007300045',
+  statusCode: 404,
+  responseTime: '2ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:45:12',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '2ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:45:12',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007300045',
+  statusCode: 404,
+  responseTime: '2ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:45:12',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:45:12',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007300045',
+  statusCode: 404,
+  responseTime: '2ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:45:12',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:45:12',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007300045',
+  statusCode: 404,
+  responseTime: '2ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:45:12',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '0ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:45:12',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007300045',
+  statusCode: 404,
+  responseTime: '2ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:45:22',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:45:22',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007414643',
+  statusCode: 404,
+  responseTime: '10ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:46:54',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '4ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:46:54',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007443175',
+  statusCode: 404,
+  responseTime: '2ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:23',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '2ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:23',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007444905',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:24',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:24',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007446082',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:26',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:26',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007446389',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:26',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '0ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:26',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007446589',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:26',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:26',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007446822',
+  statusCode: 404,
+  responseTime: '2ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:26',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '4ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:26',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007446989',
+  statusCode: 404,
+  responseTime: '3ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:26',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:27',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007447166',
+  statusCode: 404,
+  responseTime: '5ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:27',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '0ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:27',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007447332',
+  statusCode: 404,
+  responseTime: '0ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:27',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:27',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007447504',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:27',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '2ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:27',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007448671',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:28',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '2ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:28',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763007449265',
+  statusCode: 404,
+  responseTime: '0ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:29',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 14:47:29',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/auth/me',
+  statusCode: 401,
+  responseTime: '9ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 15:33:50',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/auth/me',
+  statusCode: 401,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 15:33:50',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 500,
+  responseTime: '10058ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 15:34:09',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 500,
+  responseTime: '10018ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 15:34:30',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 500,
+  responseTime: '10013ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-13 15:34:48',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 500,
+  responseTime: '10200ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-14 08:25:33',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 500,
+  responseTime: '10046ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-14 08:25:53',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 500,
+  responseTime: '10026ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-14 08:26:11',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/auth/me',
+  statusCode: 401,
+  responseTime: '23ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-14 08:44:35',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/auth/me',
+  statusCode: 401,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-14 08:44:35',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 500,
+  responseTime: '10018ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-14 08:45:00',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 500,
+  responseTime: '10030ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-14 08:51:18',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 500,
+  responseTime: '10041ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-14 08:51:42',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 503,
+  responseTime: '29ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-14 09:07:04',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 503,
+  responseTime: '16ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-14 09:07:17',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 503,
+  responseTime: '7ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-14 09:07:25',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 503,
+  responseTime: '14ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-14 09:07:35',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 503,
+  responseTime: '8ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-14 09:07:45',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/users/uploads-to-edit',
+  statusCode: 500,
+  responseTime: '20ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'dev-admin-user',
+  timestamp: '2025-11-14 09:16:57',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/users/uploads-to-edit',
+  statusCode: 500,
+  responseTime: '17ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'dev-admin-user',
+  timestamp: '2025-11-14 09:17:42',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/users/uploads-to-edit',
+  statusCode: 500,
+  responseTime: '3ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'dev-admin-user',
+  timestamp: '2025-11-14 09:17:48',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 503,
+  responseTime: '193ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-15 11:57:55',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 503,
+  responseTime: '16ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-15 11:58:20',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 503,
+  responseTime: '36ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 07:21:08',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/health',
+  statusCode: 503,
+  responseTime: '2ms',
+  userAgent: 'curl/8.7.1',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 07:21:13',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763239891310',
+  statusCode: 404,
+  responseTime: '9ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 07:21:31',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 07:21:32',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 503,
+  responseTime: '32ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 07:27:15',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 503,
+  responseTime: '4ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 07:27:40',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 503,
+  responseTime: '8ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 07:27:58',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/admin/stats',
+  statusCode: 500,
+  responseTime: '10353ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'dev-admin-user',
+  timestamp: '2025-11-16 07:42:30',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/admin/users',
+  statusCode: 500,
+  responseTime: '10040ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'dev-admin-user',
+  timestamp: '2025-11-16 07:42:30',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/admin/stats',
+  statusCode: 500,
+  responseTime: '10013ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'dev-admin-user',
+  timestamp: '2025-11-16 07:42:40',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/admin/users',
+  statusCode: 500,
+  responseTime: '10011ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'dev-admin-user',
+  timestamp: '2025-11-16 07:42:40',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/auth/me',
+  statusCode: 401,
+  responseTime: '42ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 17:43:13',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/auth/me',
+  statusCode: 401,
+  responseTime: '5ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 17:43:13',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/auth/me',
+  statusCode: 401,
+  responseTime: '7ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 20:29:57',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/auth/me',
+  statusCode: 401,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 20:29:57',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/auth/me',
+  statusCode: 401,
+  responseTime: '3ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 20:30:11',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/auth/me',
+  statusCode: 401,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 20:30:11',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763287410246',
+  statusCode: 404,
+  responseTime: '7ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 20:33:30',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 20:33:30',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 503,
+  responseTime: '7ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 20:34:02',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 503,
+  responseTime: '2ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 20:34:16',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/auth/login',
+  statusCode: 503,
+  responseTime: '5ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 20:36:57',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/?ide_webview_request_time=1763288249417',
+  statusCode: 404,
+  responseTime: '10ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 20:47:29',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/@vite/client',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-16 20:47:29',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'POST',
+  url: '/api/users/uploads-to-edit',
+  statusCode: 500,
+  responseTime: '11ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'dev-owner-admin',
+  timestamp: '2025-11-16 21:02:59',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/admin/users/stats',
+  statusCode: 404,
+  responseTime: '3ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-17 14:28:25',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/admin/users/stats',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-17 14:28:25',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/admin/users',
+  statusCode: 500,
+  responseTime: '10039ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'dev-owner-admin',
+  timestamp: '2025-11-17 14:28:35',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/admin/users',
+  statusCode: 500,
+  responseTime: '10010ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'dev-owner-admin',
+  timestamp: '2025-11-17 14:28:45',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/admin/dashboard-stats',
+  statusCode: 404,
+  responseTime: '10ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-17 14:30:45',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/admin/dashboard-stats',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-17 14:30:45',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/admin/dashboard-stats',
+  statusCode: 404,
+  responseTime: '2ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-17 14:30:47',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/admin/users/stats',
+  statusCode: 404,
+  responseTime: '1ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-17 14:43:09',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/admin/users/stats',
+  statusCode: 404,
+  responseTime: '0ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'anonymous',
+  timestamp: '2025-11-17 14:43:09',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/admin/users',
+  statusCode: 500,
+  responseTime: '10008ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'dev-owner-admin',
+  timestamp: '2025-11-17 14:43:19',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/admin/users',
+  statusCode: 500,
+  responseTime: '10006ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'dev-owner-admin',
+  timestamp: '2025-11-17 14:43:29',
+  level: 'error',
+  message: 'API Request Failed'
+}
+{
+  service: 'buzz-smile-saas',
+  environment: 'development',
+  category: 'api_request',
+  method: 'GET',
+  url: '/api/admin/videos/ready-to-edit',
+  statusCode: 500,
+  responseTime: '10020ms',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36',
+  ip: '::1',
+  userId: 'dev-owner-admin',
+  timestamp: '2025-11-17 14:48:39',
+  level: 'error',
+  message: 'API Request Failed'
+}

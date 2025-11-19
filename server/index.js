@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
+const jwt = require('jsonwebtoken');
 const MongoStore = require('connect-mongo');
 const ffmpeg = require('fluent-ffmpeg');
 const helmet = require('helmet');
@@ -216,8 +217,8 @@ const globalLimiter = rateLimit({
 });
 app.use(globalLimiter);
 
-app.use(express.json({ limit: '500mb' }));
-app.use(express.urlencoded({ extended: true, limit: '500mb' }));
+app.use(express.json({ limit: process.env.JSON_LIMIT || (process.env.NODE_ENV === 'production' ? '50mb' : '500mb') }));
+app.use(express.urlencoded({ extended: true, limit: process.env.JSON_LIMIT || (process.env.NODE_ENV === 'production' ? '50mb' : '500mb') }));
 
 // Enterprise middleware stack
 app.use(errorTrackingMiddleware.requestHandler);
@@ -286,6 +287,63 @@ app.use('/api/debug', require('./routes/debug'));
 app.use('/api/health', require('./routes/health'));
 app.use('/api/google-drive', require('./routes/googleDrive'));
 app.use('/api/social', require('./routes/social'));
+
+// Development-only admin login when database is unavailable
+if ((process.env.NODE_ENV || 'development') !== 'production') {
+  app.post('/api/auth/dev/admin-login', async (req, res) => {
+    try {
+      const mongoose = require('mongoose');
+      const dbUnavailable = mongoose.connection.readyState !== 1 && process.env.ALLOW_SERVER_WITHOUT_DB === 'true';
+      const { email, password } = req.body || {};
+
+      if (!dbUnavailable) {
+        return res.status(400).json({ message: 'Use normal /api/auth/login when database is connected' });
+      }
+
+      if (email === 'npkalyx@gmail.com' && password === 'NpkTemp!2025#Sm1le') {
+        const devUser = {
+          _id: 'dev-admin-user',
+          email: 'npkalyx@gmail.com',
+          name: 'Admin User',
+          businessName: 'Buzz Smile Media',
+          plan: 'free',
+          videoCount: 0,
+          maxVideos: 10,
+          role: 'admin',
+          profilePicture: null,
+          socialMedia: {},
+          linkedSocialAccounts: []
+        };
+        const token = jwt.sign(
+          { userId: devUser._id, devUser: true, user: devUser },
+          process.env.JWT_SECRET || 'dev-secret',
+          { expiresIn: '7d' }
+        );
+        return res.json({
+          message: 'Login successful (dev admin)',
+          token,
+          user: {
+            id: devUser._id,
+            email: devUser.email,
+            name: devUser.name,
+            businessName: devUser.businessName,
+            plan: devUser.plan,
+            videoCount: devUser.videoCount,
+            maxVideos: devUser.maxVideos,
+            role: devUser.role,
+            profilePicture: devUser.profilePicture,
+            socialMedia: devUser.socialMedia,
+            linkedSocialAccounts: devUser.linkedSocialAccounts
+          }
+        });
+      }
+
+      return res.status(400).json({ message: 'Invalid dev admin credentials' });
+    } catch (error) {
+      return res.status(500).json({ message: 'Server error during dev admin login' });
+    }
+  });
+}
 
 // 404 handler
 app.use('*', (req, res) => {

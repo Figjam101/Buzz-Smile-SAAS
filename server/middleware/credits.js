@@ -1,9 +1,13 @@
 const User = require('../models/User');
 const Video = require('../models/Video');
+const OFFLINE_MODE = process.env.ALLOW_SERVER_WITHOUT_DB === 'true' && process.env.NODE_ENV !== 'production';
 
 // Middleware to check if user has enough credits
 const checkCredits = async (req, res, next) => {
   try {
+    if (OFFLINE_MODE) {
+      return next();
+    }
     const userId = req.user.id;
     const user = await User.findById(userId);
 
@@ -80,6 +84,9 @@ const checkCredits = async (req, res, next) => {
 // Middleware to deduct credits after successful video processing
 const deductCredits = async (req, res, next) => {
   try {
+    if (OFFLINE_MODE) {
+      return next();
+    }
     const userId = req.user.id;
     const user = await User.findById(userId);
 

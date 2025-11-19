@@ -3,6 +3,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 
 const AuthContext = createContext();
+const MOCK_API = String(process.env.REACT_APP_MOCK_API).toLowerCase() === 'true';
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -22,9 +23,12 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Set base URL for all axios requests from env or same-origin
     const envBaseRaw = process.env.REACT_APP_API_URL || '';
-    const baseURL = (envBaseRaw || (typeof window !== 'undefined' ? window.location.origin : ''))
-      .replace(/\/$/, '');
-    axios.defaults.baseURL = baseURL;
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const baseCandidate = (envBaseRaw || origin).replace(/\/$/, '');
+    const devAdjusted = (!envBaseRaw && /localhost:3000$/.test(origin))
+      ? origin.replace(':3000', ':5002')
+      : baseCandidate;
+    axios.defaults.baseURL = devAdjusted;
     // Optional: surface configuration in console for quick diagnostics
     if (process.env.NODE_ENV !== 'production') {
       console.log('[AuthContext] axios baseURL set to:', axios.defaults.baseURL);
@@ -63,10 +67,26 @@ export const AuthProvider = ({ children }) => {
   // Check if user is authenticated on app load
   useEffect(() => {
     const checkAuth = async () => {
+      // In mock mode, skip network calls and treat as logged out
+      if (MOCK_API) {
+        // Auto-login as admin for preview if no token/user set
+        if (!token) {
+          const mockToken = 'mock-token';
+          const mockUser = { name: 'Preview Admin', email: 'admin@preview.local', role: 'admin' };
+          localStorage.setItem('token', mockToken);
+          setToken(mockToken);
+          setUser(mockUser);
+        }
+        setLoading(false);
+        return;
+      }
       if (token) {
         try {
           const response = await axios.get('/api/auth/me', {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: { 
+              Authorization: `Bearer ${token}`,
+              'x-bypass-cache': '1'
+            },
             // In dev, avoid sending credentials unless needed
             withCredentials: false
           });
@@ -90,6 +110,15 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = async (email, password) => {
+    if (MOCK_API) {
+      const mockUser = { name: 'Preview Admin', email, role: 'admin' };
+      const mockToken = 'mock-token';
+      localStorage.setItem('token', mockToken);
+      setToken(mockToken);
+      setUser(mockUser);
+      toast.success('Logged in (mock mode)');
+      return { success: true };
+    }
     try {
       const response = await axios.post('/api/auth/login', {
         email,
@@ -112,6 +141,16 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (name, email, password, businessName) => {
+    if (MOCK_API) {
+      // Simulate successful registration without server
+      const mockUser = { name, email, businessName };
+      const mockToken = 'mock-token';
+      localStorage.setItem('token', mockToken);
+      setToken(mockToken);
+      setUser(mockUser);
+      toast.success('Account created (mock mode)');
+      return { success: true };
+    }
     try {
       const response = await axios.post('/api/auth/register', {
         name,
@@ -144,6 +183,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   const updateProfile = async (profileData) => {
+    if (MOCK_API) {
+      // Update local user state without server
+      if (profileData && typeof profileData === 'object') {
+        setUser({ ...(user || {}), ...profileData });
+        toast.success('Profile updated (mock mode)');
+        return { success: true };
+      }
+    }
     try {
       // If profileData is already the updated user object, just update the state
       if (profileData && typeof profileData === 'object' && profileData.email) {
@@ -164,9 +211,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   const refreshUser = async () => {
+    if (MOCK_API) {
+      return { success: true };
+    }
     try {
       if (token) {
-        const response = await axios.get('/api/auth/me');
+        const response = await axios.get('/api/auth/me', {
+          headers: { 'x-bypass-cache': '1' }
+        });
         setUser(response.data.user);
         return { success: true };
       }

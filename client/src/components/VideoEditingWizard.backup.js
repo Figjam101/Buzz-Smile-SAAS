@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ChevronRight, ChevronLeft, Play, Upload, Wand2 } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, Wand2 } from 'lucide-react';
 
 const VideoEditingWizard = ({ isOpen, videoFiles, onClose, onProcessVideo }) => {
   

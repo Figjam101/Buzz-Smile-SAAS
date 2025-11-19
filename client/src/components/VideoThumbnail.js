@@ -22,6 +22,8 @@ const VideoThumbnail = ({
   const [showFallback, setShowFallback] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isInView, setIsInView] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [queued, setQueued] = useState(false);
   const observerRef = useRef(null);
 
   const thumbnailRef = useCallback(node => {
@@ -57,7 +59,8 @@ const VideoThumbnail = ({
           let resolvedBase = base;
           if (!resolvedBase && typeof window !== 'undefined') {
             const origin = window.location.origin;
-            resolvedBase = origin.includes('localhost:3000') ? 'http://localhost:5001' : origin;
+            // Avoid hard-coded dev ports; use current origin when env base is absent
+            resolvedBase = origin;
           }
           const thumbnailUrl = `${resolvedBase}/api/videos/${video._id}/thumbnail`;
           const response = await fetch(thumbnailUrl, {
@@ -89,6 +92,17 @@ const VideoThumbnail = ({
 
     generateThumbnail();
   }, [video, isInView]);
+
+  // Revoke any previously created blob URL when it is replaced or on unmount
+  useEffect(() => {
+    return () => {
+      try {
+        if (thumbnailSrc && /^blob:/.test(thumbnailSrc)) {
+          URL.revokeObjectURL(thumbnailSrc);
+        }
+      } catch (_) {}
+    };
+  }, [thumbnailSrc]);
 
   // Hover state not used; rely on CSS group-hover effects
 
@@ -164,12 +178,33 @@ const VideoThumbnail = ({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onProcess(video);
+                if (typeof onProcess === 'function') {
+                  onProcess(video);
+                  return;
+                }
+                if (isProcessing || queued) return;
+                setIsProcessing(true);
+                const token = localStorage.getItem('token');
+                const rawBase = process.env.REACT_APP_API_URL || axios.defaults.baseURL || '';
+                const trimmed = (rawBase || '').replace(/\/$/, '');
+                const base = /\/api$/.test(trimmed) ? trimmed.replace(/\/api$/, '') : trimmed;
+                const originFallback = (typeof window !== 'undefined') ? window.location.origin : '';
+                const devOverride = originFallback.includes('localhost:3000') ? 'http://localhost:5000' : originFallback;
+                const apiBase = base || devOverride;
+                axios.post(`${apiBase}/api/videos/${video._id}/process`, { editingOptions: {} }, {
+                  headers: { Authorization: `Bearer ${token}` }
+                })
+                .then(() => {
+                  setQueued(true);
+                })
+                .catch(() => {})
+                .finally(() => setIsProcessing(false));
               }}
-              className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors"
-              title="Process now"
+              className="px-2 py-1 bg-white/80 text-gray-800 rounded-full border border-gray-300 hover:bg-white transition-colors flex items-center gap-1 shadow-sm"
+            title="Process"
             >
-              <Wand2 className="w-4 h-4" />
+              <Wand2 className="w-4 h-4 text-gray-700" />
+              <span className="text-xs font-medium">{queued ? 'Queued' : isProcessing ? 'Processing…' : 'Process'}</span>
             </button>
           )}
           {onSchedule && video.status === 'completed' && (

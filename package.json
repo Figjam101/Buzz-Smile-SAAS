@@ -4,6 +4,7 @@
   "description": "SaaS platform for video upload and API-based editing",
   "main": "server/index.js",
   "scripts": {
+    "start": "node index.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd server && npm run dev",
     "client": "cd client && npm start",
@@ -14,7 +15,8 @@
     "build:vercel": "npx --yes vercel build --prod",
     "deploy:vercel": "npx --yes vercel deploy --prebuilt --prod --yes",
     "deploy:vercel:token": "npx --yes vercel deploy --prebuilt --prod --yes --token \"$VERCEL_TOKEN\" --scope \"$VERCEL_SCOPE\"",
-    "frontend:deploy": "npm run link:vercel && npm run pull:vercel && npm run build:vercel && npm run deploy:vercel"
+    "frontend:deploy": "npm run link:vercel && npm run pull:vercel && npm run build:vercel && npm run deploy:vercel",
+    "auto:deploy": "bash scripts/auto-deploy.sh"
   },
   "keywords": ["saas", "video", "editing", "capcut", "api"],
   "author": "",

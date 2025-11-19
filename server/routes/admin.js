@@ -5,6 +5,8 @@ const Video = require('../models/Video');
 const { auth } = require('../middleware/auth');
 const backupService = require('../services/backupService');
 const { addCredits } = require('../middleware/credits');
+const path = require('path');
+const fs = require('fs');
 
 // Middleware to check admin privileges
 const requireAdmin = (req, res, next) => {
@@ -85,6 +87,68 @@ router.get('/videos', auth, requireAdmin, async (req, res) => {
   } catch (error) {
     console.error('Error fetching videos:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+/**
+ * @route   GET /api/admin/videos/ready-to-edit
+ * @desc    List users who have requested video processing (ready for manual editing)
+ * @access  Admin
+ */
+router.get('/videos/ready-to-edit', auth, requireAdmin, async (req, res) => {
+  try {
+    // Consider users with videos in queued or processing state as "asked to be processed"
+    const statuses = ['queued', 'processing'];
+    const vids = await Video.find({ status: { $in: statuses } })
+      .populate('owner', 'name email')
+      .lean();
+
+    const byUser = new Map();
+    for (const v of vids) {
+      const uid = v.owner?._id?.toString();
+      if (!uid) continue;
+      if (!byUser.has(uid)) {
+        byUser.set(uid, { userId: uid, name: v.owner?.name, email: v.owner?.email, videoCount: 0, sampleTitles: [] });
+      }
+      const entry = byUser.get(uid);
+      entry.videoCount += 1;
+      if (entry.sampleTitles.length < 5 && v.title) entry.sampleTitles.push(v.title);
+    }
+
+    res.json({ users: Array.from(byUser.values()) });
+  } catch (error) {
+    console.error('Error fetching ready-to-edit users:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+/**
+ * @route   GET /api/admin/uploads-to-edit/user/:userId
+ * @desc    List files in the user's uploads-to-edit folder
+ * @access  Admin
+ */
+router.get('/uploads-to-edit/user/:userId', auth, requireAdmin, async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const baseDir = path.join(__dirname, '../uploads/user_uploads_to_edit', userId);
+    if (!fs.existsSync(baseDir)) {
+      return res.json({ files: [] });
+    }
+    const entries = fs.readdirSync(baseDir);
+    const files = entries.map(name => {
+      const full = path.join(baseDir, name);
+      const stat = fs.statSync(full);
+      return {
+        name,
+        size: stat.size,
+        modified: stat.mtime,
+        path: `/uploads/user_uploads_to_edit/${userId}/${name}`
+      };
+    });
+    res.json({ files });
+  } catch (error) {
+    console.error('Error listing uploads-to-edit files:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

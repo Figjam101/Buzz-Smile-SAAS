@@ -47,6 +47,22 @@
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0.6), rgba(0, 0, 0, 0.12));
 }
 
+/* 3D right edge for sidebar to match header style */
+.edge-right-3d {
+  position: relative;
+  box-shadow: 8px 0 24px rgba(0, 0, 0, 0.08);
+}
+.edge-right-3d::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 2px;
+  pointer-events: none;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.6), rgba(0, 0, 0, 0.12));
+}
+
 /* Header nav pill buttons with dotted outline and subtle 3D */
 .nav-pill {
   border-radius: 9999px;

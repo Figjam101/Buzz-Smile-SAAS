@@ -101,23 +101,15 @@ const UserManagement = () => {
   const fetchUserStats = async () => {
     try {
       const token = localStorage.getItem('token');
-      console.log('Fetching user stats with token:', token ? 'Token exists' : 'No token');
-      
-      const response = await fetch(buildApiUrl('/admin/stats'), {
+      const response = await fetch(buildApiUrl('/admin/users/stats'), {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       
-      console.log('User stats response status:', response.status);
-      
       if (response.ok) {
         const data = await response.json();
-        console.log('User stats data received:', data);
         setUserStats(data);
-      } else {
-        const errorText = await response.text();
-        console.error('User stats API error:', response.status, errorText);
       }
     } catch (error) {
       console.error('Error fetching user stats:', error);
@@ -138,12 +130,14 @@ const UserManagement = () => {
       
       if (response.ok) {
         fetchUsers();
-        fetchUserStats();
+        toast.success('User role updated successfully');
       } else {
-        setError('Failed to update user role');
+        const errorData = await response.json();
+        setError(errorData.message || 'Failed to update user role');
       }
     } catch (error) {
-      setError('Error updating user role: ' + error.message);
+      console.error('Error updating user role:', error);
+      setError('Failed to update user role');
     }
   };
 
@@ -161,12 +155,14 @@ const UserManagement = () => {
       
       if (response.ok) {
         fetchUsers();
-        fetchUserStats();
+        toast.success(`User ${isActive ? 'activated' : 'deactivated'} successfully`);
       } else {
-        setError('Failed to update user status');
+        const errorData = await response.json();
+        setError(errorData.message || 'Failed to update user status');
       }
     } catch (error) {
-      setError('Error updating user status: ' + error.message);
+      console.error('Error updating user status:', error);
+      setError('Failed to update user status');
     }
   };
 
@@ -187,16 +183,23 @@ const UserManagement = () => {
       if (response.ok) {
         fetchUsers();
         fetchUserStats();
+        toast.success('User deleted successfully');
       } else {
-        setError('Failed to delete user');
+        const errorData = await response.json();
+        setError(errorData.message || 'Failed to delete user');
       }
     } catch (error) {
-      setError('Error deleting user: ' + error.message);
+      console.error('Error deleting user:', error);
+      setError('Failed to delete user');
     }
   };
 
   const bulkUpdateUsers = async (action) => {
     if (selectedUsers.length === 0) return;
+
+    if (!window.confirm(`Are you sure you want to ${action} ${selectedUsers.length} user(s)?`)) {
+      return;
+    }
 
     try {
       const token = localStorage.getItem('token');
@@ -293,6 +296,88 @@ const UserManagement = () => {
     setCreditsError('');
   };
 
+  const openChangePassword = (user) => {
+    handleModalOpen(user);
+    setFocusPassword(true);
+    setTimeout(() => {
+      passwordInputRef.current?.focus();
+    }, 0);
+  };
+
+  // Replace old addCredits prompt-based function with modal submit handler
+  const submitAddCredits = async (e) => {
+    e.preventDefault();
+    const amountNum = parseFloat(creditAmount);
+    if (Number.isNaN(amountNum) || amountNum <= 0) {
+      setCreditsError('Please enter a valid positive number.');
+      return;
+    }
+    if (!creditTarget?._id) {
+      setCreditsError('No user selected.');
+      return;
+    }
+    try {
+      setCreditsLoading(true);
+      setCreditsError('');
+      const token = localStorage.getItem('token');
+      const url = buildApiUrl(`/admin/users/${creditTarget._id}/credits`);
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ amount: amountNum })
+      });
+      if (response.ok) {
+        const data = await response.json().catch(() => ({}));
+        handleCreditsClose();
+        // Success notification with amount and (optional) new balance
+        const newBalance = data?.user?.credits?.balance;
+        const targetEmail = data?.user?.email || creditTarget?.email;
+        const msg = newBalance !== undefined
+          ? `${amountNum} credits added to ${targetEmail}. New balance: ${newBalance}.`
+          : `${amountNum} credits added to ${targetEmail}.`;
+        toast.success(msg);
+        fetchUsers();
+      } else {
+        const err = await response.json().catch(() => ({}));
+        setCreditsError(err.message || 'Failed to add credits');
+      }
+    } catch (error) {
+      console.error('Error adding credits:', error);
+      setCreditsError('Failed to add credits');
+    } finally {
+      setCreditsLoading(false);
+    }
+  };
+
+  const resetUserPassword = async (userId) => {
+    if (!window.confirm('Are you sure you want to reset this user\'s password? They will receive an email with a new temporary password.')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(buildApiUrl(`/admin/users/${userId}/reset-password`), {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        alert('Password reset email sent successfully');
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || 'Failed to reset password');
+      }
+    } catch (error) {
+      console.error('Error resetting password:', error);
+      setError('Failed to reset password');
+    }
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     
@@ -358,91 +443,6 @@ const UserManagement = () => {
     }
   };
 
-  const resetUserPassword = async (userId) => {
-    if (!window.confirm('Are you sure you want to reset this user\'s password? They will receive an email with a new temporary password.')) {
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(buildApiUrl(`/admin/users/${userId}/reset-password`), {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        alert('Password reset email sent successfully');
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Failed to reset password');
-      }
-    } catch (error) {
-      console.error('Error resetting password:', error);
-      setError('Failed to reset password');
-    }
-  };
-
-
-
-  const openChangePassword = (user) => {
-    handleModalOpen(user);
-    setFocusPassword(true);
-    setTimeout(() => {
-      passwordInputRef.current?.focus();
-    }, 0);
-  };
-
-  // Replace old addCredits prompt-based function with modal submit handler
-  const submitAddCredits = async (e) => {
-    e.preventDefault();
-    const amountNum = parseFloat(creditAmount);
-    if (Number.isNaN(amountNum) || amountNum <= 0) {
-      setCreditsError('Please enter a valid positive number.');
-      return;
-    }
-    if (!creditTarget?._id) {
-      setCreditsError('No user selected.');
-      return;
-    }
-    try {
-      setCreditsLoading(true);
-      setCreditsError('');
-      const token = localStorage.getItem('token');
-      const url = buildApiUrl(`/admin/users/${creditTarget._id}/credits`);
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ amount: amountNum })
-      });
-      if (response.ok) {
-        const data = await response.json().catch(() => ({}));
-        handleCreditsClose();
-        // Success notification with amount and (optional) new balance
-        const newBalance = data?.user?.credits?.balance;
-        const targetEmail = data?.user?.email || creditTarget?.email;
-        const msg = newBalance !== undefined
-          ? `${amountNum} credits added to ${targetEmail}. New balance: ${newBalance}.`
-          : `${amountNum} credits added to ${targetEmail}.`;
-        toast.success(msg);
-        fetchUsers();
-      } else {
-        const err = await response.json().catch(() => ({}));
-        setCreditsError(err.message || 'Failed to add credits');
-      }
-    } catch (error) {
-      console.error('Error adding credits:', error);
-      setCreditsError('Failed to add credits');
-    } finally {
-      setCreditsLoading(false);
-    }
-  };
-
-
   // Filter and search users
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -463,20 +463,20 @@ const UserManagement = () => {
 
   const getRoleColor = (role) => {
     switch (role) {
-      case 'admin': return 'bg-red-100 text-red-800';
-      case 'moderator': return 'bg-yellow-100 text-yellow-800';
-      case 'premium': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'admin': return 'bg-red-500/20 text-red-300';
+      case 'moderator': return 'bg-yellow-500/20 text-yellow-300';
+      case 'premium': return 'bg-purple-500/20 text-purple-300';
+      default: return 'bg-white/10 text-white/70';
     }
   };
 
   const getStatusColor = (isActive) => {
-    return isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+    return isActive ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300';
   };
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="py-4">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
@@ -486,23 +486,23 @@ const UserManagement = () => {
 
   return (
     <> 
-      <div className="max-w-6xl mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
+      <div className="px-0 py-4">
+      <div className="flex justify-between items-center mb-2">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
-          <p className="text-gray-600">Manage users, roles, and permissions</p>
+          <h2 className="text-xl font-semibold text-white">User Management</h2>
+          <p className="text-white/70">Manage users, roles, and permissions</p>
         </div>
         <div className="flex space-x-3">
           <button
             onClick={exportUsers}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center space-x-2"
+            className="bg-green-600 text-white px-3 py-1.5 rounded-lg hover:bg-green-700 flex items-center space-x-2"
           >
             <span>📊</span>
             <span>Export</span>
           </button>
           <button
             onClick={() => handleModalOpen()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center space-x-2"
+            className="bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 flex items-center space-x-2"
           >
             <span>➕</span>
             <span>Add User</span>
@@ -512,73 +512,71 @@ const UserManagement = () => {
 
       {/* Error Alert */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-4">
           <div className="flex items-center space-x-2">
-            <span className="text-red-500">❌</span>
-            <p className="text-red-700">{error}</p>
+            <span className="text-red-300">❌</span>
+            <p className="text-red-300 text-sm">{error}</p>
           </div>
         </div>
       )}
 
-      {/* User Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white rounded-lg shadow-sm border p-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-2 mb-2">
+        <div className="bg-white/5 rounded-lg shadow-sm border border-white/10 p-2">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Users</p>
-              <p className="text-2xl font-bold text-gray-900">{userStats.users || 0}</p>
+              <p className="text-xs font-medium text-white/80">Total Users</p>
+              <p className="text-xl font-bold text-white">{userStats.users || 0}</p>
             </div>
             <span className="text-3xl">👥</span>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border p-6">
+        <div className="bg-white/5 rounded-lg shadow-sm border border-white/10 p-2">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Videos</p>
-              <p className="text-2xl font-bold text-green-600">{userStats.videos || 0}</p>
+              <p className="text-xs font-medium text-white/80">Total Videos</p>
+              <p className="text-xl font-bold text-green-400">{userStats.videos || 0}</p>
             </div>
             <span className="text-3xl">🎥</span>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border p-6">
+        <div className="bg-white/5 rounded-lg shadow-sm border border-white/10 p-2">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Admin Users</p>
-              <p className="text-2xl font-bold text-purple-600">{userStats.admins || 0}</p>
+              <p className="text-xs font-medium text-white/80">Admin Users</p>
+              <p className="text-xl font-bold text-purple-400">{userStats.admins || 0}</p>
             </div>
             <span className="text-3xl">⭐</span>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border p-6">
+        <div className="bg-white/5 rounded-lg shadow-sm border border-white/10 p-2">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">System Status</p>
-              <p className="text-2xl font-bold text-blue-600">Online</p>
+              <p className="text-xs font-medium text-white/80">System Status</p>
+              <p className="text-xl font-bold text-blue-400">Online</p>
             </div>
             <span className="text-3xl">📈</span>
           </div>
         </div>
       </div>
 
-      {/* Filters and Search */}
-      <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+      <div className="bg-white/5 rounded-lg shadow-sm border border-white/10 p-2 mb-2">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-2 mb-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+            <label className="block text-xs font-medium text-white/80 mb-1">Search</label>
             <input
               type="text"
               placeholder="Search by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+            <label className="block text-xs font-medium text-white/80 mb-1">Role</label>
             <select
               value={filterRole}
               onChange={(e) => setFilterRole(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Roles</option>
               <option value="user">User</option>
@@ -588,11 +586,11 @@ const UserManagement = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+            <label className="block text-xs font-medium text-white/80 mb-1">Status</label>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>
@@ -615,8 +613,8 @@ const UserManagement = () => {
 
         {/* Bulk Actions */}
         {selectedUsers.length > 0 && (
-          <div className="flex items-center space-x-4 p-3 bg-blue-50 rounded-lg">
-            <span className="text-sm text-blue-700">
+          <div className="flex items-center justify-between bg-blue-500/10 p-3 rounded-lg">
+            <span className="text-sm text-blue-300">
               {selectedUsers.length} user(s) selected
             </span>
             <div className="flex space-x-2">
@@ -643,13 +641,12 @@ const UserManagement = () => {
         )}
       </div>
 
-      {/* Users Table */}
-      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+      <div className="bg-white/5 rounded-lg shadow-sm border border-white/10 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-white/10">
+            <thead className="bg-white/10">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                   <input
                     type="checkbox"
                     onChange={(e) => {
@@ -662,33 +659,33 @@ const UserManagement = () => {
                     checked={selectedUsers.length === currentUsers.length && currentUsers.length > 0}
                   />
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                   User
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                   Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                   Credits
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                   Joined
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                   Last Active
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-transparent divide-y divide-white/10">
               {currentUsers.map((user) => (
-                <tr key={user._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
+                <tr key={user._id} className="hover:bg-white/10">
+                  <td className="px-3 py-2 whitespace-nowrap">
                     <input
                       type="checkbox"
                       checked={selectedUsers.includes(user._id)}
@@ -701,22 +698,22 @@ const UserManagement = () => {
                       }}
                     />
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-2 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                          <span className="text-sm font-medium text-gray-700">
+                        <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center">
+                          <span className="text-sm font-medium text-white/70">
                             {user.name?.charAt(0)?.toUpperCase() || '?'}
                           </span>
                         </div>
                       </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{user.name || 'N/A'}</div>
-                        <div className="text-sm text-gray-500">{user.email}</div>
+                      <div className="ml-3">
+                        <div className="text-sm font-medium text-white">{user.name || 'N/A'}</div>
+                        <div className="text-sm text-white/70">{user.email}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-2 whitespace-nowrap">
                     <select
                       value={user.role}
                       onChange={(e) => updateUserRole(user._id, e.target.value)}
@@ -728,12 +725,12 @@ const UserManagement = () => {
                       <option value="admin">Admin</option>
                     </select>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                  <td className="px-3 py-2 whitespace-nowrap">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-300">
                       {typeof user?.credits?.balance === 'number' ? user.credits.balance : 0}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-2 whitespace-nowrap">
                     <button
                       onClick={() => updateUserStatus(user._id, !user.isActive)}
                       className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(user.isActive)}`}
@@ -741,20 +738,20 @@ const UserManagement = () => {
                       {user.isActive ? 'Active' : 'Inactive'}
                     </button>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-3 py-2 whitespace-nowrap text-sm text-white/70">
                     {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-3 py-2 whitespace-nowrap text-sm text-white/70">
                     {user.lastActive ? new Date(user.lastActive).toLocaleDateString() : 'Never'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <td className="px-3 py-2 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
                       <button
                         onClick={() => {
                           setEditingUser(user);
                           setShowUserModal(true);
                         }}
-                        className="text-blue-600 hover:text-blue-900 flex items-center space-x-1"
+                        className="text-blue-400 hover:text-blue-300 flex items-center space-x-1"
                         title="Edit user"
                       >
                         <span>✏️</span>
@@ -762,7 +759,7 @@ const UserManagement = () => {
                       </button>
                       <button
                         onClick={() => openChangePassword(user)}
-                        className="text-indigo-600 hover:text-indigo-900 flex items-center space-x-1"
+                        className="text-indigo-400 hover:text-indigo-300 flex items-center space-x-1"
                         title="Change password"
                       >
                         <span>🔒</span>
@@ -770,7 +767,7 @@ const UserManagement = () => {
                       </button>
                       <button
                         onClick={() => handleCreditsOpen(user)}
-                        className="text-amber-600 hover:text-amber-900 flex items-center space-x-1"
+                        className="text-amber-400 hover:text-amber-300 flex items-center space-x-1"
                         title="Add credits"
                       >
                         <span>🪙</span>
@@ -778,7 +775,7 @@ const UserManagement = () => {
                       </button>
                       <button
                         onClick={() => resetUserPassword(user._id)}
-                        className="text-yellow-600 hover:text-yellow-900 flex items-center space-x-1"
+                        className="text-yellow-400 hover:text-yellow-300 flex items-center space-x-1"
                         title="Reset password"
                       >
                         <span>♻️</span>
@@ -786,7 +783,7 @@ const UserManagement = () => {
                       </button>
                       <button
                         onClick={() => deleteUser(user._id)}
-                        className="text-red-600 hover:text-red-900 flex items-center space-x-1"
+                        className="text-red-400 hover:text-red-300 flex items-center space-x-1"
                         title="Delete user"
                       >
                         <span>🗑️</span>
@@ -802,26 +799,26 @@ const UserManagement = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200">
+          <div className="bg-white/5 px-3 py-2 flex items-center justify-between border-t border-white/10 text-white">
             <div className="flex-1 flex justify-between sm:hidden">
               <button
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                className="relative inline-flex items-center px-4 py-2 border border-white/20 text-sm font-medium rounded-md text-white bg-white/5 hover:bg-white/10 disabled:opacity-50"
               >
                 Previous
               </button>
               <button
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
-                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                className="ml-3 relative inline-flex items-center px-4 py-2 border border-white/20 text-sm font-medium rounded-md text-white bg-white/5 hover:bg-white/10 disabled:opacity-50"
               >
                 Next
               </button>
             </div>
             <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-white/70">
                   Showing <span className="font-medium">{indexOfFirstUser + 1}</span> to{' '}
                   <span className="font-medium">{Math.min(indexOfLastUser, filteredUsers.length)}</span> of{' '}
                   <span className="font-medium">{filteredUsers.length}</span> results
@@ -835,8 +832,8 @@ const UserManagement = () => {
                       onClick={() => setCurrentPage(page)}
                       className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                         page === currentPage
-                          ? 'z-10 bg-blue-500 border-blue-500 text-blue-600'
-                          : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                          ? 'z-10 bg-blue-500/20 border-blue-500 text-blue-300'
+                          : 'bg-white/5 border-white/20 text-white/70 hover:bg-white/10'
                       }`}
                     >
                       {page}
@@ -852,42 +849,42 @@ const UserManagement = () => {
       {/* Empty State */}
       {filteredUsers.length === 0 && (
         <div className="text-center py-12">
-          <span className="text-6xl">👥</span>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No users found</h3>
-          <p className="mt-1 text-sm text-gray-500">
+          <span className="text-white/50 text-6xl">👥</span>
+          <h3 className="mt-2 text-sm font-semibold text-white">No users found</h3>
+          <p className="mt-1 text-sm text-white/70">
             {searchTerm || filterRole !== 'all' || filterStatus !== 'all'
               ? 'Try adjusting your search or filter criteria.'
               : 'Get started by adding your first user.'}
           </p>
         </div>
       )}
-    </div>
+      </div>
 
       {showCreditsModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={handleCreditsClose}></div>
-          <div className="relative w-full max-w-md mx-auto px-6 py-5 rounded-2xl border border-white/20 shadow-xl backdrop-blur-xl bg-white/10">
+          <div className="relative w-full max-w-md mx-auto px-4 py-4 rounded-2xl border border-white/20 shadow-xl backdrop-blur-xl bg-white/10 text-white">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <span className="text-amber-600 text-xl">🪙</span>
-                <h3 className="text-lg font-semibold text-gray-900">Add Credits</h3>
+                <h3 className="text-lg font-semibold text-white">Add Credits</h3>
               </div>
               <button onClick={handleCreditsClose} className="p-2 rounded-full hover:bg-white/20" aria-label="Close">✕</button>
             </div>
-            <p className="text-sm text-gray-700 mb-4">Add credits to <span className="font-medium">{creditTarget?.email}</span></p>
+            <p className="text-sm text-white/70 mb-4">Add credits to <span className="font-medium">{creditTarget?.email}</span></p>
             {creditsError && (
-              <div className="mb-3 bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2 text-sm">{creditsError}</div>
+              <div className="mb-3 bg-red-500/10 border border-red-500/30 text-red-300 rounded-lg px-3 py-2 text-sm">{creditsError}</div>
             )}
             <form onSubmit={submitAddCredits} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
-                <div className="flex items-center gap-2 bg-white/30 border border-white/30 rounded-lg px-3 py-2">
+                <label className="block text-sm font-medium text-white/80 mb-1">Amount</label>
+                <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-lg px-3 py-2">
                   <span className="text-amber-600">🪙</span>
-                  <input type="number" min="1" step="1" value={creditAmount} onChange={(e) => setCreditAmount(e.target.value)} placeholder="Enter credits, e.g., 10" className="w-full bg-transparent outline-none placeholder-gray-500" />
+                  <input type="number" min="1" step="1" value={creditAmount} onChange={(e) => setCreditAmount(e.target.value)} placeholder="Enter credits, e.g., 10" className="w-full bg-transparent outline-none placeholder-white/50 text-white" />
                 </div>
               </div>
               <div className="flex justify-end gap-3">
-                <button type="button" onClick={handleCreditsClose} className="px-4 py-2 rounded-lg bg-white/30 hover:bg-white/40 text-gray-800">Cancel</button>
+                <button type="button" onClick={handleCreditsClose} className="px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 text-white">Cancel</button>
                 <button type="submit" disabled={creditsLoading} className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60">{creditsLoading ? 'Adding…' : 'Add Credits'}</button>
               </div>
             </form>
@@ -898,54 +895,65 @@ const UserManagement = () => {
       {showUserModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={handleModalClose}></div>
-          <div className="relative w-full max-w-lg mx-auto px-6 py-5 rounded-2xl border border-white/20 shadow-xl backdrop-blur-xl bg-white/10">
+          <div className="relative w-full max-w-md mx-auto px-4 py-4 rounded-2xl border border-white/20 shadow-xl backdrop-blur-xl bg-white/10 text-white">
             <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <span className="text-blue-600 text-xl">👤</span>
-                <h3 className="text-lg font-semibold text-gray-900">{editingUser ? 'Edit User' : 'Add User'}</h3>
-              </div>
+              <h3 className="text-lg font-semibold text-white">{editingUser ? 'Edit User' : 'Add New User'}</h3>
               <button onClick={handleModalClose} className="p-2 rounded-full hover:bg-white/20" aria-label="Close">✕</button>
             </div>
             {error && (
-              <div className="mb-3 bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2 text-sm">{error}</div>
+              <div className="mb-3 bg-red-500/10 border border-red-500/30 text-red-300 rounded-lg px-3 py-2 text-sm">{error}</div>
             )}
             <form onSubmit={handleFormSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="Full name" className="w-full bg-white/30 border border-white/30 rounded-lg px-3 py-2 outline-none placeholder-gray-500" />
+                <label className="block text-sm font-medium text-white/80 mb-1">Name</label>
+                <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full px-3 py-2 border border-white/20 rounded-lg bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} placeholder="email@example.com" className="w-full bg-white/30 border border-white/30 rounded-lg px-3 py-2 outline-none placeholder-gray-500" />
+                <label className="block text-sm font-medium text-white/80 mb-1">Email</label>
+                <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full px-3 py-2 border border-white/20 rounded-lg bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                  <select value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="w-full bg-white/30 border border-white/30 rounded-lg px-3 py-2 outline-none">
-                    <option value="user">User</option>
-                    <option value="premium">Premium</option>
-                    <option value="moderator">Moderator</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                </div>
-                <div className="flex items-center gap-3">
-                  <input id="isActive" type="checkbox" checked={formData.isActive} onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })} />
-                  <label htmlFor="isActive" className="text-sm text-gray-700">Active</label>
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-white/80 mb-1">Role</label>
+                <select value={formData.role} onChange={(e) => setFormData({...formData, role: e.target.value})} className="w-full px-3 py-2 border border-white/20 rounded-lg bg-white/5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option value="user">User</option>
+                  <option value="premium">Premium</option>
+                  <option value="moderator">Moderator</option>
+                  <option value="admin">Admin</option>
+                </select>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                  <input ref={passwordInputRef} type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} placeholder="Optional" className="w-full bg-white/30 border border-white/30 rounded-lg px-3 py-2 outline-none placeholder-gray-500" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
-                  <input type="password" value={formData.confirmPassword} onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })} placeholder="Optional" className="w-full bg-white/30 border border-white/30 rounded-lg px-3 py-2 outline-none placeholder-gray-500" />
-                </div>
+              <div>
+                <label className="flex items-center">
+                  <input type="checkbox" checked={formData.isActive} onChange={(e) => setFormData({...formData, isActive: e.target.checked})} className="rounded border-white/20 text-blue-500 focus:ring-blue-500 bg-white/5" />
+                  <span className="ml-2 text-sm text-white/80">Active</span>
+                </label>
               </div>
+              {editingUser && (
+                <div>
+                  <label className="block text-sm font-medium text-white/80 mb-1">New Password (leave blank to keep current)</label>
+                  <input type="password" ref={passwordInputRef} value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} placeholder="Enter new password" className="w-full px-3 py-2 border border-white/20 rounded-lg bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                </div>
+              )}
+              {editingUser && formData.password && (
+                <div>
+                  <label className="block text-sm font-medium text-white/80 mb-1">Confirm New Password</label>
+                  <input type="password" value={formData.confirmPassword} onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})} placeholder="Confirm new password" className="w-full px-3 py-2 border border-white/20 rounded-lg bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                </div>
+              )}
+              {!editingUser && (
+                <div>
+                  <label className="block text-sm font-medium text-white/80 mb-1">Password</label>
+                  <input type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} className="w-full px-3 py-2 border border-white/20 rounded-lg bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
+                </div>
+              )}
+              {!editingUser && (
+                <div>
+                  <label className="block text-sm font-medium text-white/80 mb-1">Confirm Password</label>
+                  <input type="password" value={formData.confirmPassword} onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})} className="w-full px-3 py-2 border border-white/20 rounded-lg bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
+                </div>
+              )}
               <div className="flex justify-end gap-3">
-                <button type="button" onClick={handleModalClose} className="px-4 py-2 rounded-lg bg-white/30 hover:bg-white/40 text-gray-800">Cancel</button>
-                <button type="submit" disabled={modalLoading} className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60">{editingUser ? (modalLoading ? 'Saving…' : 'Save') : (modalLoading ? 'Creating…' : 'Create')}</button>
+                <button type="button" onClick={handleModalClose} className="px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 text-white">Cancel</button>
+                <button type="submit" disabled={modalLoading} className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60">{modalLoading ? 'Saving…' : (editingUser ? 'Update User' : 'Create User')}</button>
               </div>
             </form>
           </div>

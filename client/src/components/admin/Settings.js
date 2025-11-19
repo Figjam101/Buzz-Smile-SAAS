@@ -191,7 +191,7 @@ const Settings = () => {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-6xl mx-auto px-6 py-4">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
@@ -200,26 +200,26 @@ const Settings = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="max-w-6xl mx-auto px-6 py-4">
+      <div className="flex justify-between items-center mb-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">System Settings</h2>
-          <p className="text-gray-600">Configure system thresholds, preferences, and integrations</p>
+          <h2 className="text-xl font-semibold text-white">System Settings</h2>
+          <p className="text-white/70">Configure system thresholds, preferences, and integrations</p>
         </div>
-        <div className="flex space-x-3">
+        <div className="flex space-x-2">
           <button
             onClick={resetSettings}
-            className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+            className="bg-white/10 text-white px-3 py-1.5 rounded-lg hover:bg-white/20 border border-white/20"
           >
             Reset to Defaults
           </button>
           <button
             onClick={saveSettings}
             disabled={!hasChanges || saving}
-            className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
+            className={`px-3 py-1.5 rounded-lg flex items-center space-x-2 ${
               hasChanges && !saving
                 ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-white/10 text-white/50 cursor-not-allowed border border-white/10'
             }`}
           >
             {saving && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>}
@@ -230,45 +230,45 @@ const Settings = () => {
 
       {/* Success/Error Messages */}
       {success && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+        <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 mb-4 text-green-300">
           <div className="flex items-center space-x-2">
-            <span className="text-green-500">✅</span>
-            <p className="text-green-700">{success}</p>
+            <span className="text-green-400">✅</span>
+            <p>{success}</p>
           </div>
         </div>
       )}
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-4 text-red-300">
           <div className="flex items-center space-x-2">
-            <span className="text-red-500">❌</span>
-            <p className="text-red-700">{error}</p>
+            <span className="text-red-400">❌</span>
+            <p>{error}</p>
           </div>
         </div>
       )}
 
       {/* Changes Indicator */}
       {hasChanges && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 mb-4 text-yellow-300">
           <div className="flex items-center space-x-2">
-            <span className="text-yellow-500">⚠️</span>
-            <p className="text-yellow-700">You have unsaved changes. Don't forget to save!</p>
+            <span className="text-yellow-400">⚠️</span>
+            <p>You have unsaved changes. Don't forget to save!</p>
           </div>
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+      <div className="rounded-lg shadow-sm border border-white/10 bg-white/5 overflow-hidden">
         {/* Tab Navigation */}
-        <div className="border-b border-gray-200">
-          <nav className="flex space-x-8 px-6">
+        <div className="border-b border-white/10">
+          <nav className="flex flex-wrap gap-3 px-4 py-1.5">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
+                className={`py-2 px-3 rounded-md font-medium text-sm flex items-center space-x-2 ${
                   activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-white/80 hover:bg-white/10'
                 }`}
               >
                 <span>{tab.icon}</span>
@@ -279,104 +279,104 @@ const Settings = () => {
         </div>
 
         {/* Tab Content */}
-        <div className="p-6">
+        <div className="p-4">
           {/* Monitoring Settings */}
           {activeTab === 'monitoring' && (
-            <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-gray-900">Monitoring Thresholds</h3>
+            <div className="space-y-3">
+              <h3 className="text-base font-semibold text-white">Monitoring Thresholds</h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="space-y-4">
-                  <h4 className="font-medium text-gray-900">CPU Usage Thresholds</h4>
-                  <div className="space-y-3">
+                  <h4 className="font-medium text-white/90">CPU Usage Thresholds</h4>
+                  <div className="space-y-2.5">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Warning (%)</label>
+                      <label className="block text-xs font-medium text-white/80 mb-1">Warning (%)</label>
                       <input
                         type="number"
                         value={settings.monitoring.cpuThreshold.warning}
                         onChange={(e) => updateNestedSetting('monitoring', 'cpuThreshold', 'warning', Number(e.target.value))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Critical (%)</label>
+                      <label className="block text-xs font-medium text-white/80 mb-1">Critical (%)</label>
                       <input
                         type="number"
                         value={settings.monitoring.cpuThreshold.critical}
                         onChange={(e) => updateNestedSetting('monitoring', 'cpuThreshold', 'critical', Number(e.target.value))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="font-medium text-gray-900">Memory Usage Thresholds</h4>
-                  <div className="space-y-3">
+                  <h4 className="font-medium text-white/90">Memory Usage Thresholds</h4>
+                  <div className="space-y-2.5">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Warning (%)</label>
+                      <label className="block text-xs font-medium text-white/80 mb-1">Warning (%)</label>
                       <input
                         type="number"
                         value={settings.monitoring.memoryThreshold.warning}
                         onChange={(e) => updateNestedSetting('monitoring', 'memoryThreshold', 'warning', Number(e.target.value))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Critical (%)</label>
+                      <label className="block text-xs font-medium text-white/80 mb-1">Critical (%)</label>
                       <input
                         type="number"
                         value={settings.monitoring.memoryThreshold.critical}
                         onChange={(e) => updateNestedSetting('monitoring', 'memoryThreshold', 'critical', Number(e.target.value))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="font-medium text-gray-900">Disk Usage Thresholds</h4>
-                  <div className="space-y-3">
+                  <h4 className="font-medium text-white/90">Disk Usage Thresholds</h4>
+                  <div className="space-y-2.5">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Warning (%)</label>
+                      <label className="block text-xs font-medium text-white/80 mb-1">Warning (%)</label>
                       <input
                         type="number"
                         value={settings.monitoring.diskThreshold.warning}
                         onChange={(e) => updateNestedSetting('monitoring', 'diskThreshold', 'warning', Number(e.target.value))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Critical (%)</label>
+                      <label className="block text-xs font-medium text-white/80 mb-1">Critical (%)</label>
                       <input
                         type="number"
                         value={settings.monitoring.diskThreshold.critical}
                         onChange={(e) => updateNestedSetting('monitoring', 'diskThreshold', 'critical', Number(e.target.value))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="font-medium text-gray-900">Performance Thresholds</h4>
-                  <div className="space-y-3">
+                  <h4 className="font-medium text-white/90">Performance Thresholds</h4>
+                  <div className="space-y-2.5">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Response Time Warning (ms)</label>
+                      <label className="block text-xs font-medium text-white/80 mb-1">Response Time Warning (ms)</label>
                       <input
                         type="number"
                         value={settings.monitoring.responseTimeThreshold.warning}
                         onChange={(e) => updateNestedSetting('monitoring', 'responseTimeThreshold', 'warning', Number(e.target.value))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Error Rate Warning (%)</label>
+                      <label className="block text-xs font-medium text-white/80 mb-1">Error Rate Warning (%)</label>
                       <input
                         type="number"
                         value={settings.monitoring.errorRateThreshold.warning}
                         onChange={(e) => updateNestedSetting('monitoring', 'errorRateThreshold', 'warning', Number(e.target.value))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                   </div>
@@ -384,12 +384,12 @@ const Settings = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Refresh Interval (seconds)</label>
+                <label className="block text-xs font-medium text-white/80 mb-1">Refresh Interval (seconds)</label>
                 <input
                   type="number"
                   value={settings.monitoring.refreshInterval}
                   onChange={(e) => updateSetting('monitoring', 'refreshInterval', Number(e.target.value))}
-                  className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -398,7 +398,7 @@ const Settings = () => {
           {/* Backup Settings */}
           {activeTab === 'backup' && (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-gray-900">Backup Configuration</h3>
+              <h3 className="text-lg font-semibold text-white">Backup Configuration</h3>
               
               <div className="space-y-4">
                 <div className="flex items-center">
@@ -407,40 +407,40 @@ const Settings = () => {
                     id="backup-enabled"
                     checked={settings.backup.enabled}
                     onChange={(e) => updateSetting('backup', 'enabled', e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-white/20 bg-white/5 rounded"
                   />
-                  <label htmlFor="backup-enabled" className="ml-2 block text-sm text-gray-900">
+                  <label htmlFor="backup-enabled" className="ml-2 block text-sm text-white/80">
                     Enable automatic backups
                   </label>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Backup Interval (hours)</label>
+                  <label className="block text-xs font-medium text-white/80 mb-1">Backup Interval (hours)</label>
                   <input
                     type="number"
                     value={settings.backup.interval}
                     onChange={(e) => updateSetting('backup', 'interval', Number(e.target.value))}
-                    className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Maximum Backups to Keep</label>
+                  <label className="block text-xs font-medium text-white/80 mb-1">Maximum Backups to Keep</label>
                   <input
                     type="number"
                     value={settings.backup.maxBackups}
                     onChange={(e) => updateSetting('backup', 'maxBackups', Number(e.target.value))}
-                    className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Backup Directory</label>
+                  <label className="block text-xs font-medium text-white/80 mb-1">Backup Directory</label>
                   <input
                     type="text"
                     value={settings.backup.directory}
                     onChange={(e) => updateSetting('backup', 'directory', e.target.value)}
-                    className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full max-w-md px-2.5 py-1.5 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
@@ -450,9 +450,9 @@ const Settings = () => {
                     id="backup-compression"
                     checked={settings.backup.compression}
                     onChange={(e) => updateSetting('backup', 'compression', e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-white/20 bg-white/5 rounded"
                   />
-                  <label htmlFor="backup-compression" className="ml-2 block text-sm text-gray-900">
+                  <label htmlFor="backup-compression" className="ml-2 block text-sm text-white/80">
                     Enable backup compression
                   </label>
                 </div>
@@ -463,15 +463,15 @@ const Settings = () => {
           {/* Logging Settings */}
           {activeTab === 'logging' && (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-gray-900">Logging Configuration</h3>
+              <h3 className="text-lg font-semibold text-white">Logging Configuration</h3>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Log Level</label>
+                  <label className="block text-xs font-medium text-white/80 mb-1">Log Level</label>
                   <select
                     value={settings.logging.level}
                     onChange={(e) => updateSetting('logging', 'level', e.target.value)}
-                    className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="error">Error</option>
                     <option value="warn">Warning</option>
@@ -481,22 +481,22 @@ const Settings = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Maximum File Size</label>
+                  <label className="block text-xs font-medium text-white/80 mb-1">Maximum File Size</label>
                   <input
                     type="text"
                     value={settings.logging.maxFileSize}
                     onChange={(e) => updateSetting('logging', 'maxFileSize', e.target.value)}
-                    className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Maximum Files to Keep</label>
+                  <label className="block text-xs font-medium text-white/80 mb-1">Maximum Files to Keep</label>
                   <input
                     type="number"
                     value={settings.logging.maxFiles}
                     onChange={(e) => updateSetting('logging', 'maxFiles', Number(e.target.value))}
-                    className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
@@ -507,9 +507,9 @@ const Settings = () => {
                       id="logging-console"
                       checked={settings.logging.enableConsole}
                       onChange={(e) => updateSetting('logging', 'enableConsole', e.target.checked)}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-white/20 bg-white/5 rounded"
                     />
-                    <label htmlFor="logging-console" className="ml-2 block text-sm text-gray-900">
+                    <label htmlFor="logging-console" className="ml-2 block text-sm text-white/80">
                       Enable console logging
                     </label>
                   </div>
@@ -520,9 +520,9 @@ const Settings = () => {
                       id="logging-file"
                       checked={settings.logging.enableFile}
                       onChange={(e) => updateSetting('logging', 'enableFile', e.target.checked)}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-white/20 bg-white/5 rounded"
                     />
-                    <label htmlFor="logging-file" className="ml-2 block text-sm text-gray-900">
+                    <label htmlFor="logging-file" className="ml-2 block text-sm text-white/80">
                       Enable file logging
                     </label>
                   </div>
@@ -534,46 +534,46 @@ const Settings = () => {
           {/* Security Settings */}
           {activeTab === 'security' && (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-gray-900">Security Configuration</h3>
+              <h3 className="text-lg font-semibold text-white">Security Configuration</h3>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Session Timeout (hours)</label>
+                  <label className="block text-xs font-medium text-white/80 mb-1">Session Timeout (hours)</label>
                   <input
                     type="number"
                     value={settings.security.sessionTimeout}
                     onChange={(e) => updateSetting('security', 'sessionTimeout', Number(e.target.value))}
-                    className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Maximum Login Attempts</label>
+                  <label className="block text-xs font-medium text-white/80 mb-1">Maximum Login Attempts</label>
                   <input
                     type="number"
                     value={settings.security.maxLoginAttempts}
                     onChange={(e) => updateSetting('security', 'maxLoginAttempts', Number(e.target.value))}
-                    className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Lockout Duration (minutes)</label>
+                  <label className="block text-xs font-medium text-white/80 mb-1">Lockout Duration (minutes)</label>
                   <input
                     type="number"
                     value={settings.security.lockoutDuration}
                     onChange={(e) => updateSetting('security', 'lockoutDuration', Number(e.target.value))}
-                    className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Minimum Password Length</label>
+                  <label className="block text-xs font-medium text-white/80 mb-1">Minimum Password Length</label>
                   <input
                     type="number"
                     value={settings.security.passwordMinLength}
                     onChange={(e) => updateSetting('security', 'passwordMinLength', Number(e.target.value))}
-                    className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
@@ -583,9 +583,9 @@ const Settings = () => {
                     id="security-2fa"
                     checked={settings.security.requireTwoFactor}
                     onChange={(e) => updateSetting('security', 'requireTwoFactor', e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-white/20 bg-white/5 rounded"
                   />
-                  <label htmlFor="security-2fa" className="ml-2 block text-sm text-gray-900">
+                  <label htmlFor="security-2fa" className="ml-2 block text-sm text-white/80">
                     Require two-factor authentication
                   </label>
                 </div>
@@ -596,7 +596,7 @@ const Settings = () => {
           {/* Notifications Settings */}
           {activeTab === 'notifications' && (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-gray-900">Notification Configuration</h3>
+              <h3 className="text-lg font-semibold text-white">Notification Configuration</h3>
               
               <div className="space-y-4">
                 <div className="flex items-center">
@@ -605,22 +605,22 @@ const Settings = () => {
                     id="notifications-email"
                     checked={settings.notifications.emailAlerts}
                     onChange={(e) => updateSetting('notifications', 'emailAlerts', e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-white/20 bg-white/5 rounded"
                   />
-                  <label htmlFor="notifications-email" className="ml-2 block text-sm text-gray-900">
+                  <label htmlFor="notifications-email" className="ml-2 block text-sm text-white/80">
                     Enable email alerts
                   </label>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Slack Webhook URL</label>
+                  <label className="block text-xs font-medium text-white/80 mb-1">Slack Webhook URL</label>
                   <div className="flex space-x-2">
                     <input
                       type="text"
                       value={settings.notifications.slackWebhook}
                       onChange={(e) => updateSetting('notifications', 'slackWebhook', e.target.value)}
                       placeholder="https://hooks.slack.com/services/..."
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="flex-1 px-2.5 py-1.5 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                     <button
                       onClick={() => testConnection('slack')}
@@ -632,14 +632,14 @@ const Settings = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Discord Webhook URL</label>
+                  <label className="block text-xs font-medium text-white/80 mb-1">Discord Webhook URL</label>
                   <div className="flex space-x-2">
                     <input
                       type="text"
                       value={settings.notifications.discordWebhook}
                       onChange={(e) => updateSetting('notifications', 'discordWebhook', e.target.value)}
                       placeholder="https://discord.com/api/webhooks/..."
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="flex-1 px-2.5 py-1.5 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                     <button
                       onClick={() => testConnection('discord')}
@@ -651,14 +651,14 @@ const Settings = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Alert Cooldown (seconds)</label>
+                  <label className="block text-xs font-medium text-white/80 mb-1">Alert Cooldown (seconds)</label>
                   <input
                     type="number"
                     value={settings.notifications.alertCooldown}
                     onChange={(e) => updateSetting('notifications', 'alertCooldown', Number(e.target.value))}
-                    className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
-                  <p className="text-sm text-gray-500 mt-1">Minimum time between duplicate alerts</p>
+                  <p className="text-sm text-white/70 mt-1">Minimum time between duplicate alerts</p>
                 </div>
               </div>
             </div>
@@ -667,7 +667,7 @@ const Settings = () => {
           {/* Performance Settings */}
           {activeTab === 'performance' && (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-gray-900">Performance Configuration</h3>
+              <h3 className="text-lg font-semibold text-white">Performance Configuration</h3>
               
               <div className="space-y-4">
                 <div className="flex items-center">
@@ -676,20 +676,20 @@ const Settings = () => {
                     id="performance-caching"
                     checked={settings.performance.enableCaching}
                     onChange={(e) => updateSetting('performance', 'enableCaching', e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-white/20 bg-white/5 rounded"
                   />
-                  <label htmlFor="performance-caching" className="ml-2 block text-sm text-gray-900">
+                  <label htmlFor="performance-caching" className="ml-2 block text-sm text-white/80">
                     Enable caching
                   </label>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Cache Timeout (seconds)</label>
+                  <label className="block text-xs font-medium text-white/80 mb-1">Cache Timeout (seconds)</label>
                   <input
                     type="number"
                     value={settings.performance.cacheTimeout}
                     onChange={(e) => updateSetting('performance', 'cacheTimeout', Number(e.target.value))}
-                    className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
@@ -699,20 +699,20 @@ const Settings = () => {
                     id="performance-compression"
                     checked={settings.performance.enableCompression}
                     onChange={(e) => updateSetting('performance', 'enableCompression', e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-white/20 bg-white/5 rounded"
                   />
-                  <label htmlFor="performance-compression" className="ml-2 block text-sm text-gray-900">
+                  <label htmlFor="performance-compression" className="ml-2 block text-sm text-white/80">
                     Enable response compression
                   </label>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Maximum Request Size</label>
+                  <label className="block text-xs font-medium text-white/80 mb-1">Maximum Request Size</label>
                   <input
                     type="text"
                     value={settings.performance.maxRequestSize}
                     onChange={(e) => updateSetting('performance', 'maxRequestSize', e.target.value)}
-                    className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full max-w-[200px] px-2 py-1 border border-white/20 rounded-md bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
               </div>
