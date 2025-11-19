@@ -1,6 +1,8 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const { randomBytes, createHash } = require('crypto');
 const { body, validationResult } = require('express-validator');
+
 const User = require('../models/User');
 const { auth } = require('../middleware/auth');
 
@@ -14,6 +16,12 @@ const generateToken = (userId) => {
     throw new Error('JWT_SECRET is not configured in production environment');
   }
   return jwt.sign({ userId }, secret, { expiresIn: '7d' });
+};
+
+const buildClientBase = () => {
+  const raw = process.env.CLIENT_URLS || process.env.CLIENT_URL || '';
+  const list = raw.split(',').map(s => s.trim()).filter(Boolean);
+  return list[0] || 'http://localhost:3000';
 };
 
 // Register
@@ -72,6 +80,65 @@ router.post('/register', [
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({ message: 'Server error during registration' });
+  }
+});
+
+router.post('/forgot', [
+  body('email').isEmail().normalizeEmail()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: 'Validation failed', errors: errors.array() });
+    }
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    const clientBase = buildClientBase();
+    if (!user) {
+      return res.json({ message: 'If the email exists, a reset link was sent' });
+    }
+    const rawToken = randomBytes(32).toString('hex');
+    const hashed = createHash('sha256').update(rawToken).digest('hex');
+    user.resetPasswordToken = hashed;
+    user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000);
+    await user.save();
+    const resetUrl = `${clientBase.replace(/\/$/, '')}/reset-password?token=${rawToken}`;
+    return res.json({ message: 'Reset link sent', resetUrl, token: rawToken });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    return res.status(500).json({ message: 'Server error during password reset request' });
+  }
+});
+
+router.post('/reset', [
+  body('token').isString().isLength({ min: 10 }),
+  body('password').isLength({ min: 6 })
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: 'Validation failed', errors: errors.array() });
+    }
+    const { token, password } = req.body;
+    const hashed = createHash('sha256').update(token).digest('hex');
+    const user = await User.findOne({
+      resetPasswordToken: hashed,
+      resetPasswordExpires: { $gt: new Date() }
+    });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired reset token' });
+    }
+    user.password = password;
+    user.provider = 'local';
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    user.lastLogin = new Date();
+    await user.save();
+    const tokenJwt = generateToken(user._id);
+    return res.json({ message: 'Password reset successful', token: tokenJwt });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    return res.status(500).json({ message: 'Server error during password reset' });
   }
 });
 
@@ -240,6 +307,7 @@ router.put('/profile', auth, [
     res.status(500).json({ message: 'Server error during profile update' });
   }
 });
+
 
 // Development-only password reset endpoint
 if ((process.env.NODE_ENV || 'development') !== 'production') {
