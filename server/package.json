@@ -48,7 +48,8 @@
     "express-rate-limit": "^7.0.0",
     "helmet": "^7.0.0",
     "winston": "^3.18.3",
-    "nodemailer": "^6.9.9"
+    "nodemailer": "^6.9.9",
+    "resend": "^2.0.0"
   },
   "devDependencies": {
     "jest": "^30.2.0",
