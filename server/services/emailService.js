@@ -22,6 +22,8 @@ function createTransporter() {
 }
 
 function resolveClientBase() {
+  const override = process.env.PUBLIC_SITE_URL;
+  if (override) return override.replace(/\/$/, '');
   const raw = process.env.CLIENT_URLS || process.env.CLIENT_URL || '';
   const list = raw.split(',').map(s => s.trim()).filter(Boolean);
   return (list[0] || 'http://localhost:3000').replace(/\/$/, '');
