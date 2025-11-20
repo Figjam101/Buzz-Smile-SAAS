@@ -42,7 +42,12 @@ router.post('/forgot', [
     user.resetPasswordToken = hashed;
     user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000);
     await user.save();
-    // Do NOT expose token in response on production
+    try {
+      const { sendPasswordResetEmail } = require('../services/emailService');
+      await sendPasswordResetEmail(email, rawToken);
+    } catch (e) {
+      console.warn('Password reset email send failed:', e.message);
+    }
     return res.json({ message: 'If the email exists, a reset link was sent' });
   } catch (error) {
     console.error('Forgot password error:', error);
