@@ -17,8 +17,10 @@ const createTransporter = () => {
 const sendPasswordResetEmail = async (email, resetToken) => {
   try {
     const transporter = createTransporter();
-    
-    const resetUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+    const raw = process.env.CLIENT_URLS || '';
+    const list = raw.split(',').map(s => s.trim()).filter(Boolean);
+    const base = (list[0] || process.env.CLIENT_URL || 'http://localhost:3000').replace(/\/$/, '');
+    const resetUrl = `${base}/reset-password?token=${resetToken}`;
     
     const mailOptions = {
       from: process.env.EMAIL_USER,
