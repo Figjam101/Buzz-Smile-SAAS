@@ -112,10 +112,10 @@ const Header = () => {
       id={isDashboardPage ? 'dashboard-header' : undefined}
       className={
         (isDashboard || isFiles)
-          ? 'fixed top-0 left-0 right-0 w-full z-[100000] backdrop-blur-md bg-white/20 ring-1 ring-white/20'
+          ? 'fixed top-0 left-0 right-0 w-full h-16 z-[100000] backdrop-blur-md bg-white/20 ring-1 ring-white/20'
           : (isAdmin
-            ? 'fixed top-0 left-0 right-0 w-full z-[100000] backdrop-blur-md bg-transparent ring-0'
-            : `fixed top-8 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-7xl z-50 liquidGlass-wrapper bg-transparent border border-white/30 shadow-[0_12px_24px_rgba(0,0,0,0.25)] rounded-full overflow-hidden transform transition-transform duration-300 will-change-transform translate-y-0`)
+            ? 'fixed top-0 left-0 right-0 w-full h-16 z-[100000] backdrop-blur-md bg-transparent ring-0'
+            : `fixed top-0 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-7xl h-16 z-50 liquidGlass-wrapper bg-transparent border border-white/30 shadow-[0_12px_24px_rgba(0,0,0,0.25)] rounded-full overflow-hidden transform transition-transform duration-300 will-change-transform translate-y-0`)
       }
     >
       {!isDashboard && (

@@ -32,6 +32,10 @@ html, body {
 }
 }
 
+.light-body {
+  background: #f9fafb !important;
+}
+
 @layer components {
   /* Enhanced 3D button styles */
   .btn {

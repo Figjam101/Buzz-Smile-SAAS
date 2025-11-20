@@ -5,14 +5,13 @@ const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [devToken, setDevToken] = useState('');
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
     setError('');
-    setDevToken('');
     try {
       const base = (process.env.REACT_APP_API_URL || '').replace(/\/$/, '');
       const res = await fetch(`${base}/api/auth/forgot`, {
@@ -23,11 +22,11 @@ const ForgotPassword = () => {
       const data = await res.json();
       if (res.ok) {
         setMessage(data.message || 'If the email exists, a reset link was sent');
-        if (data.resetUrl) setDevToken(data.token || '');
       } else {
         setError(data.message || 'Failed to request password reset');
       }
     } catch (err) {
+      console.error('Forgot password error:', err);
       setError('Network error requesting password reset');
     } finally {
       setLoading(false);
@@ -35,12 +34,12 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-start py-0 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">Forgot your password?</h2>
+        <h2 className="mt-0 text-center text-3xl font-bold text-gray-900">Forgot your password?</h2>
         <p className="mt-2 text-center text-sm text-gray-600">Enter your email to request a reset link.</p>
       </div>
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="mt-0 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="card p-8 relative z-50">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -51,13 +50,6 @@ const ForgotPassword = () => {
           </form>
           {message && <p className="mt-4 text-green-600">{message}</p>}
           {error && <p className="mt-4 text-red-600">{error}</p>}
-          {devToken && (
-            <div className="mt-4 text-sm text-gray-700">
-              <p>Development reset token:</p>
-              <code className="block break-all mt-1 p-2 bg-gray-100">{devToken}</code>
-              <p className="mt-2">Use it on the Reset Password page.</p>
-            </div>
-          )}
         </div>
       </div>
     </div>

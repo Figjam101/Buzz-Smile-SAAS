@@ -123,7 +123,16 @@ function AppShell() {
   const location = useLocation();
   const showSidebar = ['/dashboard','/my-files','/onboarding','/upload'].includes(location.pathname);
   useEffect(() => {
-  }, []);
+    const nonDashboardRoutes = ['/','/login','/register','/forgot-password','/reset-password','/auth/success','/share'];
+    const isNonDashboard = nonDashboardRoutes.some((r) => location.pathname === r || location.pathname.startsWith('/share/'));
+    try {
+      if (isNonDashboard) {
+        document.body.classList.add('light-body');
+      } else {
+        document.body.classList.remove('light-body');
+      }
+    } catch (_) {}
+  }, [location.pathname]);
 
   return (
     <>
@@ -132,7 +141,7 @@ function AppShell() {
       <main
         id="main-content"
         role="main"
-        className={'pt-0'}
+        className={showSidebar ? 'pt-[var(--dashboard-header-bottom,64px)]' : 'pt-16 bg-gray-50 min-h-screen'}
       >
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>

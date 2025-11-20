@@ -176,6 +176,8 @@ app.use(cors({
     try {
       const { hostname } = new URL(origin);
       if (
+        hostname === 'www.buzz-smile.com' ||
+        hostname === 'buzz-smile.com' ||
         hostname === 'buzz-smile-saas.vercel.app' ||
         (hostname.endsWith('.vercel.app') && hostname.startsWith('buzz-smile-saas')) ||
         // Also allow the frontend app and its preview deployments
@@ -387,7 +389,7 @@ connectDB().then(async () => {
   // Log FFmpeg diagnostics post-init
   logFFmpegDiagnostics();
 
-  app.listen(PORT, () => {
+  app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📡 Backend API available at http://localhost:${PORT}`);
   });
@@ -397,7 +399,7 @@ connectDB().then(async () => {
     console.warn('⚠️ Starting server without DB connection for development (ALLOW_SERVER_WITHOUT_DB=true)');
     // Still log diagnostics
     try { logFFmpegDiagnostics(); } catch (e) {}
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📡 Backend API available at http://localhost:${PORT}`);
     });
