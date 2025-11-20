@@ -1,0 +1,40 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "buzz-smile-saas/client/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build",
+        "installCommand": "npm ci",
+        "buildCommand": "CI=false npm run build"
+      }
+    }
+  ],
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . vercel.json",
+  "headers": [
+    {
+      "source": "/static/(.*)",
+      "headers": [
+        { "key": "cache-control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://buzz-smile-saas-production.up.railway.app/api/$1"
+    },
+    {
+      "source": "/admin/(.*)",
+      "destination": "https://buzz-smile-saas-production.up.railway.app/api/admin/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "github": {
+    "silent": true
+  }
+}
