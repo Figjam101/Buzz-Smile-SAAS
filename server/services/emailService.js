@@ -32,6 +32,7 @@ function resolveClientBase() {
 async function sendPasswordResetEmail(email, resetToken) {
   const base = resolveClientBase();
   const resetUrl = `${base}/reset-password?token=${resetToken}`;
+  try { console.log('[email] sending password reset', { base }); } catch (_) {}
   const fromEmail = process.env.EMAIL_FROM || process.env.EMAIL_USER;
   const fromName = process.env.EMAIL_FROM_NAME || 'Buzz Smile Media';
   const from = `${fromName} <${fromEmail}>`;
