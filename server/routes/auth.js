@@ -75,7 +75,12 @@ router.post('/reset', [
     user.resetPasswordExpires = undefined;
     user.lastLogin = new Date();
     await user.save();
-    const tokenJwt = generateToken(user._id);
+    const secret = process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production' ? 'dev-secret' : null);
+    if (!secret && process.env.NODE_ENV === 'production') {
+      console.warn('JWT_SECRET not set; returning success without token');
+      return res.json({ message: 'Password reset successful' });
+    }
+    const tokenJwt = require('jsonwebtoken').sign({ userId: user._id }, secret, { expiresIn: '7d' });
     return res.json({ message: 'Password reset successful', token: tokenJwt });
   } catch (error) {
     console.error('Reset password error:', error);
