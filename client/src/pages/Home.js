@@ -1,5 +1,6 @@
 import React from 'react';
-import '../styles/stars.css';
+import GradientBlinds from '../components/GradientBlinds';
+ 
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -14,11 +15,12 @@ import {
   Users, 
   ArrowRight,
   CheckCircle,
-  ChevronDown
+  ChevronDown,
+  LayoutDashboard
 } from 'lucide-react';
 
 const Home = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   const features = [
     {
@@ -106,14 +108,72 @@ const Home = () => {
 
   return (
     <div id="home-root" className="min-h-screen relative">
-      {/* Hero Section */}
-      <section className="pt-[var(--header-bottom)] pb-12 sm:pb-20 relative min-h-screen flex items-center">
-          <div id="stars"></div>
-          <div id="stars2"></div>
-          <div id="stars3"></div>
-          <div id="star-glass"></div>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-          <div className="text-center space-y-6 sm:space-y-8">
+      <section className="relative min-h-[100svh]">
+        <div className="fixed top-3 left-4 z-[100]">
+          <Link to="/" className="flex items-center">
+            <div className="flex items-baseline space-x-1">
+              <span className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white font-['Inter'] buzz-gentle tracking-tighter">Buzz</span>
+              <span className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white font-['Inter']">Smile</span>
+            </div>
+          </Link>
+        </div>
+        <div className="fixed top-3 right-4 z-[100]">
+          {isAuthenticated ? (
+            <div className="flex items-center space-x-3">
+              <Link
+                to="/dashboard"
+                className="btn btn-elevated btn-contrast inline-flex items-center justify-center space-x-2 text-sm sm:text-base"
+              >
+                <LayoutDashboard className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span>Dashboard</span>
+              </Link>
+              {user?.role === 'admin' && (
+                <Link
+                  to="/admin"
+                  className="btn btn-elevated btn-contrast inline-flex items-center justify-center space-x-2 text-sm sm:text-base"
+                >
+                  <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span>Admin</span>
+                </Link>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center space-x-3">
+              <Link
+                to="/login"
+                className="btn btn-contrast text-sm"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="btn btn-elevated btn-contrast text-sm"
+              >
+                Get Started
+              </Link>
+            </div>
+          )}
+        </div>
+        <div className="absolute inset-0 z-0" style={{ pointerEvents: 'none' }}>
+          <div style={{ width: '100%', height: '100svh', position: 'relative' }}>
+            <GradientBlinds 
+              gradientColors={['#FF9FFC', '#5227FF']} 
+              angle={0} 
+              noise={0.3} 
+              blindCount={12} 
+              blindMinWidth={50} 
+              spotlightRadius={0.5} 
+              spotlightSoftness={1} 
+              spotlightOpacity={1} 
+              mouseDampening={0.15} 
+              distortAmount={0} 
+              shineDirection="left" 
+              mixBlendMode="lighten" 
+            /> 
+          </div>
+        </div>
+        <div className="relative z-10 w-full min-h-[100svh] flex items-center justify-center">
+          <div className="text-center space-y-6 sm:space-y-8 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto translate-y-12 sm:translate-y-16 md:translate-y-20">
             <GSAPTextAnimation 
               animationType="fadeInUp" 
               delay={0.2} 
@@ -122,7 +182,7 @@ const Home = () => {
               style={{ textShadow: '0 2px 12px rgba(0,0,0,0.85)' }}
             >
               Create Amazing Videos
-              <span className="text-lime-400 block mt-2">In Minutes, Not Hours</span>
+              <span className="text-amber-300 block mt-2">In Minutes, Not Hours</span>
             </GSAPTextAnimation>
             <GSAPTextAnimation 
               animationType="fadeInUp" 
@@ -143,7 +203,7 @@ const Home = () => {
               {isAuthenticated ? (
                 <Link
                   to="/dashboard"
-                  className="btn-primary text-lg sm:text-xl px-8 sm:px-10 py-3 sm:py-3.5 inline-flex items-center justify-center space-x-2 w-full sm:w-auto max-w-xs sm:max-w-none"
+                  className="btn btn-elevated btn-contrast text-lg sm:text-xl inline-flex items-center justify-center space-x-2 w-full sm:w-auto max-w-xs sm:max-w-none"
                 >
                   <span>Go to Dashboard</span>
                   <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -152,14 +212,14 @@ const Home = () => {
                 <>
                   <Link
                     to="/register"
-                    className="btn-primary text-base sm:text-lg px-6 sm:px-8 py-2.5 sm:py-3 inline-flex items-center justify-center space-x-2 w-full sm:w-auto max-w-xs sm:max-w-none"
+                    className="btn btn-elevated btn-contrast text-base sm:text-lg inline-flex items-center justify-center space-x-2 w-full sm:w-auto max-w-xs sm:max-w-none"
                   >
                     <span>Start Creating Free</span>
                     <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Link>
                   <Link
                     to="/login"
-                    className="btn-outline text-base sm:text-lg px-6 sm:px-8 py-2.5 sm:py-3 inline-flex items-center justify-center space-x-2 w-full sm:w-auto max-w-xs sm:max-w-none"
+                    className="btn btn-contrast text-base sm:text-lg inline-flex items-center justify-center space-x-2 w-full sm:w-auto max-w-xs sm:max-w-none"
                   >
                     <Play className="h-5 w-5" />
                     <span>Watch Demo</span>
@@ -167,11 +227,11 @@ const Home = () => {
                 </>
               )}
             </GSAPTextAnimation>
-            <div className="mt-12 flex justify-center">
-              <a href="#features" className="scroll-indicator w-10 h-10 rounded-full border border-white/30 flex items-center justify-center text-white/80">
-                <ChevronDown className="w-5 h-5" />
-              </a>
-            </div>
+          </div>
+          <div className="absolute bottom-[12px] left-1/2 -translate-x-1/2">
+            <a href="#features" className="scroll-indicator w-10 h-10 rounded-full border border-white/30 flex items-center justify-center text-white/80">
+              <ChevronDown className="w-5 h-5" />
+            </a>
           </div>
         </div>
       </section>
@@ -268,11 +328,7 @@ const Home = () => {
                 <div className="flex justify-center mt-auto">
                   <Link
                     to={isAuthenticated ? "/dashboard" : "/register"}
-                    className={`w-full text-center py-3 px-4 rounded-full font-medium transition-colors inline-block ${
-                      plan.popular
-                        ? 'bg-gray-600 text-white hover:bg-gray-700'
-                        : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                    }`}
+                    className="btn btn-contrast w-full text-center inline-block"
                   >
                     {plan.cta}
                   </Link>

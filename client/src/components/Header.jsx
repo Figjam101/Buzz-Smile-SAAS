@@ -112,32 +112,20 @@ const Header = () => {
       id={isDashboardPage ? 'dashboard-header' : undefined}
       className={
         (isDashboard || isFiles)
-          ? 'fixed top-0 left-0 right-0 w-full h-16 z-[100000] backdrop-blur-md bg-white/20 ring-1 ring-white/20'
+          ? 'fixed top-0 left-0 right-0 w-full h-16 z-[100000] backdrop-blur-md bg-transparent ring-0'
           : (isAdmin
             ? 'fixed top-0 left-0 right-0 w-full h-16 z-[100000] backdrop-blur-md bg-transparent ring-0'
-            : `fixed top-0 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-7xl h-16 z-50 liquidGlass-wrapper bg-transparent border border-white/30 shadow-[0_12px_24px_rgba(0,0,0,0.25)] rounded-full overflow-hidden transform transition-transform duration-300 will-change-transform translate-y-0`)
+            : 'fixed top-0 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-7xl h-16 z-50 rounded-full transform transition-transform duration-300 will-change-transform translate-y-0')
       }
     >
-      {!isDashboard && (
-        <>
-          <svg aria-hidden="true" className="absolute w-0 h-0">
-            <defs>
-              <filter id="glass-distortion">
-                <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="3" result="noise" />
-                <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G" />
-              </filter>
-            </defs>
-          </svg>
-          <div className="liquidGlass-effect"></div>
-        </>
-      )}
+      
       <div className={`${(isDashboard || isAdmin || isFiles) ? 'relative z-10 w-full pl-8 pr-8' : `relative z-10 w-full max-w-7xl mx-auto ${padClass} px-4 sm:px-6 lg:px-6`}`}> 
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
               <div className="flex items-baseline space-x-1">
-                <span className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white font-['Inter'] buzz-gentle tracking-tighter">Buzz</span>
-                <span className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-blue-600 font-['Inter']">Smile</span>
+                <span className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white font-['Inter'] buzz-gentle tracking-tighter">Buzz</span>
+                <span className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white font-['Inter']">Smile</span>
               </div>
             </Link>
           </div>
@@ -206,13 +194,13 @@ const Header = () => {
               <div className="flex items-center space-x-4">
                 <Link
                   to="/login"
-                  className="px-5 py-2.5 text-sm font-medium rounded-full bg-gray-100 text-gray-900 hover:bg-gray-200 shadow"
+                  className="btn btn-contrast text-sm px-5 py-2 rounded-full"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="px-5 py-2.5 text-sm font-semibold rounded-full bg-blue-600 text-white hover:bg-blue-700 shadow"
+                  className="btn btn-elevated btn-contrast text-sm px-5 sm:px-6 py-2 rounded-full"
                 >
                   Get Started
                 </Link>

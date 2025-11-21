@@ -95,6 +95,32 @@ const VideoManagement = () => {
     }
   };
 
+  const finalizeVideo = async (video) => {
+    try {
+      const processedUrl = window.prompt('Enter processed video URL (CDN/storage):');
+      if (!processedUrl) return;
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/admin/videos/${video._id}/finalize`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          processedUrl,
+          autoSchedule: true,
+          platforms: ['facebook'],
+          caption: `Scheduled: ${video.title || 'Video'}`
+        })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.message || 'Failed to finalize');
+      alert('Finalized and scheduled to Meta');
+    } catch (error) {
+      alert(`Finalize failed: ${error.message}`);
+    }
+  };
+
   const bulkDeleteVideos = async () => {
     if (!window.confirm(`Are you sure you want to delete ${selectedVideos.length} videos?`)) return;
     
@@ -383,21 +409,27 @@ const VideoManagement = () => {
                     {video.createdAt ? new Date(video.createdAt).toLocaleDateString() : 'N/A'}
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => window.open(video.url, '_blank')}
-                        className="text-blue-400 hover:text-blue-300"
-                        disabled={!video.url}
-                      >
-                        View
-                      </button>
-                      <button
-                        onClick={() => deleteVideo(video._id)}
-                        className="text-red-400 hover:text-red-300"
-                      >
-                        Delete
-                      </button>
-                    </div>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => window.open(video.url, '_blank')}
+                      className="text-blue-400 hover:text-blue-300"
+                      disabled={!video.url}
+                    >
+                      View
+                    </button>
+                    <button
+                      onClick={() => deleteVideo(video._id)}
+                      className="text-red-400 hover:text-red-300"
+                    >
+                      Delete
+                    </button>
+                    <button
+                      onClick={() => finalizeVideo(video)}
+                      className="text-green-400 hover:text-green-300"
+                    >
+                      Finalize & Schedule Meta
+                    </button>
+                  </div>
                   </td>
                 </tr>
               ))}

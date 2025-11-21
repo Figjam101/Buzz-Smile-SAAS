@@ -122,6 +122,7 @@ const PageTitleHandler = () => {
 function AppShell() {
   const location = useLocation();
   const showSidebar = ['/dashboard','/my-files','/onboarding','/upload'].includes(location.pathname);
+  const isHome = location.pathname === '/';
   useEffect(() => {
     const nonDashboardRoutes = ['/','/login','/register','/forgot-password','/reset-password','/auth/success','/share'];
     const isNonDashboard = nonDashboardRoutes.some((r) => location.pathname === r || location.pathname.startsWith('/share/'));
@@ -136,12 +137,12 @@ function AppShell() {
 
   return (
     <>
-      <Header />
+      {!isHome && <Header />}
       {showSidebar && <DashboardSidebar />}
       <main
         id="main-content"
         role="main"
-        className={showSidebar ? 'pt-[var(--dashboard-header-bottom,64px)]' : 'pt-16 bg-gray-50 min-h-screen'}
+        className={showSidebar ? 'pt-[var(--dashboard-header-bottom,64px)]' : (isHome ? 'pt-0 bg-gray-50 min-h-screen' : 'pt-16 bg-gray-50 min-h-screen')}
       >
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>

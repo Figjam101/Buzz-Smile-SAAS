@@ -131,6 +131,38 @@ html, body {
       inset 0 1px 0 rgba(255, 255, 255, 0.26),
       inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   }
+  .btn-ceramic {
+    @apply px-6 py-3 rounded-full font-semibold transition-all duration-300 transform;
+    color: #0f172a;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow:
+      0 10px 28px rgba(0, 0, 0, 0.18),
+      0 4px 10px rgba(0, 0, 0, 0.10),
+      inset 0 2px 0 rgba(255, 255, 255, 0.85),
+      inset 0 -2px 0 rgba(0, 0, 0, 0.06);
+  }
+  .btn-ceramic:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 14px 36px rgba(0, 0, 0, 0.22),
+      0 8px 18px rgba(0, 0, 0, 0.12),
+      inset 0 2px 0 rgba(255, 255, 255, 0.9),
+      inset 0 -2px 0 rgba(0, 0, 0, 0.08);
+  }
+  .btn-ceramic:active {
+    transform: translateY(0);
+    box-shadow:
+      0 8px 22px rgba(0, 0, 0, 0.18),
+      0 3px 8px rgba(0, 0, 0, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8),
+      inset 0 -3px 0 rgba(0, 0, 0, 0.1);
+  }
+  .btn-contrast {
+    @apply text-white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.30);
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.30));
+  }
   
   .input {
     @apply h-12 w-full rounded-xl border-2 border-gray-300 bg-white px-3 py-3 text-sm text-gray-900 placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50;
@@ -386,15 +418,7 @@ select:focus-visible {
   pointer-events: none;
 }
 
-@keyframes ballX {
-  from { transform: translateX(0); }
-  to { transform: translateX(var(--dx, 240px)); }
-}
-
-@keyframes ballY {
-  from { transform: translateY(0); }
-  to { transform: translateY(var(--dy, 240px)); }
-}
+/* Removed legacy ball animations (not used after component cleanup) */
 
 /* Deployment fix - Fri Oct 31 18:57:13 ACDT 2025 */
 

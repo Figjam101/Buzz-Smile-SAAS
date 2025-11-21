@@ -1,6 +1,6 @@
 import React from 'react';
  
-import '../styles/stars.css';
+ 
 
 /**
  * DashboardStructure
@@ -42,9 +42,9 @@ export default function DashboardStructure({
 
       {/* Narrow centered section for wizard content */}
       <section
-        id="structure-preview"
         className="relative w-full h-full overflow-hidden"
         tabIndex={0}
+        style={{ background: 'radial-gradient(ellipse at 50% 55%, #0b1220 0%, #0d1a2b 40%, #090a0f 100%)' }}
       >
         
 

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const Video = require('../models/Video');
+const ScheduledPost = require('../models/ScheduledPost');
 const { auth } = require('../middleware/auth');
 const backupService = require('../services/backupService');
 const { addCredits } = require('../middleware/credits');
@@ -451,7 +452,7 @@ router.delete('/video-backups/:userId/:videoId', auth, requireAdmin, async (req,
 router.put('/videos/:id/finalize', auth, requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-    const { processedFilePath, processedUrl } = req.body || {};
+    const { processedFilePath, processedUrl, autoSchedule, platforms, caption, scheduledAt } = req.body || {};
 
     const video = await Video.findById(id);
     if (!video) {
@@ -471,7 +472,7 @@ router.put('/videos/:id/finalize', auth, requireAdmin, async (req, res) => {
     if (processedFilePath) update.processedFilePath = processedFilePath;
     if (processedUrl) update.processedUrl = processedUrl;
 
-    await Video.findByIdAndUpdate(id, update, { new: true });
+    const updated = await Video.findByIdAndUpdate(id, update, { new: true });
 
     // Deduct 1 credit and increment videoCount for the owner unless exempt
     try {
@@ -489,7 +490,31 @@ router.put('/videos/:id/finalize', auth, requireAdmin, async (req, res) => {
       console.error('Finalize credit update error:', creditErr?.message || creditErr);
     }
 
-    return res.json({ message: 'Video finalized and ready', videoId: id });
+    let scheduled = null;
+    try {
+      if (autoSchedule && processedUrl && Array.isArray(platforms) && platforms.length > 0) {
+        const when = scheduledAt ? new Date(scheduledAt) : new Date();
+        const post = new ScheduledPost({
+          userId: ownerId,
+          videoId: id,
+          platforms,
+          scheduledAt: when,
+          caption: caption || `Scheduled via Buzz Smile Media`,
+          video: {
+            title: updated?.title || 'Untitled',
+            url: processedUrl,
+            thumbnail: updated?.thumbnailPath || null,
+            duration: updated?.duration || null
+          },
+          status: 'scheduled'
+        });
+        scheduled = await post.save();
+      }
+    } catch (scheduleErr) {
+      console.error('Finalize scheduling error:', scheduleErr?.message || scheduleErr);
+    }
+
+    return res.json({ message: 'Video finalized and ready', videoId: id, video: updated, scheduled });
   } catch (error) {
     console.error('Error finalizing video:', error);
     res.status(500).json({ message: 'Server error' });
