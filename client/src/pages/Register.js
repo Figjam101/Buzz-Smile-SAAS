@@ -114,7 +114,7 @@ const Register = () => {
 
 
   return (
-    <div className="relative min-h-screen bg-transparent flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="relative min-h-screen bg-transparent">
       <div className="fixed inset-0 z-0" style={{ pointerEvents: 'none' }}>
         <div style={{ width: '100%', height: '100svh', position: 'relative' }}>
           <GradientBlinds 
@@ -133,26 +133,19 @@ const Register = () => {
           /> 
         </div>
       </div>
-      <div className="relative z-10 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center">
-          <Video className="h-12 w-12 text-white" />
-        </div>
-        <h2 className="mt-6 text-center text-3xl font-bold text-white">
-          Create your account
-        </h2>
-        <p className="mt-2 text-center text-sm text-white/80">
-          Already have an account?{' '}
-          <Link
-            to="/login"
-            className="font-semibold text-amber-300 hover:text-amber-200 transition-colors"
-          >
-            Sign in here
-          </Link>
-        </p>
-      </div>
-
-      <div className="relative z-10 mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="card p-8">
+      <div className="relative z-10 flex items-center justify-center min-h-[100svh] px-4">
+        <div className="w-full sm:max-w-md">
+          <div className="card p-8">
+            <div className="flex flex-col items-center text-center">
+              <Video className="h-12 w-12 text-white" />
+              <h2 className="mt-6 text-3xl font-bold text-white">Create your account</h2>
+              <p className="mt-2 text-sm text-white/80">
+                Already have an account?{' '}
+                <Link to="/login" className="font-semibold text-amber-300 hover:text-amber-200 transition-colors">
+                  Sign in here
+                </Link>
+              </p>
+            </div>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name Field */}
             <div>
@@ -342,6 +335,7 @@ const Register = () => {
           </form>
 
           {/* Social login removed */}
+          </div>
         </div>
       </div>
     </div>
