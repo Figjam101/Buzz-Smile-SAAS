@@ -11,7 +11,6 @@
       }
     }
   ],
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . vercel.json",
   "headers": [
     {
       "source": "/static/(.*)",
