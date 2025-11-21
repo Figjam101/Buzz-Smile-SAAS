@@ -1,5 +1,6 @@
 const Queue = require('bull');
 const Video = require('../models/Video');
+const User = require('../models/User');
 const videoEditingService = require('./videoEditingService');
 
 let videoProcessingQueue = null;
@@ -78,12 +79,12 @@ const initializeQueue = async () => {
          userId: userId
        });
 
-      // Update video with processing results
+      // Mark processing step complete; finalization is done by admin
        await Video.findByIdAndUpdate(videoId, {
-         status: 'ready',
-         processedAt: new Date(),
-         processingDuration: Date.now() - new Date(video.processingStartedAt).getTime()
-       });
+        status: 'processing',
+        processedAt: new Date(),
+        processingDuration: Date.now() - new Date(video.processingStartedAt).getTime()
+      });
 
        console.log(`✅ Video processing completed for video ${videoId}`);
        
@@ -138,9 +139,9 @@ const addVideoProcessingJob = async (videoId, userId, options = {}) => {
       setTimeout(async () => {
         try {
           await Video.findByIdAndUpdate(videoId, {
-            status: 'ready',
+            status: 'processing',
             processedAt: new Date(),
-            processingDuration: 5000 // 5 seconds simulation
+            processingDuration: 5000
           });
           console.log(`✅ Video ${videoId} processed successfully (direct)`);
         } catch (error) {

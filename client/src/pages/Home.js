@@ -107,12 +107,12 @@ const Home = () => {
   return (
     <div id="home-root" className="min-h-screen relative">
       {/* Hero Section */}
-      <section className="pt-0 sm:pt-0 pb-12 sm:pb-20 relative min-h-screen flex items-center">
+      <section className="pt-[var(--header-bottom)] pb-12 sm:pb-20 relative min-h-screen flex items-center">
           <div id="stars"></div>
           <div id="stars2"></div>
           <div id="stars3"></div>
           <div id="star-glass"></div>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full mt-32 sm:mt-40 lg:mt-48 xl:mt-52 2xl:mt-56">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
           <div className="text-center space-y-6 sm:space-y-8">
             <GSAPTextAnimation 
               animationType="fadeInUp" 

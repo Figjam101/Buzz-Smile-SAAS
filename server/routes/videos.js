@@ -106,6 +106,32 @@ router.post('/upload', auth, createUploadMiddleware, async (req, res) => {
     const isMultipleFiles = files.length > 1;
     const incomingTotalSize = files.reduce((sum, f) => sum + (f.size || 0), 0);
     const dbConnected = isDbConnected();
+    
+    // Enforce user storage cap before accepting upload
+    const storageLimit = getStorageLimitForUser(user);
+    // If DB is disconnected and offline mode is enabled, skip storage usage query
+    let currentUsed = 0;
+    if (dbConnected) {
+      const userVideos = await Video.find({ owner: user._id }).select('fileSize');
+      currentUsed = userVideos.reduce((sum, v) => sum + (v.fileSize || 0), 0);
+    }
+    if (Number.isFinite(storageLimit) && currentUsed + incomingTotalSize > storageLimit) {
+      // Delete uploaded files immediately
+      files.forEach(file => {
+        if (fs.existsSync(file.path)) {
+          fs.unlinkSync(file.path);
+        }
+      });
+      const remaining = Math.max(0, storageLimit - currentUsed);
+      return res.status(403).json({
+        message: `Storage limit exceeded. You have ${Math.round(remaining / (1024*1024))} MB remaining.`,
+        storageUsed: currentUsed,
+        storageLimit,
+        attemptedSize: incomingTotalSize
+      });
+    }
+    
+    // Do not block uploads based on videoCount; enforce limits during processing
 
     const { title, description, editingData, fileCount, fileNames, multipleFiles } = req.body;
     
@@ -142,7 +168,7 @@ router.post('/upload', auth, createUploadMiddleware, async (req, res) => {
           fileSize: totalSize,
           format: 'mp4',
           owner: user._id,
-          status: 'uploading',
+          status: 'uploaded',
           editingPreferences: parsedEditingData,
           sourceFiles: files.map(file => ({
             filename: file.filename,
@@ -163,7 +189,7 @@ router.post('/upload', auth, createUploadMiddleware, async (req, res) => {
           fileSize: totalSize,
           format: 'mp4',
           owner: user._id,
-          status: 'uploading',
+          status: 'uploaded',
           editingPreferences: parsedEditingData,
           sourceFiles: files.map(file => ({
             filename: file.filename,
@@ -188,7 +214,7 @@ router.post('/upload', auth, createUploadMiddleware, async (req, res) => {
           fileSize: file.size,
           format: path.extname(file.originalname).toLowerCase().slice(1),
           owner: user._id,
-          status: 'ready',
+          status: 'uploaded',
           editingPreferences: parsedEditingData
         });
       } else {
@@ -202,7 +228,7 @@ router.post('/upload', auth, createUploadMiddleware, async (req, res) => {
           fileSize: file.size,
           format: path.extname(file.originalname).toLowerCase().slice(1),
           owner: user._id,
-          status: 'ready',
+          status: 'uploaded',
           editingPreferences: parsedEditingData,
           createdAt: new Date()
         };
@@ -261,10 +287,10 @@ router.post('/upload', auth, createUploadMiddleware, async (req, res) => {
     }
 
     // Do not start processing automatically on upload.
-    // Save any provided editingPreferences with the video and leave status as 'ready'.
+    // Save any provided editingPreferences with the video and leave status as 'uploaded'.
 
-    // Update user video count (count as 1 video regardless of source files)
-    // Do not increment user video count on upload; counting happens when processing is completed.
+    // Do not increment user video count on upload
+    // Counting happens when processing is completed.
 
     // Clear video list cache for this user to ensure fresh data on next fetch
     const userId = user._id.toString();
@@ -421,13 +447,13 @@ router.get('/', auth, async (req, res) => {
     
     // Optimized query with lean() for better performance
     const [videos, total] = await Promise.all([
-      Video.find({ owner: req.user._id })
+      Video.find({ owner: req.user._id, status: 'ready' })
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
         .select('title description filename status duration format thumbnailPath createdAt updatedAt fileSize isPublic')
         .lean(), // Use lean() for better performance
-      Video.countDocuments({ owner: req.user._id })
+      Video.countDocuments({ owner: req.user._id, status: 'ready' })
     ]);
 
     console.log('Query results - videos found:', videos.length, 'total count:', total);
@@ -672,8 +698,8 @@ router.delete('/:id', auth, async (req, res) => {
 });
 
 // Process video for editing
-// Processing should require credits; enforce check and deduction here
-router.post('/:id/process', auth, checkCredits, async (req, res) => {
+// User triggers processing request; do NOT consume credits here
+router.post('/:id/process', auth, async (req, res) => {
   try {
     const OFFLINE_MODE = process.env.ALLOW_SERVER_WITHOUT_DB === 'true' && process.env.NODE_ENV !== 'production';
     if (OFFLINE_MODE) {
@@ -684,6 +710,12 @@ router.post('/:id/process', auth, checkCredits, async (req, res) => {
         console.error('Discord webhook notify failed (offline):', notifyErr?.message || notifyErr);
       }
       return res.json({ message: 'Video processing job added (offline mode)', jobId, status: 'queued' });
+    }
+    const isGodModeAdmin = req.user && req.user.role === 'admin' && (req.user.subscription?.plan === 'god' || req.user.plan === 'god');
+    if (!isGodModeAdmin && typeof req.user.maxVideos === 'number' && typeof req.user.videoCount === 'number') {
+      if (req.user.videoCount >= req.user.maxVideos) {
+        return res.status(403).json({ message: 'Video limit reached' });
+      }
     }
     const video = await Video.findOne({ 
       _id: req.params.id, 
@@ -717,13 +749,6 @@ router.post('/:id/process', auth, checkCredits, async (req, res) => {
       await notifyVideoQueued({ user: req.user, video, jobId: job.id });
     } catch (notifyErr) {
       console.error('Discord webhook notify failed:', notifyErr?.message || notifyErr);
-    }
-
-    // Deduct credits after queueing processing job
-    try {
-      await deductCredits(req, res, () => {});
-    } catch (deductErr) {
-      console.error('Credit deduction after queue failed:', deductErr);
     }
 
     res.json({ 

@@ -74,8 +74,7 @@ class VideoEditingService {
     }
 
     await Video.findByIdAndUpdate(video._id, {
-      status: 'ready',
-      processedFilePath: processedPath,
+      status: 'processing',
       'editingJob.completedAt': new Date(),
       'editingJob.progress': 100
     });

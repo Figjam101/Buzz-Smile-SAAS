@@ -444,6 +444,59 @@ router.delete('/video-backups/:userId/:videoId', auth, requireAdmin, async (req,
 });
 
 /**
+ * @route   PUT /api/admin/videos/:id/finalize
+ * @desc    Finalize an edited video: attach processed file, mark ready, and deduct credit
+ * @access  Admin
+ */
+router.put('/videos/:id/finalize', auth, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { processedFilePath, processedUrl } = req.body || {};
+
+    const video = await Video.findById(id);
+    if (!video) {
+      return res.status(404).json({ message: 'Video not found' });
+    }
+
+    const ownerId = video.owner?.toString();
+    if (!ownerId) {
+      return res.status(400).json({ message: 'Video owner missing' });
+    }
+
+    // Update video as ready and attach processed file info
+    const update = {
+      status: 'ready',
+      processedAt: new Date()
+    };
+    if (processedFilePath) update.processedFilePath = processedFilePath;
+    if (processedUrl) update.processedUrl = processedUrl;
+
+    await Video.findByIdAndUpdate(id, update, { new: true });
+
+    // Deduct 1 credit and increment videoCount for the owner unless exempt
+    try {
+      const owner = await User.findById(ownerId);
+      if (owner && !(owner.subscription?.plan === 'god' || owner.isPreLaunch)) {
+        await User.findByIdAndUpdate(ownerId, {
+          $inc: {
+            'credits.balance': -1,
+            'credits.used': 1,
+            videoCount: 1
+          }
+        });
+      }
+    } catch (creditErr) {
+      console.error('Finalize credit update error:', creditErr?.message || creditErr);
+    }
+
+    return res.json({ message: 'Video finalized and ready', videoId: id });
+  } catch (error) {
+    console.error('Error finalizing video:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+/**
  * @route   POST /api/admin/users/:id/credits
  * @desc    Add credits to a user by ID (admin only)
  * @access  Admin
