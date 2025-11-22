@@ -93,7 +93,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
               {isAuthenticated && !isActive('/dashboard') && (
                 <nav className="flex items-center space-x-6">
                   <Link
-                    to="/dashboard"
+                    to="/dashboard?section=create"
                     className={`btn-primary btn-elevated flex items-center space-x-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${
                       isActive('/dashboard') ? '' : ''
                     }`}
@@ -254,7 +254,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                 <div className="flex-1 p-3">
                   <nav className="space-y-1">
                     <Link
-                      to="/dashboard"
+                      to="/dashboard?section=create"
                       onClick={closeMobileMenu}
                       className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-left transition-colors text-sm ${
                         isActive('/dashboard')
