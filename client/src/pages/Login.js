@@ -80,8 +80,8 @@ const Login = () => {
       const result = await login(formData.email, formData.password);
       
       if (result.success) {
-        announceToScreenReader('Login successful. Redirecting to Create Video.');
-        navigate('/upload');
+        announceToScreenReader('Login successful. Redirecting to dashboard.');
+        navigate('/dashboard');
       }
     } catch (error) {
       console.error('Login error:', error);
