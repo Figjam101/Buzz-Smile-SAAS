@@ -20,6 +20,7 @@ const Home = React.lazy(() => import('./pages/Home'));
 const Login = React.lazy(() => import('./pages/Login'));
 const Register = React.lazy(() => import('./pages/Register'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
+const CreateVideo = React.lazy(() => import('./pages/CreateVideo'));
 const MyFiles = React.lazy(() => import('./pages/MyFiles'));
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const ShareVideo = React.lazy(() => import('./pages/ShareVideo'));
@@ -47,6 +48,12 @@ const PageTitleHandler = () => {
             title: 'Dashboard - VideoSaaS',
             description: 'Manage your videos, upload new content, and track your video editing progress.',
             canonical: `${window.location.origin}/dashboard`
+          };
+        case '/create-video':
+          return {
+            title: 'Create Video - VideoSaaS',
+            description: 'Upload and process your videos using the guided step-by-step flow.',
+            canonical: `${window.location.origin}/create-video`
           };
         case '/admin':
           return {
@@ -115,7 +122,7 @@ const PageTitleHandler = () => {
 
 function AppShell() {
   const location = useLocation();
-  const showSidebar = ['/dashboard','/my-files','/onboarding'].includes(location.pathname);
+  const showSidebar = ['/dashboard','/my-files','/onboarding','/create-video'].includes(location.pathname);
   const isHome = location.pathname === '/';
   useEffect(() => {
     const nonDashboardRoutes = ['/','/login','/register','/forgot-password','/reset-password','/auth/success','/share'];
@@ -153,6 +160,14 @@ function AppShell() {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/create-video" 
+              element={
+                <ProtectedRoute>
+                  <CreateVideo />
                 </ProtectedRoute>
               } 
             />
@@ -214,7 +229,7 @@ function DashboardSidebar() {
   const location = useLocation();
   const [showUploader, setShowUploader] = useState(false);
   const isFiles = location.pathname === '/my-files';
-  const isDashboard = location.pathname === '/dashboard' && !location.hash;
+  const isCreate = location.pathname === '/create-video';
   const isSocial = location.pathname === '/dashboard' && location.hash === '#social';
   const isSettings = location.pathname === '/dashboard' && location.hash === '#settings';
 
@@ -296,10 +311,10 @@ function DashboardSidebar() {
           <div className="p-4 pl-4 mx-3 my-3 rounded-xl backdrop-blur-md bg-white/5 border border-white/10">
             <nav className="grid grid-cols-1 gap-3">
               <Link
-                to="/dashboard?section=create"
+                to="/create-video"
                 className="group w-full px-3 py-2.5 rounded-xl text-white flex items-center bg-white/5 hover:bg-white/10 ring-1 ring-white/15 hover:ring-white/30 shadow-sm hover:shadow-md transition-all"
               >
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${isDashboard ? 'bg-white/20 border-white/40 shadow-md' : 'bg-white/10 border-white/20 group-hover:bg-white/15 group-hover:border-white/30 shadow-sm group-hover:shadow-md'}`}>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${isCreate ? 'bg-white/20 border-white/40 shadow-md' : 'bg-white/10 border-white/20 group-hover:bg-white/15 group-hover:border-white/30 shadow-sm group-hover:shadow-md'}`}>
                   <Upload className="w-6 h-6" />
                 </div>
                 <span className="ml-3 flex-1 text-xs sm:text-sm font-medium text-white leading-snug truncate">Create Video</span>
