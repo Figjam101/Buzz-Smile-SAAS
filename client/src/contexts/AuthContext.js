@@ -69,10 +69,9 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       // In mock mode, skip network calls and treat as logged out
       if (MOCK_API) {
-        // Auto-login as admin for preview if no token/user set
-        if (!token) {
-          const mockToken = 'mock-token';
-          const mockUser = { name: 'Preview Admin', email: 'admin@preview.local', role: 'admin' };
+        if (!token || !user) {
+          const mockToken = token || 'mock-token';
+          const mockUser = user || { name: 'Preview Admin', email: 'admin@preview.local', role: 'admin' };
           localStorage.setItem('token', mockToken);
           setToken(mockToken);
           setUser(mockUser);

@@ -8,6 +8,35 @@ const { sendPasswordResetEmail } = require('../services/emailService');
 
 const router = express.Router();
 
+// Development-only reset password endpoint used by dev-auto-login.html
+router.post('/dev/reset-password', async (req, res) => {
+  try {
+    if (process.env.NODE_ENV === 'production') {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    const { email, newPassword } = req.body || {};
+    if (!email || !newPassword) {
+      return res.status(400).json({ message: 'Email and newPassword required' });
+    }
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = new User({ email, password: newPassword });
+      await user.save();
+      return res.json({ message: 'User created' });
+    }
+
+    user.password = newPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+    return res.json({ message: 'Password reset' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Register route
 router.post('/register', [
   body('email').isEmail().normalizeEmail(),
