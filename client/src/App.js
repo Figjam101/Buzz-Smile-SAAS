@@ -1,6 +1,6 @@
 // Force deployment - Updated: 2025-10-31 18:37:00
 import React, { Suspense, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Link, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { StatsProvider } from './contexts/StatsContext';
 import { Toaster } from 'react-hot-toast';
@@ -157,11 +157,7 @@ function AppShell() {
             <Route path="/" element={<Home />} />
             <Route 
               path="/dashboard" 
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              } 
+              element={<Navigate to="/create-video" replace />} 
             />
             <Route 
               path="/create-video" 
