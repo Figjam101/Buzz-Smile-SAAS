@@ -394,7 +394,10 @@ function App() {
         >
           <div className="App">
             <PageTitleHandler />
-            <AppShell />
+            {/* Redirect plain /dashboard to section=create so Create Video opens */}
+            <DashboardRedirectWrapper>
+              <AppShell />
+            </DashboardRedirectWrapper>
           </div>
         </Router>
       </StatsProvider>
@@ -403,3 +406,21 @@ function App() {
 }
 
 export default App;
+
+function DashboardRedirectWrapper({ children }) {
+  const location = useLocation();
+  const navigate = React.useCallback((path, opts) => {
+    try { window.history.replaceState(null, '', path); } catch (_) {}
+  }, []);
+  React.useEffect(() => {
+    try {
+      if (location.pathname === '/dashboard') {
+        const hasSection = new URLSearchParams(location.search || '').has('section');
+        if (!hasSection && !location.hash) {
+          navigate('/dashboard?section=create', { replace: true });
+        }
+      }
+    } catch (_) {}
+  }, [location.pathname, location.search, location.hash, navigate]);
+  return children;
+}
