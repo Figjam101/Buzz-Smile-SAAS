@@ -327,7 +327,7 @@ const Dashboard = () => {
     if (location.pathname === '/my-files' || location.hash === '#files') {
       scrollToVideosSection();
     }
-    if (location.pathname === '/dashboard') {
+    if (location.pathname === '/dashboard' || location.pathname === '/create-video') {
       const params = new URLSearchParams(location.search || '');
       const section = params.get('section');
       if (location.hash === '#social' || section === 'social') {

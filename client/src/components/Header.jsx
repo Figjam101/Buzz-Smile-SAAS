@@ -15,7 +15,7 @@ const Header = () => {
   const [showUploader, setShowUploader] = useState(false);
   
   const isHome = location.pathname === '/';
-  const isDashboard = location.pathname === '/dashboard';
+  const isDashboard = location.pathname === '/dashboard' || location.pathname === '/create-video';
   const isFiles = location.pathname === '/my-files';
   const isDashboardPage = isDashboard || isFiles;
   const isAdmin = location.pathname === '/admin';
