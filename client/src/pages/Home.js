@@ -121,7 +121,7 @@ const Home = () => {
           {isAuthenticated ? (
             <div className="flex items-center space-x-3">
               <Link
-                to="/create-video"
+                to="/dashboard"
                 className="btn btn-elevated btn-contrast inline-flex items-center justify-center space-x-2 text-sm sm:text-base"
               >
                 <LayoutDashboard className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -202,7 +202,7 @@ const Home = () => {
             >
               {isAuthenticated ? (
                 <Link
-                  to="/create-video"
+                  to="/dashboard"
                   className="btn btn-elevated btn-contrast text-lg sm:text-xl inline-flex items-center justify-center space-x-2 w-full sm:w-auto max-w-xs sm:max-w-none"
                 >
                   <span>Go to Dashboard</span>
@@ -327,7 +327,7 @@ const Home = () => {
                 
                 <div className="flex justify-center mt-auto">
                   <Link
-                    to={isAuthenticated ? "/create-video" : "/register"}
+                    to={isAuthenticated ? "/dashboard" : "/register"}
                     className="btn btn-contrast w-full text-center inline-block"
                   >
                     {plan.cta}

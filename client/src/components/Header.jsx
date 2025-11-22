@@ -15,7 +15,7 @@ const Header = () => {
   const [showUploader, setShowUploader] = useState(false);
   
   const isHome = location.pathname === '/';
-  const isDashboard = location.pathname === '/dashboard' || location.pathname === '/create-video';
+  const isDashboard = location.pathname === '/dashboard';
   const isFiles = location.pathname === '/my-files';
   const isDashboardPage = isDashboard || isFiles;
   const isAdmin = location.pathname === '/admin';
@@ -134,7 +134,7 @@ const Header = () => {
             {isAuthenticated && !isDashboardPage && (
               <nav className="flex items-center space-x-6">
                 <Link
-                  to="/create-video"
+                  to="/dashboard"
                   className="btn-primary btn-elevated inline-flex items-center justify-center space-x-2 text-sm sm:text-base px-5 sm:px-6 py-2 rounded-full"
                 >
                   <LayoutDashboard className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -259,7 +259,7 @@ const Header = () => {
               <div className="flex-1 p-4">
                 <nav className="space-y-2">
                   <Link
-                    to="/dashboard?section=create"
+                    to="/dashboard"
                     onClick={closeMobileMenu}
                     className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors text-base text-gray-700 hover:bg-gray-50"
                   >
@@ -438,7 +438,7 @@ const Header = () => {
                 </div>
                 <div className="flex-1 p-4">
                   <nav className="space-y-2">
-                    <Link to="/create-video" onClick={closeMobileMenu} className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors text-base text-gray-700 hover:bg-gray-50"><LayoutDashboard className="w-5 h-5 flex-shrink-0" /><span>Dashboard</span></Link>
+                    <Link to="/dashboard" onClick={closeMobileMenu} className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors text-base text-gray-700 hover:bg-gray-50"><LayoutDashboard className="w-5 h-5 flex-shrink-0" /><span>Dashboard</span></Link>
                     {user?.role === 'admin' && (
                       <Link to="/admin" onClick={closeMobileMenu} className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors text-base text-gray-700 hover:bg-gray-50"><Shield className="w-5 h-5 flex-shrink-0" /><span>Admin</span></Link>
                     )}

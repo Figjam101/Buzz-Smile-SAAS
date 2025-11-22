@@ -1,6 +1,6 @@
 // Force deployment - Updated: 2025-10-31 18:37:00
 import React, { Suspense, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { StatsProvider } from './contexts/StatsContext';
 import { Toaster } from 'react-hot-toast';
@@ -20,7 +20,6 @@ const Home = React.lazy(() => import('./pages/Home'));
 const Login = React.lazy(() => import('./pages/Login'));
 const Register = React.lazy(() => import('./pages/Register'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
-const CreateVideo = React.lazy(() => import('./pages/CreateVideo'));
 const MyFiles = React.lazy(() => import('./pages/MyFiles'));
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const ShareVideo = React.lazy(() => import('./pages/ShareVideo'));
@@ -49,12 +48,7 @@ const PageTitleHandler = () => {
             description: 'Manage your videos, upload new content, and track your video editing progress.',
             canonical: `${window.location.origin}/dashboard`
           };
-        case '/create-video':
-          return {
-            title: 'Create Video - VideoSaaS',
-            description: 'Upload and process your videos using the guided step-by-step flow.',
-            canonical: `${window.location.origin}/create-video`
-          };
+        
         case '/admin':
           return {
             title: 'Admin Dashboard - VideoSaaS',
@@ -122,7 +116,7 @@ const PageTitleHandler = () => {
 
 function AppShell() {
   const location = useLocation();
-  const showSidebar = ['/dashboard','/my-files','/onboarding','/create-video'].includes(location.pathname);
+  const showSidebar = ['/dashboard','/my-files','/onboarding'].includes(location.pathname);
   const isHome = location.pathname === '/';
   useEffect(() => {
     const nonDashboardRoutes = ['/','/login','/register','/forgot-password','/reset-password','/auth/success','/share'];
@@ -157,16 +151,13 @@ function AppShell() {
             <Route path="/" element={<Home />} />
             <Route 
               path="/dashboard" 
-              element={<Navigate to="/create-video" replace />} 
-            />
-            <Route 
-              path="/create-video" 
               element={
                 <ProtectedRoute>
-                  <CreateVideo />
+                  <Dashboard />
                 </ProtectedRoute>
-              } 
+              }
             />
+            
             <Route 
               path="/my-files" 
               element={
@@ -225,7 +216,7 @@ function DashboardSidebar() {
   const location = useLocation();
   const [showUploader, setShowUploader] = useState(false);
   const isFiles = location.pathname === '/my-files';
-  const isCreate = location.pathname === '/create-video';
+  const isCreate = location.pathname === '/dashboard';
   const isSocial = location.pathname === '/dashboard' && location.hash === '#social';
   const isSettings = location.pathname === '/dashboard' && location.hash === '#settings';
 
@@ -307,7 +298,7 @@ function DashboardSidebar() {
           <div className="p-4 pl-4 mx-3 my-3 rounded-xl backdrop-blur-md bg-white/5 border border-white/10">
             <nav className="grid grid-cols-1 gap-3">
               <Link
-                to="/create-video"
+                to="/dashboard"
                 className="group w-full px-3 py-2.5 rounded-xl text-white flex items-center bg-white/5 hover:bg-white/10 ring-1 ring-white/15 hover:ring-white/30 shadow-sm hover:shadow-md transition-all"
               >
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${isCreate ? 'bg-white/20 border-white/40 shadow-md' : 'bg-white/10 border-white/20 group-hover:bg-white/15 group-hover:border-white/30 shadow-sm group-hover:shadow-md'}`}>
@@ -405,10 +396,7 @@ function App() {
         >
           <div className="App">
             <PageTitleHandler />
-            {/* Redirect plain /dashboard to section=create so Create Video opens */}
-            <DashboardRedirectWrapper>
-              <AppShell />
-            </DashboardRedirectWrapper>
+            <AppShell />
           </div>
         </Router>
       </StatsProvider>
@@ -417,21 +405,3 @@ function App() {
 }
 
 export default App;
-
-function DashboardRedirectWrapper({ children }) {
-  const location = useLocation();
-  const navigate = React.useCallback((path, opts) => {
-    try { window.history.replaceState(null, '', path); } catch (_) {}
-  }, []);
-  React.useEffect(() => {
-    try {
-      if (location.pathname === '/dashboard') {
-        const hasSection = new URLSearchParams(location.search || '').has('section');
-        if (!hasSection && !location.hash) {
-          navigate('/dashboard?section=create', { replace: true });
-        }
-      }
-    } catch (_) {}
-  }, [location.pathname, location.search, location.hash, navigate]);
-  return children;
-}
