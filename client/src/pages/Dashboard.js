@@ -328,15 +328,19 @@ const Dashboard = () => {
       scrollToVideosSection();
     }
     if (location.pathname === '/dashboard') {
-      if (location.hash === '#social') {
+      const params = new URLSearchParams(location.search || '');
+      const section = params.get('section');
+      if (location.hash === '#social' || section === 'social') {
         setActiveSection('social');
-      } else if (location.hash === '#settings') {
+      } else if (location.hash === '#settings' || section === 'settings') {
         setActiveSection('settings');
       } else {
         setActiveSection('dashboard');
+        setFlowActive(true);
+        setFlowStep(0);
       }
     }
-  }, [location.pathname, location.hash, scrollToVideosSection]);
+  }, [location.pathname, location.hash, location.search, scrollToVideosSection]);
 
   // Horizontal flow controls for the new slider in DashboardStructure
   const finishFlow = useCallback(() => {

@@ -296,7 +296,7 @@ function DashboardSidebar() {
           <div className="p-4 pl-4 mx-3 my-3 rounded-xl backdrop-blur-md bg-white/5 border border-white/10">
             <nav className="grid grid-cols-1 gap-3">
               <Link
-                to="/dashboard"
+                to="/dashboard?section=create"
                 className="group w-full px-3 py-2.5 rounded-xl text-white flex items-center bg-white/5 hover:bg-white/10 ring-1 ring-white/15 hover:ring-white/30 shadow-sm hover:shadow-md transition-all"
               >
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${isDashboard ? 'bg-white/20 border-white/40 shadow-md' : 'bg-white/10 border-white/20 group-hover:bg-white/15 group-hover:border-white/30 shadow-sm group-hover:shadow-md'}`}>
