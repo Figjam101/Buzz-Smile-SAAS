@@ -5,7 +5,6 @@ import { useStats } from '../contexts/StatsContext';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import VideoEditingWizard from '../components/VideoEditingWizard';
 import ProfilePictureUploader from '../components/ProfilePictureUploader';
 import OnboardingModal from '../components/OnboardingModal';
 import SocialMediaPopup from '../components/SocialMediaPopup';
@@ -160,7 +159,6 @@ const Dashboard = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [pendingVideoFiles, setPendingVideoFiles] = useState([]);
-  const [showWizard, setShowWizard] = useState(false);
   const [uploadStepComplete, setUploadStepComplete] = useState(false);
   const [lastUploadedItem, setLastUploadedItem] = useState(null);
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -1341,16 +1339,6 @@ const Dashboard = () => {
         )}
       </main>
 
-      {/* Video Editing Wizard */}
-      <VideoEditingWizard
-        isOpen={showWizard}
-        videoFiles={pendingVideoFiles}
-        onClose={() => {
-          setShowWizard(false);
-          // Keep pending files intact; bubbles remain visible until upload success removes them
-        }}
-        onProcessVideo={handleVideoProcessing}
-      />
 
       {/* Processing Status Modal */}
       <ProcessingStatusModal
